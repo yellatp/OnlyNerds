@@ -4,14 +4,48 @@ import '../styles/global.css';
 export interface Props {
   title?: string;
   description?: string;
+  keywords?: string;
+  ogImage?: string;
+  canonical?: string;
 }
 
 const {
   title = 'OnlyNerds',
-  description = 'Free, open-source career intelligence for jobseekers, students, and builders.',
+  description = 'Free, open-source career intelligence for tech jobseekers. Search H1B sponsoring companies, VC-backed startup jobs, private market firms, and curated learning resources - all in one place.',
+  keywords = 'tech jobs, H1B sponsoring companies, VC backed startups, startup jobs, career resources, job search, data science jobs, software engineer jobs, machine learning jobs, VC portfolio jobs, accelerator jobs, job dorking',
+  ogImage = '/OnlyNerds.png',
+  canonical,
 } = Astro.props;
 
-const pageTitle = title === 'Home' ? 'OnlyNerds' : `${title} - OnlyNerds`;
+const siteUrl  = 'https://onlynerds.win';
+const pageUrl  = canonical ?? (siteUrl + Astro.url.pathname);
+const pageTitle = title === 'Home' || title === 'OnlyNerds'
+  ? 'OnlyNerds - Free Career Intelligence for Tech Jobseekers'
+  : `${title} | OnlyNerds`;
+
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : siteUrl + ogImage;
+
+const jsonLdOrg = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'OnlyNerds',
+  url: siteUrl,
+  logo: siteUrl + '/OnlyNerds.svg',
+  description: 'Free, open-source career intelligence platform for tech jobseekers, students, and builders.',
+  sameAs: ['https://github.com/yellatp/OnlyNerds'],
+});
+
+const jsonLdWebsite = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'OnlyNerds',
+  url: siteUrl,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: siteUrl + '/companies?q={search_term_string}' },
+    'query-input': 'required name=search_term_string',
+  },
+});
 ---
 
 <!doctype html>
@@ -19,15 +53,48 @@ const pageTitle = title === 'Home' ? 'OnlyNerds' : `${title} - OnlyNerds`;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+
+    <!-- Primary -->
     <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="Pavan Yellathakota" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href={pageUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OnlyNerds" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:creator" content="@yellatp" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/OnlyNerds.png" />
+
+    <!-- Fonts: Syne (display) + Space Grotesk (body) + Space Mono (mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={jsonLdOrg} />
+    <script type="application/ld+json" set:html={jsonLdWebsite} />
   </head>
   <body>
     <slot />

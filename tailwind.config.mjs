@@ -6,8 +6,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans:    ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Syne', 'Space Grotesk', 'sans-serif'],
+        mono:    ['Space Mono', 'JetBrains Mono', 'monospace'],
       },
       colors: {
         // Sector accents (used as: text-h1b, bg-h1b/10 etc.)

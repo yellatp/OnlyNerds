@@ -1,0 +1,188 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import H1BFilter from '../components/h1b/H1BFilter';
+import PrivateFilter from '../components/private/PrivateFilter';
+import VCDirectory from '../components/vc/VCDirectory';
+import { getH1BCompanies, getH1BSectors, getH1BCategories } from '../data/h1b';
+import { getPrivateCompanies, getPrivateSectors, getPrivateRounds } from '../data/privateMarkets';
+import { getVCFirms, getVCFirmsByType } from '../data/vcPortfolios';
+
+const h1bCompanies  = getH1BCompanies();
+const h1bSectors    = getH1BSectors();
+const h1bCategories = getH1BCategories();
+
+const pmCompanies = getPrivateCompanies();
+const pmSectors   = getPrivateSectors();
+const pmRounds    = getPrivateRounds();
+
+const vcFirms  = getVCFirms();
+const vcs      = getVCFirmsByType('VC');
+const accels   = getVCFirmsByType('accelerator');
+const vcWithJob= vcFirms.filter((f) => f.hasJobBoard).length;
+
+const total = h1bCompanies.length + pmCompanies.length + vcFirms.length;
+
+const sections = [
+  { id: 'h1b',     label: 'H1B Sponsors' },
+  { id: 'private', label: 'Private Markets' },
+  { id: 'vc',      label: 'VC Portfolios' },
+];
+---
+
+<Layout title="Companies">
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <!-- Sticky section nav -->
+    <div class="sticky top-14 z-30 border-b border-slate-800 bg-[#080810]">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex items-center gap-1 overflow-x-auto py-2" style="scrollbar-width:none">
+          {sections.map((s) => (
+            <a
+              href={`#${s.id}`}
+              data-section={s.id}
+              class="section-link shrink-0 rounded-md px-3 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-800 hover:text-white"
+            >
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-1">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+
+        <!-- Page header -->
+        <div class="py-10">
+          <div class="mb-3 flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+            <span class="text-xs font-semibold uppercase tracking-widest text-emerald-500">Company Directory</span>
+          </div>
+          <h1 class="mb-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Companies</h1>
+          <p class="max-w-xl text-sm text-slate-400 leading-relaxed">
+            {total.toLocaleString()} total records across H1B sponsors, private-market firms, and VC-backed portfolios.
+            All in one place.
+          </p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            {[
+              { value: h1bCompanies.length.toLocaleString(), label: 'H1B Companies',   color: 'text-emerald-400' },
+              { value: pmCompanies.length.toLocaleString(),  label: 'Private Firms',   color: 'text-amber-400' },
+              { value: vcFirms.length.toString(),            label: 'VC Funds',        color: 'text-violet-400' },
+            ].map((s) => (
+              <div class="rounded-xl border border-slate-800 bg-slate-900 px-4 py-3">
+                <p class:list={['text-xl font-bold', s.color]}>{s.value}</p>
+                <p class="text-xs text-slate-500">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             SECTION 1: H1B SPONSORS
+        ═══════════════════════════════════════ -->
+        <section id="h1b" class="scroll-mt-28 border-t border-slate-800 py-10">
+          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div class="mb-2 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-emerald-500">H1B Sponsors</h2>
+              </div>
+              <p class="text-sm text-slate-400">
+                {h1bCompanies.length.toLocaleString()} companies ranked by visa sponsorship likelihood.
+              </p>
+            </div>
+            <a href="/h1b" class="text-xs text-emerald-400 hover:text-emerald-300 transition-colors shrink-0">
+              Full H1B page
+              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+          <H1BFilter client:load companies={h1bCompanies} sectors={h1bSectors} categories={h1bCategories} />
+        </section>
+
+        <!-- ═══════════════════════════════════════
+             SECTION 2: PRIVATE MARKETS
+        ═══════════════════════════════════════ -->
+        <section id="private" class="scroll-mt-28 border-t border-slate-800 py-10">
+          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div class="mb-2 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-amber-500">Private Markets</h2>
+              </div>
+              <p class="text-sm text-slate-400">
+                {pmCompanies.length.toLocaleString()} privately-listed firms sourced from institutional research.
+              </p>
+            </div>
+            <a href="/private-markets" class="text-xs text-amber-400 hover:text-amber-300 transition-colors shrink-0">
+              Full Private Markets page
+              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+          <PrivateFilter client:load companies={pmCompanies} sectors={pmSectors} rounds={pmRounds} />
+        </section>
+
+        <!-- ═══════════════════════════════════════
+             SECTION 3: VC PORTFOLIOS
+        ═══════════════════════════════════════ -->
+        <section id="vc" class="scroll-mt-28 border-t border-slate-800 py-10">
+          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div class="mb-2 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-violet-500">VC Portfolios</h2>
+              </div>
+              <p class="text-sm text-slate-400">
+                {vcs.length} VC firms, {accels.length} accelerators, {vcWithJob} with direct job boards.
+              </p>
+            </div>
+            <a href="/vc-portfolios" class="text-xs text-violet-400 hover:text-violet-300 transition-colors shrink-0">
+              Full VC Portfolios page
+              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+          <VCDirectory client:load firms={vcFirms} />
+        </section>
+
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</Layout>
+
+<script>
+  /* Active section highlighting */
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.section-link');
+  const sectionIds = Array.from(navLinks).map((l) => l.getAttribute('data-section') ?? '');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks.forEach((l) => {
+            const active = l.getAttribute('data-section') === entry.target.id;
+            l.classList.toggle('bg-slate-800', active);
+            l.classList.toggle('text-white', active);
+            l.classList.toggle('text-slate-500', !active);
+          });
+        }
+      });
+    },
+    { rootMargin: '-100px 0px -60% 0px', threshold: 0 }
+  );
+
+  sectionIds.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+</script>

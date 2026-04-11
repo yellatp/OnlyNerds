@@ -1,0 +1,167 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+---
+
+<Layout title="Contact">
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1 mx-auto w-full max-w-4xl px-4 sm:px-6 py-12">
+
+      <!-- Header -->
+      <div class="mb-10">
+        <div class="mb-3 flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-violet-400"></span>
+          <span class="text-xs font-semibold uppercase tracking-widest text-violet-500">Open Source Project</span>
+        </div>
+        <h1 class="mb-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          Contact &amp; Contribute
+        </h1>
+        <p class="max-w-xl text-sm text-slate-400 leading-relaxed">
+          OnlyNerds is a free, community-built platform. Share resources, suggest improvements,
+          or join as a contributor. Every contribution gets credited by name.
+        </p>
+      </div>
+
+      <!-- Mission statement -->
+      <div class="mb-8 rounded-2xl border-2 border-violet-800 bg-violet-950/30 p-6">
+        <p class="mb-4 text-lg font-semibold text-white leading-snug">
+          "I water you, you water me. We grow together."
+        </p>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          This platform was built because great resources are too scattered and too gatekept.
+          OnlyNerds exists to give every jobseeker, student, and self-taught builder access to the same
+          playbooks that experienced practitioners use. Not a product. Not a business. A shared dictionary
+          of strategies, tools, and paths, maintained by people who actually use them.
+        </p>
+      </div>
+
+      <!-- Creator cards -->
+      <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+        <!-- Creator -->
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+          <div class="mb-3 flex items-center gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-emerald-500 text-sm font-bold text-white">
+              PY
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-white">Pavan Yellathakota</p>
+              <p class="text-xs text-slate-500">Creator</p>
+            </div>
+          </div>
+          <p class="mb-3 text-xs text-slate-400 leading-relaxed">
+            Data Scientist &amp; ML Practitioner. Co-Founder at Alphonso AI.
+            Building tools that give every nerd an unfair advantage.
+          </p>
+          <div class="flex flex-wrap gap-3 text-xs">
+            <a href="https://pye.pages.dev" target="_blank" rel="noopener noreferrer"
+              class="rounded-md border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-300 hover:text-white transition-colors">
+              pye.pages.dev
+            </a>
+            <a href="https://alphonsohq.com" target="_blank" rel="noopener noreferrer"
+              class="rounded-md border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-300 hover:text-white transition-colors">
+              alphonsohq.com
+            </a>
+            <a href="https://github.com/yellatp" target="_blank" rel="noopener noreferrer"
+              class="rounded-md border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-300 hover:text-white transition-colors">
+              github/yellatp
+            </a>
+            <a href="https://linkedin.com/in/yellatp" target="_blank" rel="noopener noreferrer"
+              class="rounded-md border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-300 hover:text-white transition-colors">
+              linkedin/yellatp
+            </a>
+          </div>
+        </div>
+
+        <!-- Email contact -->
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+          <p class="mb-2 text-sm font-semibold text-white">Get in Touch</p>
+          <p class="mb-4 text-xs text-slate-400 leading-relaxed">
+            Have a resource to share? Found something that should be here? Want to improve the data or UI?
+            Reach out directly. Responses are personal, not automated.
+          </p>
+          <a
+            href="mailto:pavan.yellathakota.ds@gmail.com"
+            class="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-violet-500"
+          >
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            pavan.yellathakota.ds@gmail.com
+          </a>
+        </div>
+
+      </div>
+
+      <!-- How to contribute -->
+      <div class="mb-8 rounded-xl border border-slate-800 bg-slate-900 p-6">
+        <h2 class="mb-4 text-sm font-semibold text-white">How to Contribute</h2>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              title: 'Share a Resource',
+              body: 'Email a link with a short description and who shared it. It will go up with your name as contributor.',
+              color: 'border-l-violet-600',
+            },
+            {
+              title: 'Add Company Data',
+              body: 'Know a company that should be in the H1B or Private Markets database? Send the details and we will verify and add it.',
+              color: 'border-l-emerald-600',
+            },
+            {
+              title: 'Improve the UI',
+              body: 'Fork the repository on GitHub, make your changes, and open a pull request. All contributors listed in the repo.',
+              color: 'border-l-blue-600',
+            },
+            {
+              title: 'Fix Data Errors',
+              body: 'Spotted a wrong career URL, a missing job board, or outdated information? Report it and it gets fixed fast.',
+              color: 'border-l-amber-600',
+            },
+            {
+              title: 'Write Strategy Content',
+              body: 'Have a career strategy or learning path that worked for you? Write it up and share it. Context and credit included.',
+              color: 'border-l-violet-600',
+            },
+            {
+              title: 'Spread the Word',
+              body: 'Share OnlyNerds with one person who would benefit. That is it. The platform grows by word of mouth only.',
+              color: 'border-l-slate-600',
+            },
+          ].map((item) => (
+            <div class:list={['border-l-2 pl-4 py-1', item.color]}>
+              <p class="mb-1.5 text-xs font-semibold text-white">{item.title}</p>
+              <p class="text-xs text-slate-400 leading-relaxed">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- GitHub CTA -->
+      <div class="rounded-xl border border-slate-700 bg-slate-900 p-6 text-center">
+        <p class="mb-1 text-sm font-semibold text-white">OnlyNerds is Open Source</p>
+        <p class="mb-4 text-xs text-slate-400">
+          Fork it, improve it, and open a PR. Everything you contribute is credited.
+        </p>
+        <a
+          href="https://github.com/yellatp"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg bg-slate-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-600"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          View on GitHub
+        </a>
+      </div>
+
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

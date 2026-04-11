@@ -1,0 +1,114 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import JobSearchBuilder from '../components/jobsearch/JobSearchBuilder';
+import { ROLE_GROUPS, ATS_SEGMENTS, LEVELS, LOCATION_HUBS, POSTED_TIMES } from '../data/jobSearch';
+import { SMART_JOB_BOARDS } from '../data/resources';
+---
+
+<Layout title="Job Search">
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 py-10">
+
+      <div class="mb-8">
+        <div class="mb-3 flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+          <span class="text-xs font-semibold uppercase tracking-widest text-amber-500">Advanced Dorking Engine</span>
+        </div>
+        <h1 class="mb-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          Job Search
+        </h1>
+        <p class="max-w-xl text-sm text-slate-400 leading-relaxed">
+          Curated job boards for a quick start. Then use the Dorking Builder to go further:
+          bypass algorithms, filter by ATS type, career level, location, and how recently a job was posted.
+        </p>
+      </div>
+
+      <!-- =========================================================
+           JOB BOARDS
+      ========================================================= -->
+      <section class="mb-12">
+        <div class="mb-5 flex items-center gap-2">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-emerald-500">Curated Job Boards</h2>
+        </div>
+        <p class="mb-4 max-w-2xl text-sm text-slate-400">
+          High signal boards with better quality-to-noise ratios than LinkedIn or Indeed. Good starting points, but limited by their own algorithms and employer partnerships.
+        </p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-6">
+          {SMART_JOB_BOARDS.map((item) => (
+            <a href={item.url} target="_blank" rel="noopener noreferrer"
+              class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-emerald-700 hover:bg-slate-800">
+              <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+            </a>
+          ))}
+        </div>
+
+        <!-- Handshake tip -->
+        <div class="mb-6 rounded-xl border border-slate-700 bg-slate-900 p-4 max-w-3xl">
+          <p class="text-xs font-semibold text-white mb-1">Handshake A-Z Tip</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            The full employer list follows the pattern
+            <code class="mx-1 rounded bg-slate-800 px-1.5 py-0.5 text-[11px] text-slate-300 font-mono">app.joinhandshake.com/employers/[letter]/page-[n]</code>.
+            Paginate through each letter to build a comprehensive company list for your target sector.
+          </p>
+        </div>
+
+        <!-- Dorking CTA -->
+        <div class="rounded-2xl border-2 border-amber-700 bg-amber-950/30 p-5 max-w-3xl">
+          <div class="flex items-start gap-3">
+            <div class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-700 text-white">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="mb-1 text-sm font-bold text-amber-300">Want results faster and earlier than job boards?</p>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Job boards show you what they want to show you. Google Dorking hits ATS systems directly, surfaces postings within hours of going live,
+                and bypasses every algorithm between you and the job. Build your precision query below.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           DORKING BUILDER
+      ========================================================= -->
+      <section>
+        <div class="mb-6 flex items-center gap-2">
+          <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-amber-500">Dorking Query Builder</h2>
+        </div>
+
+        <!-- What is dorking -->
+        <div class="mb-6 rounded-xl border border-amber-900 bg-amber-950/30 p-4 max-w-2xl">
+          <p class="mb-1 text-xs font-semibold text-amber-300">What is Google Dorking?</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Google dorking uses advanced search operators to query specific websites directly.
+            Instead of a job board's filtered view, you hit raw ATS job postings indexed by Google.
+            Add a time filter to find jobs posted in the last hour before anyone else sees them.
+          </p>
+        </div>
+
+        <JobSearchBuilder
+          client:load
+          roleGroups={ROLE_GROUPS}
+          atsSegments={ATS_SEGMENTS}
+          levels={LEVELS}
+          locationHubs={LOCATION_HUBS}
+          postedTimes={POSTED_TIMES}
+        />
+      </section>
+
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

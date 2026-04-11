@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.github/
+
+# Secrets - never commit
+.env
+.env.*
+!.env.example
+secrets.txt
+Secrets.txt
+*.secret
+
+# Build
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+

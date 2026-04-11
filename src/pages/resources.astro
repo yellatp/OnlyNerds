@@ -1,0 +1,765 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import {
+  TECH_BLOGS, DSA_PREP, AI_ML_LEARNING,
+  SQL_RESOURCES, SALARY_INTEL, NETWORKING_TOOLS, AUTOFILL_TOOLS,
+  RESUME_RESOURCES, DORK_QUERIES, PYE_LEARNING_PATHS,
+} from '../data/resources';
+
+const SECTIONS = [
+  {
+    id: 'learning-paths',
+    label: 'Learning Paths',
+    desc: 'Structured DS and ML paths curated by practitioners',
+    color: 'violet',
+    dot: 'bg-violet-400',
+    border: 'hover:border-violet-700',
+    badge: 'bg-violet-950 text-violet-300 border border-violet-800',
+    count: `${PYE_LEARNING_PATHS.length} paths`,
+  },
+  {
+    id: 'sql',
+    label: 'SQL Mastery',
+    desc: 'The single most important skill for data and dev professionals',
+    color: 'sky',
+    dot: 'bg-sky-400',
+    border: 'hover:border-sky-700',
+    badge: 'bg-sky-950 text-sky-300 border border-sky-800',
+    count: `${SQL_RESOURCES.length} resources`,
+  },
+  {
+    id: 'ai-ml',
+    label: 'AI / ML Learning',
+    desc: 'Build first, watch lectures second. Ground-up deep learning resources',
+    color: 'blue',
+    dot: 'bg-blue-400',
+    border: 'hover:border-blue-700',
+    badge: 'bg-blue-950 text-blue-300 border border-blue-800',
+    count: `${AI_ML_LEARNING.length} resources`,
+  },
+  {
+    id: 'dsa',
+    label: 'DSA & Coding Prep',
+    desc: 'Four resources done properly cover everything you need',
+    color: 'violet',
+    dot: 'bg-violet-400',
+    border: 'hover:border-violet-700',
+    badge: 'bg-violet-950 text-violet-300 border border-violet-800',
+    count: `${DSA_PREP.length} resources`,
+  },
+  {
+    id: 'tech-blogs',
+    label: 'Tech Blogs',
+    desc: 'Worth reading even when you are not job searching',
+    color: 'amber',
+    dot: 'bg-amber-400',
+    border: 'hover:border-amber-700',
+    badge: 'bg-amber-950 text-amber-300 border border-amber-800',
+    count: `${TECH_BLOGS.length} sources`,
+  },
+  {
+    id: 'salary',
+    label: 'Salary Intel',
+    desc: 'Use before every negotiation. Know your number before they ask',
+    color: 'emerald',
+    dot: 'bg-emerald-400',
+    border: 'hover:border-emerald-700',
+    badge: 'bg-emerald-950 text-emerald-300 border border-emerald-800',
+    count: `${SALARY_INTEL.length} tools`,
+  },
+  {
+    id: 'dorking',
+    label: 'Google Dorking',
+    desc: 'Bypass job board filters and query ATS systems directly',
+    color: 'amber',
+    dot: 'bg-amber-400',
+    border: 'hover:border-amber-700',
+    badge: 'bg-amber-950 text-amber-300 border border-amber-800',
+    count: `${DORK_QUERIES.length} queries`,
+  },
+  {
+    id: 'networking',
+    label: 'Networking',
+    desc: 'Events, autofill tools, and outreach strategies that actually work',
+    color: 'violet',
+    dot: 'bg-violet-400',
+    border: 'hover:border-violet-700',
+    badge: 'bg-violet-950 text-violet-300 border border-violet-800',
+    count: `${NETWORKING_TOOLS.length + AUTOFILL_TOOLS.length} tools`,
+  },
+  {
+    id: 'strategy',
+    label: 'Career Strategy',
+    desc: 'Build, ship, contribute, and grow. The playbook practitioners use',
+    color: 'blue',
+    dot: 'bg-blue-400',
+    border: 'hover:border-blue-700',
+    badge: 'bg-blue-950 text-blue-300 border border-blue-800',
+    count: '6 strategies',
+  },
+  {
+    id: 'resume',
+    label: 'Resume & Portfolio',
+    desc: 'Claude over templates. Real examples over advice articles',
+    color: 'emerald',
+    dot: 'bg-emerald-400',
+    border: 'hover:border-emerald-700',
+    badge: 'bg-emerald-950 text-emerald-300 border border-emerald-800',
+    count: `${RESUME_RESOURCES.length} resources`,
+  },
+];
+---
+
+<Layout title="Resources">
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+
+        <!-- Page title -->
+        <div class="py-10">
+          <div class="mb-3 flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-blue-400"></span>
+            <span class="text-xs font-semibold uppercase tracking-widest text-blue-500">Jobseeker Toolkit</span>
+          </div>
+          <h1 class="mb-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Resources</h1>
+          <p class="max-w-xl text-sm text-slate-400 leading-relaxed">
+            Curated tools, learning paths, and strategies for the serious jobseeker.
+            Select any section to open it.
+          </p>
+        </div>
+
+        <!-- Section grid -->
+        <div class="grid grid-cols-1 gap-3 pb-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {SECTIONS.map((s) => (
+            <button
+              type="button"
+              data-open={s.id}
+              class:list={[
+                'group cn-card cursor-pointer p-5 text-left transition-colors hover:bg-slate-800',
+                s.border,
+              ]}
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <span class:list={['h-2 w-2 rounded-full', s.dot]} />
+                <span class:list={['rounded-full px-2.5 py-1 text-xs font-medium', s.badge]}>
+                  {s.count}
+                </span>
+              </div>
+              <h3 class="mb-1 text-sm font-semibold text-white">{s.label}</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
+              <div class="mt-4 flex items-center gap-1 text-xs font-medium text-slate-600 transition-colors group-hover:text-slate-300">
+                Open
+                <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            </button>
+          ))}
+        </div>
+
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</Layout>
+
+<!-- ===================================================
+     MODAL OVERLAYS - one per section
+===================================================== -->
+
+<!-- Overlay backdrop -->
+<div id="modal-backdrop" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm"></div>
+
+<!-- Helper macro: renders a modal shell -->
+<!-- Each modal is a fixed panel, hidden by default -->
+
+<!-- LEARNING PATHS -->
+<div id="modal-learning-paths" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-violet-400">DS & ML Learning Paths</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <p class="mb-5 text-sm text-slate-400 leading-relaxed">
+        Structured paths curated by <a href="https://pye.pages.dev" target="_blank" rel="noopener noreferrer" class="text-violet-400 hover:text-violet-300 transition-colors">Pavan Yellathakota (pye.pages.dev)</a> based on real project experience. Each path covers tools, workflows, and code examples from actual data work.
+      </p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {PYE_LEARNING_PATHS.map((item) => (
+          <a href={item.url} target="_blank" rel="noopener noreferrer"
+            class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-violet-700 hover:bg-slate-800">
+            <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SQL MASTERY -->
+<div id="modal-sql" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-sky-400">SQL Mastery</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-8">
+
+      <!-- Callout -->
+      <div class="rounded-xl border-2 border-sky-700 bg-sky-950/30 p-5">
+        <p class="text-sm font-bold text-sky-300 mb-2">SQL is the single most important skill for data and dev professionals.</p>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          Start with MySQL. It is legendary for a reason. Every SQL concept you learn in MySQL transfers directly to PostgreSQL, BigQuery, Snowflake, and Redshift.
+          Master the fundamentals before you touch the platform-specific syntax.
+        </p>
+      </div>
+
+      <!-- Resources grid -->
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Practice & Learning Platforms</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {SQL_RESOURCES.map((item) => (
+            <a href={item.url} target="_blank" rel="noopener noreferrer"
+              class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-sky-700 hover:bg-slate-800">
+              <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- SQL Execution Order -->
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <p class="mb-4 text-sm font-semibold text-white">SQL Execution Order vs Logical Order</p>
+        <p class="mb-4 text-xs text-slate-400 leading-relaxed">
+          SQL is declarative. You tell it what you want and the Optimizer decides how to get there.
+          The order you write clauses is NOT the order the engine executes them.
+        </p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="border-b border-slate-700">
+                <th class="py-2 pr-4 text-left font-semibold text-slate-400">Step</th>
+                <th class="py-2 pr-4 text-left font-semibold text-slate-400">Clause</th>
+                <th class="py-2 text-left font-semibold text-slate-400">What is actually happening</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              {[
+                ['1', 'FROM', 'The engine identifies the source tables and performs any JOINs.'],
+                ['2', 'WHERE', 'Filters the raw rows based on conditions.'],
+                ['3', 'GROUP BY', 'Aggregates the filtered rows into buckets.'],
+                ['4', 'HAVING', 'Filters the groups (not the individual rows).'],
+                ['5', 'SELECT', 'Only now does it pick the specific columns and apply aliases.'],
+                ['6', 'ORDER BY', 'Sorts the final result set for display.'],
+              ].map(([step, clause, what]) => (
+                <tr>
+                  <td class="py-2 pr-4 text-slate-600 font-mono">{step}</td>
+                  <td class="py-2 pr-4 font-mono font-semibold text-sky-300">{clause}</td>
+                  <td class="py-2 text-slate-400">{what}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 rounded-lg border border-amber-900 bg-amber-950/30 px-4 py-3">
+          <p class="text-xs font-semibold text-amber-300 mb-1">The Key Insight</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            This is why you cannot use an alias created in the SELECT clause inside a WHERE clause.
+            The computer has not reached the SELECT step yet when it is filtering rows. Execution order, not writing order.
+          </p>
+        </div>
+      </div>
+
+      <!-- Data vs Logic -->
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <p class="mb-3 text-sm font-semibold text-white">Data and Logic: The Long-Term Relationship</p>
+        <p class="mb-4 text-xs text-slate-400 leading-relaxed">
+          To understand the digital world, look past the syntax and see it as an ecosystem.
+          It is a long-term relationship between two distinct entities: Data and Logic.
+        </p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 mb-4">
+          {[
+            { title: 'Data (SQL) is the Memory', body: 'It knows every detail of the past: names, dates, histories. A vast library waiting for a reader. It cannot act on its own.' },
+            { title: 'Code is the Will', body: 'The ability to make decisions and perform tasks. But code is ephemeral. It forgets everything the moment the session ends or power is cut.' },
+            { title: 'Programming is Matchmaking', body: 'Teaching these two how to talk to each other. A programming language is the shared dialect, allowing Will to ask Memory for the context it needs.' },
+          ].map((item) => (
+            <div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+              <p class="mb-1.5 text-xs font-semibold text-white">{item.title}</p>
+              <p class="text-xs text-slate-400 leading-relaxed">{item.body}</p>
+            </div>
+          ))}
+        </div>
+        <div class="rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 font-mono text-xs leading-6">
+          <p class="text-slate-500 mb-1">// The House Metaphor</p>
+          <p><span class="text-sky-400">Data</span>        <span class="text-slate-500">=</span> <span class="text-slate-300">The Memory (locked vault without logic)</span></p>
+          <p><span class="text-violet-400">Code</span>       <span class="text-slate-500">=</span> <span class="text-slate-300">The Will (amnesiac without data)</span></p>
+          <p><span class="text-amber-400">Framework</span>  <span class="text-slate-500">=</span> <span class="text-slate-300">The House (foundation, plumbing, walls)</span></p>
+          <p><span class="text-emerald-400">API</span>       <span class="text-slate-500">=</span> <span class="text-slate-300">The Front Door (controlled exchange with the world)</span></p>
+        </div>
+      </div>
+
+      <!-- SQL vs Programming -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="rounded-xl border border-sky-900 bg-sky-950/20 p-4">
+          <p class="mb-2 text-xs font-semibold text-sky-300">SQL is Set Theory</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            You start with a large pile of data and whittle it down through filters until you have a small, precise set of results.
+            Declarative: you describe the destination, the engine finds the route.
+          </p>
+        </div>
+        <div class="rounded-xl border border-violet-900 bg-violet-950/20 p-4">
+          <p class="mb-2 text-xs font-semibold text-violet-300">Programming is Imperative Logic</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            You start at a single point (main) and follow a map of instructions step by step.
+            You are not describing a destination, you are drawing the entire path yourself.
+          </p>
+        </div>
+      </div>
+
+      <!-- Programming lifecycle -->
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <p class="mb-4 text-sm font-semibold text-white">The Programming Execution Lifecycle</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 mb-4">
+          <div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+            <p class="mb-2 text-xs font-semibold text-violet-300">Phase A: Compile Time (Preparation)</p>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Before the program runs, the compiler checks syntax and prepares the blueprint. This is where Library Linking and Memory Mapping for static variables happen.
+            </p>
+          </div>
+          <div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+            <p class="mb-2 text-xs font-semibold text-emerald-300">Phase B: Runtime (Execution)</p>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Entry Point (main) receives control from the OS. Stack Initialization sets up memory for function calls. Control Flow executes business logic through branching, iteration, and function calls.
+            </p>
+          </div>
+        </div>
+        <div class="rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 font-mono text-xs leading-6">
+          <p class="text-slate-500 mb-1">// The Layers Perspective</p>
+          <p><span class="text-slate-400">Hardware</span>    <span class="text-slate-600">=</span> <span class="text-slate-500">Physical CPU and RAM</span></p>
+          <p><span class="text-amber-400">Kernel (OS)</span> <span class="text-slate-600">=</span> <span class="text-slate-500">Manages resources, hands control to your program</span></p>
+          <p><span class="text-blue-400">Runtime/VM</span>  <span class="text-slate-600">=</span> <span class="text-slate-500">Python or Java middleman translating to OS language</span></p>
+          <p><span class="text-emerald-400">Application</span><span class="text-slate-600">=</span> <span class="text-slate-500">Your code, logic, and variables</span></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- AI/ML LEARNING -->
+<div id="modal-ai-ml" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-blue-400">AI / ML Learning</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-6">
+      <div class="rounded-xl border border-blue-900 bg-blue-950/40 p-4">
+        <p class="text-xs font-semibold text-blue-300 mb-1">Prefer doing over watching</p>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          100 hours of lectures will not get you a job. Build something every week. Ship it.
+          The act of debugging a real project teaches more than any course. Use these resources to fill specific gaps, not as a primary path.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {AI_ML_LEARNING.map((item) => (
+          <a href={item.url} target="_blank" rel="noopener noreferrer"
+            class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-blue-700 hover:bg-slate-800">
+            <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+          </a>
+        ))}
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <p class="mb-1 text-xs font-semibold text-white">For Jobs: Learn AWS, Azure, GCP</p>
+          <p class="text-xs text-slate-400 leading-relaxed">Job listings require these. Get certified. AWS Solutions Architect and GCP Professional Data Engineer are the most recognized.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <p class="mb-1 text-xs font-semibold text-white">For Personal Projects: Use Cheaper Alternatives</p>
+          <p class="text-xs text-slate-400 leading-relaxed">Digital Ocean, Cloudflare, Hetzner, Oracle free tier, Alibaba Cloud. Keep costs near zero while you build. Save AWS credits for work.</p>
+        </div>
+      </div>
+      <div class="rounded-xl border border-slate-700 bg-slate-900 p-4">
+        <p class="mb-2 text-xs font-semibold text-white">Learn the concept before the framework</p>
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3 text-xs text-slate-400">
+          <p><span class="text-slate-300 font-medium">Before orchestration frameworks,</span> understand cron jobs and task scheduling.</p>
+          <p><span class="text-slate-300 font-medium">Before Spring Boot,</span> understand how MVC works.</p>
+          <p><span class="text-slate-300 font-medium">Before Django,</span> understand how MVT and HTTP request/response cycles work.</p>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Also useful: learnxinyminutes.com, Build Your Own X, roadmap.sh</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DSA -->
+<div id="modal-dsa" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-violet-400">DSA & Coding Interview Prep</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <p class="mb-5 text-sm text-slate-400">Fewer resources, done properly. These four cover everything you need for any technical interview.</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {DSA_PREP.map((item) => (
+          <a href={item.url} target="_blank" rel="noopener noreferrer"
+            class="group flex flex-col gap-2 rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-violet-700 hover:bg-slate-800">
+            <h3 class="text-sm font-semibold text-white">{item.name}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed flex-1">{item.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH BLOGS -->
+<div id="modal-tech-blogs" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-amber-400">Tech Blogs & Communities</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <p class="mb-5 text-sm text-slate-400">Stay technically sharp and connected. These are worth reading even when you are not actively searching.</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {TECH_BLOGS.map((item) => (
+          <a href={item.url} target="_blank" rel="noopener noreferrer"
+            class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-amber-700 hover:bg-slate-800">
+            <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SALARY -->
+<div id="modal-salary" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-emerald-400">Salary & Market Intelligence</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <p class="mb-5 text-sm text-slate-400">Know your number before they ask. Use both before every negotiation and before accepting any offer.</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {SALARY_INTEL.map((item) => (
+          <a href={item.url} target="_blank" rel="noopener noreferrer"
+            class="group rounded-xl border border-slate-800 bg-slate-900 p-5 transition-colors hover:border-emerald-700 hover:bg-slate-800">
+            <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DORKING -->
+<div id="modal-dorking" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-amber-400">Google Dorking for Jobs</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <p class="mb-4 text-sm text-slate-400 leading-relaxed">
+        Google operators let you bypass job board algorithms and query ATS systems directly.
+        Copy any query below, paste into Google, and customize the role titles to match your target.
+        Or use the <a href="/job-search" class="text-amber-400 hover:text-amber-300 transition-colors">Job Search Builder</a> to generate custom queries automatically.
+      </p>
+      <div class="space-y-4">
+        {DORK_QUERIES.map((dork, i) => (
+          <div class="rounded-xl border border-slate-800 bg-slate-900 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 border-b border-slate-800 px-4 py-3">
+              <div class="flex items-center gap-2.5">
+                <span class="text-sm font-semibold text-white">{dork.label}</span>
+                <span class:list={['rounded-md px-2 py-0.5 text-[10px] font-medium', dork.tagClass]}>{dork.tag}</span>
+              </div>
+              <button type="button" data-copy-btn={`dork-${i}`}
+                class="shrink-0 rounded-md bg-slate-800 px-3 py-1 text-[11px] font-medium text-slate-400 transition-colors hover:bg-slate-700 hover:text-white">
+                Copy
+              </button>
+            </div>
+            <pre id={`dork-${i}`} class="whitespace-pre-wrap break-words px-4 py-4 font-mono text-[11px] text-slate-300 leading-relaxed">{dork.query}</pre>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NETWORKING -->
+<div id="modal-networking" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-violet-400">Networking</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-6">
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Events & Community</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {NETWORKING_TOOLS.map((item) => (
+            <a href={item.url} target="_blank" rel="noopener noreferrer"
+              class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-violet-700 hover:bg-slate-800">
+              <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Application Autofill</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {AUTOFILL_TOOLS.map((item) => (
+            <a href={item.url} target="_blank" rel="noopener noreferrer"
+              class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-violet-700 hover:bg-slate-800">
+              <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Strategies</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { title: 'Go where people gather', body: 'Starbucks, Capital One Cafes, and independent cafes near tech centers attract remote workers. Hackathon registration desks, conference hallways, and afterparties are better than the talks themselves.' },
+            { title: 'Cold email alumni the right way', body: 'No one will directly refer you but most alumni will share insights if asked politely. Host a meet, let friends run follow-ups, and a single alumnus can become a long-term mentor.' },
+            { title: 'Open source as a contact list', body: 'Open any active GitHub repo in your target area. Go to the contributors list. Contact info and portfolio links are often right there. Message about a specific contribution, not about jobs.' },
+            { title: 'Target domain events', body: 'If you are targeting data, AI, blockchain, or fintech, find hackathons and events in those sectors specifically. Paid events (even nominally) tend to have better attendees and fewer tourists.' },
+            { title: 'Research labs and unpaid internships', body: 'In a difficult market, an unpaid lab internship still beats no experience. Reach out directly to professors with research that matches your interests. Lab experience converts well to industry roles.' },
+            { title: 'LinkedIn search signals', body: 'Search "I am hiring" or "We are looking for" on LinkedIn to surface active hiring posts directly from decision-makers. Filter to 2nd connections for warm context.' },
+          ].map((item) => (
+            <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+              <p class="mb-2 text-sm font-semibold text-white">{item.title}</p>
+              <p class="text-xs text-slate-400 leading-relaxed">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAREER STRATEGY -->
+<div id="modal-strategy" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-blue-400">Career Strategy</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-6">
+      <div class="rounded-xl border-2 border-amber-600 bg-amber-950/30 p-5">
+        <div class="mb-3 flex items-center gap-2">
+          <span class="rounded-md bg-amber-600 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">Recommended</span>
+          <h3 class="text-base font-bold text-amber-300">Skip the Master's. Consider a PhD.</h3>
+        </div>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          A Master's degree often costs $60-100k for marginal signal. A PhD, if you are serious, will waive your tuition
+          and pay a stipend for research work. BigTech, quant firms, and finance companies compete hard for PhD graduates
+          and the career trajectory is categorically different. If you want to go deep on a domain, a PhD is the higher ROI path.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {[
+          { title: 'Build and ship in 24-48 hours', body: 'Register a startup or LLC in college. Buy a domain, name it something. Form a group of growth-minded friends and host your own 24-hour hackathons. Build something and ship it. This single habit will do more for your career than 1,000 to 5,000 applications ever could. Post your projects everywhere.' },
+          { title: 'Create an Error Registry', body: 'Keep a private document or Notion page cataloging every significant error you encounter while coding. Include the error message, what caused it, and how you fixed it. Over six months this becomes an invaluable personal reference that makes you faster than anyone who does not maintain one.' },
+          { title: 'Create a Skill Map and Learning Registry', body: 'Maintain a personal skill registry tracking what you have learned with code examples and visual diagrams for each topic. Draw the workflow of every project you build so you can trace data or logic forward and backward quickly. This creates genuine ownership of your knowledge.' },
+          { title: 'Make content about your work', body: 'Post your projects, pain points, and what you are trying to solve. Not just finished products but the process. This builds an audience, attracts inbound opportunities, and creates proof of work that no resume line can replicate. Distribution is now a skill as important as the technical work itself.' },
+          { title: 'Find the open source version', body: 'Browse Reddit and LinkedIn for software pain points. If the tool people complain about has an open source alternative, fork it, improve the UI, reduce the price, and start charging. This is a real business and a real portfolio piece simultaneously.' },
+          { title: 'Contribute to open source strategically', body: 'Find a project used by your target companies. Make a meaningful contribution. Then reach out to other contributors directly via their GitHub profile contact info. Ask about what they are working on, not about jobs. The relationship does the rest.' },
+        ].map((item) => (
+          <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+            <p class="mb-2 text-sm font-semibold text-white">{item.title}</p>
+            <p class="text-xs text-slate-400 leading-relaxed">{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESUME -->
+<div id="modal-resume" data-modal class="modal-panel fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto py-8 px-4">
+  <div class="relative w-full max-w-5xl rounded-2xl border border-slate-700 bg-[#0d0d1a] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-800 bg-[#0d0d1a] px-6 py-4">
+      <div class="flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+        <h2 class="text-sm font-bold uppercase tracking-widest text-emerald-400">Resume & Portfolio</h2>
+      </div>
+      <button type="button" data-close class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-5">
+      <div class="rounded-xl border border-emerald-800 bg-emerald-950/30 p-5">
+        <div class="mb-2 flex items-center gap-2">
+          <span class="rounded-md bg-emerald-700 px-2 py-0.5 text-[11px] font-bold text-white uppercase tracking-wide">Preferred</span>
+          <h3 class="text-sm font-semibold text-emerald-300">Use Claude for Resume Templates</h3>
+        </div>
+        <p class="mb-3 text-sm text-slate-400 leading-relaxed">
+          Skip generic resume builders. Ask Claude to create a tailored ATS-optimized resume template for your specific role, level, and industry.
+          You get a customized result in seconds, not a template designed for the average candidate.
+        </p>
+        <a href="https://claude.ai" target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-600">
+          Open Claude
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {RESUME_RESOURCES.map((item) => (
+          <a href={item.url} target="_blank" rel="noopener noreferrer"
+            class="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-emerald-700 hover:bg-slate-800">
+            <h3 class="mb-1.5 text-sm font-semibold text-white">{item.name}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+          </a>
+        ))}
+      </div>
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <p class="mb-3 text-sm font-semibold text-white">Find real resumes in your domain</p>
+        <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+          Use Google to find real resumes and portfolios from people in your target role. Reach out and ask about a specific project you noticed, not for a referral. Specificity gets replies.
+        </p>
+        <div class="relative rounded-lg border border-slate-700 bg-[#080810] overflow-hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 px-4 py-2">
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Resume and contact dorking</span>
+            <button type="button" data-copy-btn="resume-dork"
+              class="rounded bg-slate-800 px-2.5 py-1 text-[10px] font-medium text-slate-400 transition-colors hover:bg-slate-700 hover:text-white">
+              Copy
+            </button>
+          </div>
+          <pre id="resume-dork" class="whitespace-pre-wrap px-4 py-3 font-mono text-[11px] text-slate-300 leading-relaxed">"data scientist resume" filetype:pdf
+site:github.io "resume" "data scientist"
+site:github.com "data scientist" "portfolio"
+"data science portfolio" "case study"
+data scientist CV site:edu filetype:pdf</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-panel.is-open {
+    display: flex;
+  }
+</style>
+
+<script>
+  /* Modal open/close system */
+  const backdrop = document.getElementById('modal-backdrop')!;
+  const modals   = document.querySelectorAll<HTMLDivElement>('[data-modal]');
+
+  function openModal(id: string) {
+    const modal = document.getElementById(`modal-${id}`);
+    if (!modal) return;
+    modal.classList.add('is-open');
+    backdrop.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAll() {
+    modals.forEach((m) => m.classList.remove('is-open'));
+    backdrop.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  /* Open buttons on cards */
+  document.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((btn) => {
+    btn.addEventListener('click', () => openModal(btn.getAttribute('data-open') ?? ''));
+  });
+
+  /* Close buttons inside modals */
+  document.querySelectorAll<HTMLButtonElement>('[data-close]').forEach((btn) => {
+    btn.addEventListener('click', closeAll);
+  });
+
+  /* Close on backdrop click */
+  backdrop.addEventListener('click', closeAll);
+
+  /* Close on Escape key */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAll();
+  });
+
+  /* Copy-to-clipboard for dork query blocks */
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-btn]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const targetId = btn.getAttribute('data-copy-btn');
+      const pre = document.getElementById(targetId ?? '');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.textContent?.trim() ?? '').then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('text-emerald-400');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('text-emerald-400');
+        }, 2000);
+      });
+    });
+  });
+</script>

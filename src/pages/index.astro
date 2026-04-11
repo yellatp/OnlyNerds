@@ -1,0 +1,232 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import { getH1BCompanies } from '../data/h1b';
+import { getPrivateCompanies } from '../data/privateMarkets';
+import { getVCFirms } from '../data/vcPortfolios';
+
+const h1bCount  = getH1BCompanies().length;
+const pmCount   = getPrivateCompanies().length;
+const vcCount   = getVCFirms().length;
+const total     = h1bCount + pmCount + vcCount;
+---
+
+<Layout title="Home">
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1">
+
+      <!-- Hero -->
+      <section class="border-b border-slate-800 bg-[#080810] px-4 py-16 sm:px-6 sm:py-24">
+        <div class="mx-auto max-w-4xl text-center">
+          <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-800 bg-violet-950 px-3 py-1 text-xs font-medium text-violet-300">
+            <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
+            Open source &amp; free forever
+          </div>
+
+          <h1 class="mb-5 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Career Intelligence<br />for Serious Builders
+          </h1>
+
+          <p class="mx-auto mb-4 max-w-2xl text-base text-slate-400 sm:text-lg">
+            {total.toLocaleString()}+ curated records across H1B sponsors, private-market firms, and VC-backed startups.
+            Every signal you need to land your next role, free and open to all.
+          </p>
+
+          <p class="mx-auto mb-8 max-w-xl text-sm text-slate-500 italic">
+            "I water you, you water me. We grow together."
+          </p>
+
+          <div class="flex flex-wrap justify-center gap-3">
+            <a href="/companies" class="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500">
+              Explore Companies
+            </a>
+            <a href="/job-search" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-500">
+              Job Search Builder
+            </a>
+            <a href="/resources" class="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700">
+              Resources
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats bar -->
+      <section class="border-b border-slate-800">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+          <div class="grid grid-cols-2 divide-x divide-slate-800 sm:grid-cols-4">
+            {[
+              { value: h1bCount.toLocaleString(),  label: 'H1B Companies',  color: 'text-emerald-400' },
+              { value: pmCount.toLocaleString(),   label: 'Private Firms',  color: 'text-amber-400' },
+              { value: vcCount.toString(),         label: 'VC Funds',       color: 'text-violet-400' },
+              { value: '100% Free',                label: 'Always',         color: 'text-blue-400' },
+            ].map((s) => (
+              <div class="px-6 py-5">
+                <p class:list={['text-2xl font-bold', s.color]}>{s.value}</p>
+                <p class="mt-0.5 text-xs text-slate-500">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- What is OnlyNerds -->
+      <section class="px-4 py-14 sm:px-6">
+        <div class="mx-auto max-w-7xl">
+          <h2 class="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Why OnlyNerds</h2>
+          <p class="mb-8 text-xl font-semibold text-white">Built for people who actually want to learn and grow</p>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: 'H1B Sponsorship Intelligence',
+                body: 'Every company ranked by H1B sponsorship likelihood from Very High to Low, based on historical patterns. Target the right employers before you apply.',
+                accent: 'border-l-emerald-600',
+              },
+              {
+                title: 'Pre-IPO Private Market Access',
+                body: 'Most job boards only index public companies. OnlyNerds surfaces thousands of private, pre-IPO firms that are actively hiring but rarely appear in standard searches.',
+                accent: 'border-l-amber-500',
+              },
+              {
+                title: 'VC Portfolio Job Boards',
+                body: 'Funded startups hire fast and pay competitively. Browse direct job board links for 100+ top VC firms and accelerators including Y Combinator and Techstars.',
+                accent: 'border-l-violet-500',
+              },
+              {
+                title: 'Advanced Job Search Builder',
+                body: 'Select your role, level, ATS preference, and location. Get a precision Google Dorking query to find jobs that never make it to the big boards.',
+                accent: 'border-l-amber-500',
+              },
+              {
+                title: 'Curated Learning Resources',
+                body: 'Data Science, ML, engineering paths, salary intel, networking strategies, and resume guidance. Curated by practitioners, not content marketers.',
+                accent: 'border-l-blue-500',
+              },
+              {
+                title: 'Community-Driven and Open Source',
+                body: 'Anyone can fork, contribute, and push updates. If you have better resources, strategies, or data, open a PR or reach out. This grows because you contribute.',
+                accent: 'border-l-violet-500',
+              },
+            ].map((item) => (
+              <div class:list={['cn-card border-l-2 p-5', item.accent]}>
+                <h3 class="mb-2 text-sm font-semibold text-white">{item.title}</h3>
+                <p class="text-sm leading-relaxed text-slate-400">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Open Source CTA -->
+      <section class="border-t border-slate-800 px-4 py-12 sm:px-6">
+        <div class="mx-auto max-w-7xl">
+          <div class="rounded-2xl border-2 border-violet-800 bg-violet-950/30 p-8">
+            <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div class="max-w-2xl">
+                <div class="mb-3 flex items-center gap-2">
+                  <span class="rounded-md bg-violet-700 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">Open Source</span>
+                  <span class="text-xs text-violet-400">onlynerds.win</span>
+                </div>
+                <h2 class="mb-2 text-xl font-bold text-white">Join as a Contributor</h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                  OnlyNerds is a platform built on the principle of shared growth. Fork the repo, add resources you have discovered, push better data, or improve the UI.
+                  Every contribution will be credited. If you share a resource, it goes up with your name on it.
+                </p>
+              </div>
+              <div class="flex shrink-0 flex-col gap-3 sm:items-end">
+                <a
+                  href="https://github.com/yellatp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500"
+                >
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                  </svg>
+                  Fork on GitHub
+                </a>
+                <a href="/contact" class="text-xs text-violet-400 hover:text-violet-300 transition-colors">
+                  Share a resource or idea
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Explore grid -->
+      <section class="border-t border-slate-800 px-4 py-12 sm:px-6">
+        <div class="mx-auto max-w-7xl">
+          <h2 class="mb-6 text-xs font-semibold uppercase tracking-widest text-slate-500">Explore</h2>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                href: '/companies',
+                label: 'Companies',
+                count: `${total.toLocaleString()} records`,
+                desc: 'H1B, private markets, and VC portfolios in one place',
+                dot: 'bg-emerald-400',
+                badge: 'bg-emerald-950 text-emerald-400 border border-emerald-900',
+                hover: 'hover:border-emerald-800',
+              },
+              {
+                href: '/job-search',
+                label: 'Job Search Builder',
+                count: 'Precision dorking',
+                desc: 'Build targeted search queries by role, level, and ATS',
+                dot: 'bg-amber-400',
+                badge: 'bg-amber-950 text-amber-400 border border-amber-900',
+                hover: 'hover:border-amber-800',
+              },
+              {
+                href: '/resources',
+                label: 'Resources',
+                count: 'Curated toolkit',
+                desc: 'DS/ML learning paths, salary intel, networking strategies',
+                dot: 'bg-blue-400',
+                badge: 'bg-blue-950 text-blue-400 border border-blue-900',
+                hover: 'hover:border-blue-800',
+              },
+              {
+                href: '/contact',
+                label: 'Contribute',
+                count: 'Open to all',
+                desc: 'Share resources, ideas, or join as a contributor',
+                dot: 'bg-violet-400',
+                badge: 'bg-violet-950 text-violet-400 border border-violet-900',
+                hover: 'hover:border-violet-800',
+              },
+            ].map((item) => (
+              <a
+                href={item.href}
+                class:list={['group cn-card p-5 transition-colors hover:bg-slate-800', item.hover]}
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <span class:list={['h-2 w-2 rounded-full', item.dot]} />
+                  <span class:list={['rounded-full px-2.5 py-1 text-xs font-medium', item.badge]}>
+                    {item.count}
+                  </span>
+                </div>
+                <h3 class="mb-1 text-sm font-semibold text-white">{item.label}</h3>
+                <p class="text-xs text-slate-500">{item.desc}</p>
+                <div class="mt-4 flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors group-hover:text-white">
+                  Explore
+                  <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

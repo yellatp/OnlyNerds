@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #080810;
+    color: #f1f5f9;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #080810; }
+  ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+  ::selection { background: rgba(139, 92, 246, 0.3); color: #f1f5f9; }
+
+  a { text-decoration: none; color: inherit; }
+  button { cursor: pointer; }
+  input, button { font-family: inherit; }
+}
+
+@layer components {
+  /* Card */
+  .cn-card {
+    @apply bg-slate-900 border border-slate-800 rounded-xl;
+  }
+
+  /* Input */
+  .cn-input {
+    @apply w-full bg-slate-900 border border-slate-700 rounded-lg py-2.5 text-sm text-white
+           placeholder-slate-500 outline-none transition-colors
+           focus:border-slate-500 focus:bg-slate-800;
+  }
+
+  /* Pill button - inactive */
+  .cn-pill {
+    @apply rounded-lg px-3 py-1.5 text-xs font-medium transition-colors
+           bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200;
+  }
+
+  /* Pill active variants */
+  .cn-pill-emerald { @apply bg-emerald-900/60 text-emerald-300 ring-1 ring-emerald-700/50; }
+  .cn-pill-amber   { @apply bg-amber-900/60 text-amber-300 ring-1 ring-amber-700/50; }
+  .cn-pill-violet  { @apply bg-violet-900/60 text-violet-300 ring-1 ring-violet-700/50; }
+  .cn-pill-blue    { @apply bg-blue-900/60 text-blue-300 ring-1 ring-blue-700/50; }
+
+  /* Section label */
+  .cn-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-slate-500;
+  }
+
+  /* Page title */
+  .cn-page-title {
+    @apply text-3xl font-bold tracking-tight text-white sm:text-4xl;
+  }
+
+  /* Stat box */
+  .cn-stat {
+    @apply rounded-xl bg-slate-900 border border-slate-800 px-4 py-3;
+  }
+
+  /* Section divider */
+  .cn-divider {
+    @apply border-t border-slate-800;
+  }
+}

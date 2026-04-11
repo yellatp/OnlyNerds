@@ -1,0 +1,69 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import H1BFilter from '../components/h1b/H1BFilter';
+import { getH1BCompanies, getH1BSectors, getH1BCategories } from '../data/h1b';
+
+const companies  = getH1BCompanies();
+const sectors    = getH1BSectors();
+const categories = getH1BCategories();
+
+const stats = [
+  { label: 'Very High',    value: companies.filter((c) => c.likelihood === 'Very High').length, color: 'text-emerald-400' },
+  { label: 'High',         value: companies.filter((c) => c.likelihood === 'High').length,      color: 'text-green-400' },
+  { label: 'Fortune 500',  value: companies.filter((c) => c.fortune500).length,                 color: 'text-amber-400' },
+  { label: 'Analyst Picks',value: companies.filter((c) => c.analystsPick).length,               color: 'text-violet-400' },
+];
+---
+
+<Layout title="H1B Sponsors">
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 py-10">
+
+      <!-- Page header -->
+      <div class="mb-8">
+        <div class="mb-3 flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+          <span class="text-xs font-semibold uppercase tracking-widest text-emerald-500">H1B Sponsorship Database</span>
+        </div>
+        <h1 class="mb-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          H1B Sponsors
+        </h1>
+        <p class="max-w-xl text-sm text-slate-400 leading-relaxed">
+          {companies.length.toLocaleString()} companies ranked by visa sponsorship likelihood.
+          Use the filters to find companies in your target sector.
+        </p>
+
+        <!-- Stats -->
+        <div class="mt-5 flex flex-wrap gap-3">
+          {stats.map((s) => (
+            <div class="rounded-xl border border-slate-800 bg-slate-900 px-4 py-3">
+              <p class:list={['text-xl font-bold', s.color]}>{s.value.toLocaleString()}</p>
+              <p class="text-xs text-slate-500">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Info banner -->
+      <div class="mb-5 flex items-start gap-2.5 rounded-lg border border-slate-800 bg-slate-900 px-4 py-3">
+        <svg class="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-xs text-slate-400">
+          <span class="font-semibold text-white">Smart Career Routing</span> - clicking a company routes to their careers page,
+          or a targeted Google search if no direct URL is on file.
+        </p>
+      </div>
+
+      <H1BFilter client:load companies={companies} sectors={sectors} categories={categories} />
+    </main>
+
+    <Footer />
+  </div>
+
+</Layout>

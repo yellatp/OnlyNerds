@@ -1,0 +1,99 @@
+---
+interface Props {
+  quantity?: number;
+}
+const { quantity = 90 } = Astro.props;
+---
+
+<canvas id="dust-canvas" aria-hidden="true"></canvas>
+
+<style>
+  #dust-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>
+
+<script define:vars={{ quantity }}>
+  (function () {
+    const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('dust-canvas'));
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let W = 0;
+    let H = 0;
+    let raf = 0;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // Build particles
+    const particles = Array.from({ length: quantity }, () => ({
+      x:     Math.random() * W,
+      y:     Math.random() * H,
+      vx:    (Math.random() - 0.5) * 0.25,
+      vy:    (Math.random() - 0.5) * 0.25,
+      r:     0.5 + Math.random() * 1.0,   // 0.5 - 1.5 px
+      alpha: 0.06 + Math.random() * 0.22,  // very subtle
+    }));
+
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+
+      for (const p of particles) {
+        // Brownian kick each frame
+        p.vx += (Math.random() - 0.5) * 0.035;
+        p.vy += (Math.random() - 0.5) * 0.035;
+
+        // Viscous damping — keeps motion lazy
+        p.vx *= 0.982;
+        p.vy *= 0.982;
+
+        // Hard speed cap so no particle ever "zooms"
+        const spd = Math.hypot(p.vx, p.vy);
+        if (spd > 0.45) {
+          const inv = 0.45 / spd;
+          p.vx *= inv;
+          p.vy *= inv;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap edges
+        if (p.x < 0)  p.x += W;
+        if (p.x > W)  p.x -= W;
+        if (p.y < 0)  p.y += H;
+        if (p.y > H)  p.y -= H;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(240,235,225,${p.alpha})`;
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(tick);
+    }
+
+    // Pause when tab is hidden — saves CPU
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+      } else {
+        raf = requestAnimationFrame(tick);
+      }
+    });
+
+    raf = requestAnimationFrame(tick);
+  })();
+</script>

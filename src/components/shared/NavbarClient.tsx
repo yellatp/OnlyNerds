@@ -46,14 +46,14 @@ export default function NavbarClient({ pathname }: Props) {
         transition: 'background 0.4s ease, backdrop-filter 0.4s ease',
       }}
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6 sm:px-10">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6 sm:px-10">
 
         {/* Logo */}
         <a href="/" className="flex shrink-0 items-center">
           <img
             src="/OnlyNerds_Nav.svg"
             alt="OnlyNerds"
-            className="h-11 w-auto"
+            className="h-20 w-auto"
             onError={(e) => { (e.target as HTMLImageElement).src = '/OnlyNerds_Nav.png'; }}
           />
         </a>

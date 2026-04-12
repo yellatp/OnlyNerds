@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import DustParticles from '../components/DustParticles.astro';
 
 export interface Props {
   title?: string;
@@ -99,6 +100,9 @@ const jsonLdWebsite = JSON.stringify({
   <body>
     <!-- Custom cursor -->
     <div id="cursor" aria-hidden="true"></div>
+
+    <!-- Dust particles background -->
+    <DustParticles quantity={90} />
 
     <slot />
   </body>

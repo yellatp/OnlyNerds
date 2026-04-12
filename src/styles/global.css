@@ -102,6 +102,24 @@
   box-shadow: 0 0 14px rgba(251, 146, 60, 0.45);
 }
 
+/* ─── Global hover highlight on text ───────────────────── */
+/* Any text element brightens when directly hovered */
+p, li, td, th, span, label {
+  transition: color 0.18s ease;
+}
+
+/* Tiles/blocks: text inside brightens when the block is hovered */
+[class*="group"]:hover p,
+[class*="group"]:hover li,
+[class*="group"]:hover span:not([style*="background"]) {
+  color: #C8C6BE;
+}
+
+/* Headings brighten on direct hover */
+h1:hover, h2:hover, h3:hover {
+  color: #F5F5F0;
+}
+
 /* ─── Component classes ─────────────────────────────────── */
 @layer components {
 

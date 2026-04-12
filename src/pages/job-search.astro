@@ -16,6 +16,28 @@ import { SMART_JOB_BOARDS } from '../data/resources';
   <div class="flex min-h-screen flex-col">
     <Navbar />
 
+    <!-- Sticky section nav -->
+    <div class="sticky top-24 z-30" style="border-bottom: 0.5px solid #1C1C18; background: #0D0D0D;">
+      <div class="mx-auto max-w-7xl px-6 sm:px-10">
+        <div class="flex items-center gap-1 overflow-x-auto py-2" style="scrollbar-width:none;">
+          {[
+            { id: 'job-boards',      label: 'Job Boards',             dot: '#7AB87A' },
+            { id: 'dorking-builder', label: 'Google Dorking for Jobs', dot: '#fb923c' },
+          ].map((s) => (
+            <a
+              href={`#${s.id}`}
+              data-section={s.id}
+              class="section-link shrink-0 flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] font-medium uppercase tracking-widest transition-colors"
+              style="color:#706E66;"
+            >
+              <span style={`width:5px;height:5px;border-radius:50%;background:${s.dot};flex-shrink:0;display:inline-block;`}></span>
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
     <main class="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 py-10">
 
       <div class="mb-8">
@@ -35,7 +57,7 @@ import { SMART_JOB_BOARDS } from '../data/resources';
       <!-- =========================================================
            JOB BOARDS
       ========================================================= -->
-      <section class="mb-12">
+      <section id="job-boards" class="scroll-mt-36 mb-12">
         <div class="mb-5 flex items-center gap-2">
           <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
           <h2 class="text-xs font-semibold uppercase tracking-widest text-emerald-500">Curated Job Boards</h2>
@@ -77,6 +99,15 @@ import { SMART_JOB_BOARDS } from '../data/resources';
                 Job boards show you what they want to show you. Google Dorking hits ATS systems directly, surfaces postings within hours of going live,
                 and bypasses every algorithm between you and the job. Build your precision query below.
               </p>
+              <a
+                href="#dorking-builder"
+                class="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-amber-400 transition-colors hover:text-amber-300"
+              >
+                Jump to Dorking Builder
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
@@ -85,7 +116,7 @@ import { SMART_JOB_BOARDS } from '../data/resources';
       <!-- =========================================================
            DORKING BUILDER
       ========================================================= -->
-      <section>
+      <section id="dorking-builder" class="scroll-mt-36">
         <div class="mb-6 flex items-center gap-2">
           <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
           <h2 class="text-xs font-semibold uppercase tracking-widest text-amber-500">Dorking Query Builder</h2>
@@ -116,3 +147,33 @@ import { SMART_JOB_BOARDS } from '../data/resources';
     <Footer />
   </div>
 </Layout>
+
+<script>
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.section-link');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks.forEach((l) => {
+            const active = l.getAttribute('data-section') === entry.target.id;
+            if (active) {
+              l.style.color = '#EDEDEA';
+              l.style.background = '#1C1C18';
+            } else {
+              l.style.color = '#706E66';
+              l.style.background = 'transparent';
+            }
+          });
+        }
+      });
+    },
+    { rootMargin: '-120px 0px -60% 0px', threshold: 0 }
+  );
+
+  navLinks.forEach((l) => {
+    const id = l.getAttribute('data-section') ?? '';
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+</script>

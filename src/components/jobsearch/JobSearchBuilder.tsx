@@ -47,14 +47,16 @@ function Pill({
 }
 
 export default function JobSearchBuilder({ roleGroups, atsSegments, levels, locationHubs, postedTimes }: Props) {
-  const [customRole, setCustomRole]       = useState('');
-  const [selRoles, setSelRoles]           = useState<string[]>([]);
-  const [selATS, setSelATS]               = useState<string[]>([]);
-  const [selLevels, setSelLevels]         = useState<string[]>([]);
-  const [selLocations, setSelLocations]   = useState<string[]>([]);
-  const [selTime, setSelTime]             = useState<string>('');
-  const [companyFilter, setCompanyFilter] = useState('');
-  const [copied, setCopied]               = useState(false);
+  const [customRole, setCustomRole]         = useState('');
+  const [selRoles, setSelRoles]             = useState<string[]>([]);
+  const [selATS, setSelATS]                 = useState<string[]>([]);
+  const [selLevels, setSelLevels]           = useState<string[]>([]);
+  const [selLocations, setSelLocations]     = useState<string[]>([]);
+  const [customCity, setCustomCity]         = useState('');
+  const [customCountry, setCustomCountry]   = useState('');
+  const [selTime, setSelTime]               = useState<string>('');
+  const [companyFilter, setCompanyFilter]   = useState('');
+  const [copied, setCopied]                 = useState(false);
 
   // Flat map of label -> role object for alias lookup
   const roleMap = useMemo(() => {
@@ -93,14 +95,22 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
       }
     }
 
-    // Location
+    // Location: predefined hubs + custom city + custom country
+    const locTerms: string[] = [];
     if (selLocations.length > 0) {
-      const locTerms = locationHubs
+      locationHubs
         .filter((l) => selLocations.includes(l.label))
-        .flatMap((l) => l.terms);
-      if (locTerms.length > 0) {
-        parts.push(`(${locTerms.join(' OR ')})`);
-      }
+        .flatMap((l) => l.terms)
+        .forEach((t) => locTerms.push(t));
+    }
+    if (customCity.trim()) {
+      locTerms.push(`"${customCity.trim()}"`);
+    }
+    if (customCountry.trim()) {
+      locTerms.push(`"${customCountry.trim()}"`);
+    }
+    if (locTerms.length > 0) {
+      parts.push(locTerms.length === 1 ? locTerms[0] : `(${locTerms.join(' OR ')})`);
     }
 
     // ATS (site: operators)
@@ -120,7 +130,7 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
     }
 
     return parts.join('\n');
-  }, [selRoles, selLevels, selLocations, selATS, companyFilter, levels, atsSegments, locationHubs, roleMap]);
+  }, [selRoles, selLevels, selLocations, customCity, customCountry, selATS, companyFilter, levels, atsSegments, locationHubs, roleMap]);
 
   // Time filter goes into URL params, not the text query
   const selectedTimeObj = postedTimes.find((t) => t.label === selTime);
@@ -144,12 +154,15 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
     setSelATS([]);
     setSelLevels([]);
     setSelLocations([]);
+    setCustomCity('');
+    setCustomCountry('');
     setSelTime('');
     setCompanyFilter('');
     setCustomRole('');
   }
 
-  const hasSelections = selRoles.length > 0 || selLevels.length > 0 || selLocations.length > 0 || selATS.length > 0 || selTime !== '';
+  const hasSelections = selRoles.length > 0 || selLevels.length > 0 || selLocations.length > 0
+    || selATS.length > 0 || selTime !== '' || customCity.trim() !== '' || customCountry.trim() !== '';
 
   return (
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]">
@@ -271,8 +284,11 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
 
         {/* Location */}
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">Location</p>
-          <div class="flex flex-wrap gap-2">
+          <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Location</p>
+          <p class="mb-3 text-[10px] text-slate-500">Pick a region, type a city, or type a country - mix any combination.</p>
+
+          {/* Region pills */}
+          <div class="mb-4 flex flex-wrap gap-2">
             {locationHubs.map((loc) => (
               <Pill
                 key={loc.label}
@@ -281,6 +297,30 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
                 onClick={() => toggle(selLocations, loc.label, setSelLocations)}
               />
             ))}
+          </div>
+
+          {/* City + Country custom inputs */}
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <p class="mb-1.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">Add city (optional)</p>
+              <input
+                type="text"
+                placeholder="NYC, San Francisco, Bengaluru, London, Singapore..."
+                value={customCity}
+                onInput={(e) => setCustomCity((e.target as HTMLInputElement).value)}
+                class="cn-input px-4"
+              />
+            </div>
+            <div>
+              <p class="mb-1.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">Add country (optional)</p>
+              <input
+                type="text"
+                placeholder="e.g. Netherlands, Japan, Brazil, South Korea..."
+                value={customCountry}
+                onInput={(e) => setCustomCountry((e.target as HTMLInputElement).value)}
+                class="cn-input px-4"
+              />
+            </div>
           </div>
         </div>
 
@@ -378,6 +418,26 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
                   <span class="text-emerald-400">x</span>
                 </button>
               ))}
+              {customCity.trim() && (
+                <button
+                  type="button"
+                  onClick={() => setCustomCity('')}
+                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors"
+                >
+                  {customCity.trim()}
+                  <span class="text-emerald-400">x</span>
+                </button>
+              )}
+              {customCountry.trim() && (
+                <button
+                  type="button"
+                  onClick={() => setCustomCountry('')}
+                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors"
+                >
+                  {customCountry.trim()}
+                  <span class="text-emerald-400">x</span>
+                </button>
+              )}
               {selATS.map((a) => {
                 const seg = atsSegments.find((s) => s.key === a);
                 return (

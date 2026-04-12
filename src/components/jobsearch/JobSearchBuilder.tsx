@@ -1,5 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { RoleGroup, ATSSegment, Level, LocationHub, PostedTime } from '../../data/jobSearch';
+import {
+  getCooldownState, recordDorkClick, buildEngineUrl,
+  formatCooldownTime, type CooldownState,
+} from '../../data/dorkSafety';
 
 interface Props {
   roleGroups: RoleGroup[];
@@ -22,14 +26,8 @@ const ATS_BADGE: Record<string, string> = {
 };
 
 function Pill({
-  label,
-  selected,
-  onClick,
-}: {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-}) {
+  label, selected, onClick,
+}: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
@@ -46,6 +44,26 @@ function Pill({
   );
 }
 
+type Engine = 'google' | 'bing' | 'ddg';
+
+const ENGINE_LABELS: Record<Engine, string> = {
+  google: 'Google',
+  bing:   'Bing',
+  ddg:    'DuckDuckGo',
+};
+
+const ENGINE_ACTIVE: Record<Engine, string> = {
+  google: 'bg-violet-700 text-white',
+  bing:   'bg-blue-700 text-white',
+  ddg:    'bg-emerald-700 text-white',
+};
+
+const ENGINE_BTN: Record<Engine, string> = {
+  google: 'bg-violet-600 hover:bg-violet-500 text-white',
+  bing:   'bg-blue-600 hover:bg-blue-500 text-white',
+  ddg:    'bg-emerald-600 hover:bg-emerald-500 text-white',
+};
+
 export default function JobSearchBuilder({ roleGroups, atsSegments, levels, locationHubs, postedTimes }: Props) {
   const [customRole, setCustomRole]         = useState('');
   const [selRoles, setSelRoles]             = useState<string[]>([]);
@@ -57,8 +75,17 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
   const [selTime, setSelTime]               = useState<string>('');
   const [companyFilter, setCompanyFilter]   = useState('');
   const [copied, setCopied]                 = useState(false);
+  const [engine, setEngine]                 = useState<Engine>('google');
+  const [cooldown, setCooldown]             = useState<CooldownState>({ type: 'none', secondsLeft: 0, recentClicks: 0 });
 
-  // Flat map of label -> role object for alias lookup
+  // Poll cooldown state every second
+  useEffect(() => {
+    const tick = () => setCooldown(getCooldownState());
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   const roleMap = useMemo(() => {
     const map: Record<string, { label: string; aliases?: string[] }> = {};
     roleGroups.forEach((g) => g.roles.forEach((r) => { map[r.label] = r; }));
@@ -72,74 +99,65 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
   const query = useMemo(() => {
     const parts: string[] = [];
 
-    // Roles + aliases
     if (selRoles.length > 0) {
       const terms: string[] = [];
       selRoles.forEach((label) => {
         terms.push(`"${label}"`);
-        const role = roleMap[label];
-        if (role?.aliases) {
-          role.aliases.forEach((a) => terms.push(`"${a}"`));
-        }
+        roleMap[label]?.aliases?.forEach((a) => terms.push(`"${a}"`));
       });
       parts.push(`(${terms.join(' OR ')})`);
     }
 
-    // Level
     if (selLevels.length > 0) {
-      const levelQueries = levels
-        .filter((l) => selLevels.includes(l.label))
-        .map((l) => l.query);
-      if (levelQueries.length > 0) {
-        parts.push(`(${levelQueries.join(' OR ')})`);
-      }
+      const lq = levels.filter((l) => selLevels.includes(l.label)).map((l) => l.query);
+      if (lq.length > 0) parts.push(`(${lq.join(' OR ')})`);
     }
 
-    // Location: predefined hubs + custom city + custom country
     const locTerms: string[] = [];
-    if (selLocations.length > 0) {
-      locationHubs
-        .filter((l) => selLocations.includes(l.label))
-        .flatMap((l) => l.terms)
-        .forEach((t) => locTerms.push(t));
-    }
-    if (customCity.trim()) {
-      locTerms.push(`"${customCity.trim()}"`);
-    }
-    if (customCountry.trim()) {
-      locTerms.push(`"${customCountry.trim()}"`);
-    }
-    if (locTerms.length > 0) {
-      parts.push(locTerms.length === 1 ? locTerms[0] : `(${locTerms.join(' OR ')})`);
-    }
+    locationHubs.filter((l) => selLocations.includes(l.label)).flatMap((l) => l.terms).forEach((t) => locTerms.push(t));
+    if (customCity.trim())    locTerms.push(`"${customCity.trim()}"`);
+    if (customCountry.trim()) locTerms.push(`"${customCountry.trim()}"`);
+    if (locTerms.length > 0) parts.push(locTerms.length === 1 ? locTerms[0] : `(${locTerms.join(' OR ')})`);
 
-    // ATS (site: operators)
     if (selATS.length > 0) {
-      const sites = atsSegments
-        .filter((a) => selATS.includes(a.key))
-        .flatMap((a) => a.sites)
-        .map((s) => `site:${s}`);
-      if (sites.length > 0) {
-        parts.push(`(${sites.join(' OR ')})`);
-      }
+      const sites = atsSegments.filter((a) => selATS.includes(a.key)).flatMap((a) => a.sites).map((s) => `site:${s}`);
+      if (sites.length > 0) parts.push(`(${sites.join(' OR ')})`);
     }
 
-    // Company filter
-    if (companyFilter.trim()) {
-      parts.push(`"${companyFilter.trim()}"`);
-    }
+    if (companyFilter.trim()) parts.push(`"${companyFilter.trim()}"`);
 
     return parts.join('\n');
   }, [selRoles, selLevels, selLocations, customCity, customCountry, selATS, companyFilter, levels, atsSegments, locationHubs, roleMap]);
 
-  // Time filter goes into URL params, not the text query
   const selectedTimeObj = postedTimes.find((t) => t.label === selTime);
-  const searchUrl = useMemo(() => {
-    if (!query) return '';
-    let url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-    if (selectedTimeObj) url += `&tbs=${selectedTimeObj.tbs}`;
-    return url;
-  }, [query, selectedTimeObj]);
+
+  const isGoogleBlocked = engine === 'google' && cooldown.type !== 'none';
+  const canSearch       = Boolean(query) && !isGoogleBlocked;
+
+  function handleSearch() {
+    if (!query || isGoogleBlocked) return;
+    if (engine === 'google') recordDorkClick();
+    const url = buildEngineUrl(query, engine, selectedTimeObj?.tbs);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  function getButtonLabel(): string {
+    if (!query) return 'Build a query first';
+    if (cooldown.type === 'hard' && engine === 'google')
+      return `Deep Freeze: ${formatCooldownTime(cooldown.secondsLeft)}`;
+    if (cooldown.type === 'soft' && engine === 'google')
+      return `IP Protection: ${cooldown.secondsLeft}s`;
+    return `Search on ${ENGINE_LABELS[engine]}`;
+  }
+
+  function getButtonClass(): string {
+    if (!query) return 'bg-slate-800 text-slate-500 cursor-not-allowed';
+    if (cooldown.type === 'hard' && engine === 'google')
+      return 'bg-red-950 border border-red-900 text-red-400 cursor-not-allowed font-mono';
+    if (cooldown.type === 'soft' && engine === 'google')
+      return 'bg-amber-950 border border-amber-900 text-amber-400 cursor-not-allowed font-mono';
+    return ENGINE_BTN[engine];
+  }
 
   function handleCopy() {
     if (!query) return;
@@ -150,15 +168,9 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
   }
 
   function handleReset() {
-    setSelRoles([]);
-    setSelATS([]);
-    setSelLevels([]);
-    setSelLocations([]);
-    setCustomCity('');
-    setCustomCountry('');
-    setSelTime('');
-    setCompanyFilter('');
-    setCustomRole('');
+    setSelRoles([]); setSelATS([]); setSelLevels([]); setSelLocations([]);
+    setCustomCity(''); setCustomCountry(''); setSelTime('');
+    setCompanyFilter(''); setCustomRole('');
   }
 
   const hasSelections = selRoles.length > 0 || selLevels.length > 0 || selLocations.length > 0
@@ -172,9 +184,7 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
 
         {/* Custom role input */}
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-            Type a role (optional)
-          </p>
+          <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">Type a role (optional)</p>
           <input
             type="text"
             placeholder="e.g. Quantitative Analyst, Research Engineer..."
@@ -186,9 +196,7 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
             <button
               type="button"
               onClick={() => {
-                if (!selRoles.includes(customRole.trim())) {
-                  setSelRoles([...selRoles, customRole.trim()]);
-                }
+                if (!selRoles.includes(customRole.trim())) setSelRoles([...selRoles, customRole.trim()]);
                 setCustomRole('');
               }}
               class="mt-2 rounded-lg bg-violet-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-600 transition-colors"
@@ -201,21 +209,14 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
         {/* Role groups */}
         {roleGroups.map((group) => (
           <div key={group.label} class="rounded-xl border border-slate-800 bg-slate-900 p-5">
-            <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-              {group.label}
-            </p>
+            <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">{group.label}</p>
             <div class="flex flex-wrap gap-2">
               {group.roles.map((role) => (
                 <div key={role.label} class="flex flex-col gap-0.5">
-                  <Pill
-                    label={role.label}
-                    selected={selRoles.includes(role.label)}
-                    onClick={() => toggle(selRoles, role.label, setSelRoles)}
-                  />
+                  <Pill label={role.label} selected={selRoles.includes(role.label)} onClick={() => toggle(selRoles, role.label, setSelRoles)} />
                   {role.aliases && role.aliases.length > 0 && (
                     <p class="text-center text-[9px] text-slate-600 leading-none">
-                      {role.aliases.slice(0, 2).join(', ')}
-                      {role.aliases.length > 2 ? ` +${role.aliases.length - 2}` : ''}
+                      {role.aliases.slice(0, 2).join(', ')}{role.aliases.length > 2 ? ` +${role.aliases.length - 2}` : ''}
                     </p>
                   )}
                 </div>
@@ -229,12 +230,7 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
           <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">Career Level</p>
           <div class="flex flex-wrap gap-2">
             {levels.map((l) => (
-              <Pill
-                key={l.label}
-                label={l.label}
-                selected={selLevels.includes(l.label)}
-                onClick={() => toggle(selLevels, l.label, setSelLevels)}
-              />
+              <Pill key={l.label} label={l.label} selected={selLevels.includes(l.label)} onClick={() => toggle(selLevels, l.label, setSelLevels)} />
             ))}
           </div>
         </div>
@@ -252,9 +248,7 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
                   onClick={() => toggle(selATS, seg.key, setSelATS)}
                   class={[
                     'rounded-xl border p-4 text-left transition-all',
-                    isSelected
-                      ? `${ATS_COLOR[seg.color]} ring-1`
-                      : 'border-slate-700 bg-slate-950 hover:border-slate-600',
+                    isSelected ? `${ATS_COLOR[seg.color]} ring-1` : 'border-slate-700 bg-slate-950 hover:border-slate-600',
                   ].join(' ')}
                 >
                   <div class="mb-1 flex items-center justify-between">
@@ -268,13 +262,9 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
                   <p class="text-xs text-slate-500">{seg.sublabel}</p>
                   <div class="mt-2 flex flex-wrap gap-1">
                     {seg.sites.slice(0, 2).map((s) => (
-                      <span key={s} class={`rounded px-1.5 py-0.5 text-[10px] font-mono ${ATS_BADGE[seg.color]}`}>
-                        {s.split('.')[0]}
-                      </span>
+                      <span key={s} class={`rounded px-1.5 py-0.5 text-[10px] font-mono ${ATS_BADGE[seg.color]}`}>{s.split('.')[0]}</span>
                     ))}
-                    {seg.sites.length > 2 && (
-                      <span class="rounded px-1.5 py-0.5 text-[10px] text-slate-500">+{seg.sites.length - 2}</span>
-                    )}
+                    {seg.sites.length > 2 && <span class="rounded px-1.5 py-0.5 text-[10px] text-slate-500">+{seg.sites.length - 2}</span>}
                   </div>
                 </button>
               );
@@ -286,40 +276,21 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
           <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Location</p>
           <p class="mb-3 text-[10px] text-slate-500">Pick a region, type a city, or type a country - mix any combination.</p>
-
-          {/* Region pills */}
           <div class="mb-4 flex flex-wrap gap-2">
             {locationHubs.map((loc) => (
-              <Pill
-                key={loc.label}
-                label={loc.label}
-                selected={selLocations.includes(loc.label)}
-                onClick={() => toggle(selLocations, loc.label, setSelLocations)}
-              />
+              <Pill key={loc.label} label={loc.label} selected={selLocations.includes(loc.label)} onClick={() => toggle(selLocations, loc.label, setSelLocations)} />
             ))}
           </div>
-
-          {/* City + Country custom inputs */}
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <p class="mb-1.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">Add city (optional)</p>
-              <input
-                type="text"
-                placeholder="NYC, San Francisco, Bengaluru, London, Singapore..."
-                value={customCity}
-                onInput={(e) => setCustomCity((e.target as HTMLInputElement).value)}
-                class="cn-input px-4"
-              />
+              <input type="text" placeholder="NYC, San Francisco, Bengaluru, London..." value={customCity}
+                onInput={(e) => setCustomCity((e.target as HTMLInputElement).value)} class="cn-input px-4" />
             </div>
             <div>
               <p class="mb-1.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">Add country (optional)</p>
-              <input
-                type="text"
-                placeholder="e.g. Netherlands, Japan, Brazil, South Korea..."
-                value={customCountry}
-                onInput={(e) => setCustomCountry((e.target as HTMLInputElement).value)}
-                class="cn-input px-4"
-              />
+              <input type="text" placeholder="Netherlands, Japan, Brazil, South Korea..." value={customCountry}
+                onInput={(e) => setCustomCountry((e.target as HTMLInputElement).value)} class="cn-input px-4" />
             </div>
           </div>
         </div>
@@ -329,11 +300,7 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
           <div class="mb-3 flex items-center justify-between">
             <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">Posted Time</p>
             {selTime && (
-              <button
-                type="button"
-                onClick={() => setSelTime('')}
-                class="text-[10px] text-slate-500 hover:text-slate-300 transition-colors"
-              >
+              <button type="button" onClick={() => setSelTime('')} class="text-[10px] text-slate-500 hover:text-slate-300 transition-colors">
                 Clear
               </button>
             )}
@@ -355,14 +322,12 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
               </button>
             ))}
           </div>
-          <p class="mt-2 text-[10px] text-slate-600">Time filter applies to Google search, not the query text itself.</p>
+          <p class="mt-2 text-[10px] text-slate-600">Time filter applies to Google search URL only. Not supported on Bing/DDG.</p>
         </div>
 
         {/* Company / keyword */}
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
-            Enter a company name or pick an ATS tier
-          </p>
+          <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Enter a company name or pick an ATS tier</p>
           <p class="mb-3 text-[10px] text-slate-500 leading-relaxed">
             No idea which ATS a company uses? Just type the company name. If you know the ATS, select a tier above instead. Either approach works.
           </p>
@@ -386,80 +351,48 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
             <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Active Filters</p>
             <div class="flex flex-wrap gap-1.5">
               {selRoles.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setSelRoles(selRoles.filter((x) => x !== r))}
-                  class="flex items-center gap-1 rounded-md bg-violet-900 border border-violet-700 px-2 py-0.5 text-[11px] text-violet-200 hover:bg-violet-800 transition-colors"
-                >
-                  {r}
-                  <span class="text-violet-400">x</span>
+                <button key={r} type="button" onClick={() => setSelRoles(selRoles.filter((x) => x !== r))}
+                  class="flex items-center gap-1 rounded-md bg-violet-900 border border-violet-700 px-2 py-0.5 text-[11px] text-violet-200 hover:bg-violet-800 transition-colors">
+                  {r}<span class="text-violet-400">x</span>
                 </button>
               ))}
               {selLevels.map((l) => (
-                <button
-                  key={l}
-                  type="button"
-                  onClick={() => setSelLevels(selLevels.filter((x) => x !== l))}
-                  class="flex items-center gap-1 rounded-md bg-blue-900 border border-blue-700 px-2 py-0.5 text-[11px] text-blue-200 hover:bg-blue-800 transition-colors"
-                >
-                  {l}
-                  <span class="text-blue-400">x</span>
+                <button key={l} type="button" onClick={() => setSelLevels(selLevels.filter((x) => x !== l))}
+                  class="flex items-center gap-1 rounded-md bg-blue-900 border border-blue-700 px-2 py-0.5 text-[11px] text-blue-200 hover:bg-blue-800 transition-colors">
+                  {l}<span class="text-blue-400">x</span>
                 </button>
               ))}
               {selLocations.map((loc) => (
-                <button
-                  key={loc}
-                  type="button"
-                  onClick={() => setSelLocations(selLocations.filter((x) => x !== loc))}
-                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors"
-                >
-                  {loc}
-                  <span class="text-emerald-400">x</span>
+                <button key={loc} type="button" onClick={() => setSelLocations(selLocations.filter((x) => x !== loc))}
+                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors">
+                  {loc}<span class="text-emerald-400">x</span>
                 </button>
               ))}
               {customCity.trim() && (
-                <button
-                  type="button"
-                  onClick={() => setCustomCity('')}
-                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors"
-                >
-                  {customCity.trim()}
-                  <span class="text-emerald-400">x</span>
+                <button type="button" onClick={() => setCustomCity('')}
+                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors">
+                  {customCity.trim()}<span class="text-emerald-400">x</span>
                 </button>
               )}
               {customCountry.trim() && (
-                <button
-                  type="button"
-                  onClick={() => setCustomCountry('')}
-                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors"
-                >
-                  {customCountry.trim()}
-                  <span class="text-emerald-400">x</span>
+                <button type="button" onClick={() => setCustomCountry('')}
+                  class="flex items-center gap-1 rounded-md bg-emerald-900 border border-emerald-700 px-2 py-0.5 text-[11px] text-emerald-200 hover:bg-emerald-800 transition-colors">
+                  {customCountry.trim()}<span class="text-emerald-400">x</span>
                 </button>
               )}
               {selATS.map((a) => {
                 const seg = atsSegments.find((s) => s.key === a);
                 return (
-                  <button
-                    key={a}
-                    type="button"
-                    onClick={() => setSelATS(selATS.filter((x) => x !== a))}
-                    class="flex items-center gap-1 rounded-md bg-amber-900 border border-amber-700 px-2 py-0.5 text-[11px] text-amber-200 hover:bg-amber-800 transition-colors"
-                  >
-                    {seg?.label}
-                    <span class="text-amber-400">x</span>
+                  <button key={a} type="button" onClick={() => setSelATS(selATS.filter((x) => x !== a))}
+                    class="flex items-center gap-1 rounded-md bg-amber-900 border border-amber-700 px-2 py-0.5 text-[11px] text-amber-200 hover:bg-amber-800 transition-colors">
+                    {seg?.label}<span class="text-amber-400">x</span>
                   </button>
                 );
               })}
               {selTime && (
-                <button
-                  type="button"
-                  onClick={() => setSelTime('')}
-                  class="flex items-center gap-1 rounded-md bg-amber-900 border border-amber-700 px-2 py-0.5 text-[11px] text-amber-200 hover:bg-amber-800 transition-colors"
-                >
-                  {selTime}
-                  <span class="text-amber-400">x</span>
+                <button type="button" onClick={() => setSelTime('')}
+                  class="flex items-center gap-1 rounded-md bg-amber-900 border border-amber-700 px-2 py-0.5 text-[11px] text-amber-200 hover:bg-amber-800 transition-colors">
+                  {selTime}<span class="text-amber-400">x</span>
                 </button>
               )}
             </div>
@@ -472,11 +405,7 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
             <span class="text-xs font-semibold text-slate-400">Generated Query</span>
             <div class="flex items-center gap-2">
               {(query || selTime) && (
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  class="rounded bg-slate-800 px-2 py-1 text-[11px] text-slate-400 hover:text-white transition-colors"
-                >
+                <button type="button" onClick={handleReset} class="rounded bg-slate-800 px-2 py-1 text-[11px] text-slate-400 hover:text-white transition-colors">
                   Reset all
                 </button>
               )}
@@ -486,11 +415,8 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
                 disabled={!query}
                 class={[
                   'rounded px-2.5 py-1 text-[11px] font-medium transition-colors',
-                  query
-                    ? copied
-                      ? 'bg-emerald-800 text-emerald-300'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
-                    : 'bg-slate-900 text-slate-600 cursor-not-allowed',
+                  query ? copied ? 'bg-emerald-800 text-emerald-300' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
+                        : 'bg-slate-900 text-slate-600 cursor-not-allowed',
                 ].join(' ')}
               >
                 {copied ? 'Copied!' : 'Copy'}
@@ -509,44 +435,106 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
             <div class="border-t border-slate-800 px-4 py-2 flex items-center gap-2">
               <span class="text-[10px] text-slate-500">Time filter:</span>
               <span class="rounded bg-amber-900 border border-amber-800 px-2 py-0.5 text-[10px] text-amber-300 font-mono">{selectedTimeObj?.tbs}</span>
-              <span class="text-[10px] text-slate-600">applied to Google URL</span>
+              <span class="text-[10px] text-slate-600">Google only</span>
             </div>
           )}
         </div>
 
-        {/* Action buttons */}
-        <div class="flex gap-3">
-          <a
-            href={searchUrl || undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            class={[
-              'flex-1 rounded-lg py-2.5 text-center text-sm font-semibold transition-colors',
-              searchUrl
-                ? 'bg-violet-600 text-white hover:bg-violet-500'
-                : 'bg-slate-800 text-slate-500 cursor-not-allowed pointer-events-none',
-            ].join(' ')}
-          >
-            Search on Google
-            {selTime && <span class="ml-1 text-[11px] font-normal opacity-70">({selTime})</span>}
-          </a>
+        {/* Engine selector */}
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+          <p class="mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">Search Engine</p>
+          <div class="mb-3 flex rounded-lg border border-slate-700 bg-slate-950 p-1">
+            {(['google', 'bing', 'ddg'] as const).map((e) => (
+              <button
+                key={e}
+                type="button"
+                onClick={() => setEngine(e)}
+                class={[
+                  'flex-1 rounded-md py-1.5 text-xs font-semibold transition-colors',
+                  engine === e ? ENGINE_ACTIVE[e] : 'text-slate-500 hover:text-slate-300',
+                ].join(' ')}
+              >
+                {ENGINE_LABELS[e]}
+              </button>
+            ))}
+          </div>
+          <p class="text-[10px] leading-relaxed" style={{ color: engine === 'google' ? '#706E66' : '#6ee7b7' }}>
+            {engine === 'google'
+              ? 'Google indexes ATS pages fastest but rate-limits complex queries from shared IPs. IP protection is active.'
+              : engine === 'bing'
+                ? 'Bing indexes most ATS platforms, is significantly more lenient on advanced queries, and has no cooldown here.'
+                : 'DuckDuckGo does not log your IP, has no rate limits for dorking, and often surfaces results Google hides.'}
+          </p>
         </div>
+
+        {/* Cooldown state - shown only for Google */}
+        {engine === 'google' && cooldown.type !== 'none' && (
+          <div class={[
+            'rounded-xl border p-4',
+            cooldown.type === 'hard'
+              ? 'border-red-900 bg-red-950/40'
+              : 'border-amber-900 bg-amber-950/40',
+          ].join(' ')}>
+            <div class="flex items-center gap-3 mb-2">
+              <span
+                class="font-mono text-2xl font-bold tabular-nums"
+                style={{ color: cooldown.type === 'hard' ? '#f87171' : '#fbbf24' }}
+              >
+                {formatCooldownTime(cooldown.secondsLeft)}
+              </span>
+              <div>
+                <p class="text-xs font-bold" style={{ color: cooldown.type === 'hard' ? '#fca5a5' : '#fcd34d' }}>
+                  {cooldown.type === 'hard' ? 'Deep Freeze Active' : 'IP Protection Active'}
+                </p>
+                <p class="text-[10px] text-slate-400">
+                  {cooldown.type === 'hard'
+                    ? `${cooldown.recentClicks} dorks in 3 min. Pausing to keep your IP off Google's radar.`
+                    : 'Keeping 45s between Google dorks. Switch to Bing or DDG for no limits.'}
+                </p>
+              </div>
+            </div>
+            {cooldown.type === 'hard' && (
+              <button
+                type="button"
+                onClick={() => setEngine('bing')}
+                class="w-full rounded-lg bg-blue-900 border border-blue-800 py-1.5 text-xs font-semibold text-blue-200 hover:bg-blue-800 transition-colors"
+              >
+                Switch to Bing now (no cooldown)
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Search button */}
+        <button
+          type="button"
+          onClick={handleSearch}
+          disabled={!canSearch}
+          class={['w-full rounded-lg py-2.5 text-sm font-semibold transition-colors', getButtonClass()].join(' ')}
+        >
+          {getButtonLabel()}
+          {selTime && engine === 'google' && cooldown.type === 'none' && (
+            <span class="ml-1 text-[11px] font-normal opacity-70">({selTime})</span>
+          )}
+        </button>
 
         {/* Aliases note */}
         {selRoles.some((r) => roleMap[r]?.aliases?.length) && (
           <div class="rounded-xl border border-slate-800 bg-slate-900 p-3">
             <p class="text-[10px] text-slate-500 leading-relaxed">
-              <span class="text-slate-400 font-medium">Aliases included:</span> Selected roles automatically expand to include shorthand variants (SWE, SDE, etc.) in the search query.
+              <span class="text-slate-400 font-medium">Aliases included:</span> Selected roles expand to include shorthand variants (SWE, SDE, etc.) in the query.
             </p>
           </div>
         )}
 
-        {/* Tip */}
-        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
-          <p class="mb-1 text-xs font-semibold text-white">Pro tip</p>
+        {/* Tips */}
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4 space-y-2">
+          <p class="text-xs font-semibold text-white">Pro tips</p>
           <p class="text-xs text-slate-400 leading-relaxed">
-            No role selected? Enter a company name and pick an ATS tier to find all open roles at that company across major platforms.
-            Add a time filter to catch fresh postings before they fill up.
+            Shared IP? Switch to Bing or DuckDuckGo - no cooldown, ATS indexing is solid, and they won't CAPTCHA you.
+          </p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Query jitter is applied automatically on each click - your URL will differ slightly from the next user's on the same IP, reducing shared-IP flagging.
           </p>
         </div>
 

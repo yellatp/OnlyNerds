@@ -5,35 +5,33 @@ const year = new Date().getFullYear();
 <footer class="mt-auto py-16" style="border-top: 0.5px solid #323028;">
   <div class="mx-auto max-w-7xl px-6 sm:px-10">
 
-    <div class="mb-14 grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- Main row: 30% logo | 23% pages | 23% creator | 23% built-with | 1% pad -->
+    <div class="mb-10 flex flex-col gap-10 lg:flex-row lg:gap-0">
 
-      <!-- Brand -->
-      <div class="lg:col-span-1">
-        <div class="mb-6">
+      <!-- Logo column — 30% -->
+      <div class="flex shrink-0 items-start lg:w-[30%] lg:pr-8">
+        <a href="/">
           <img
             src="/OnlyNerds.svg"
             alt="OnlyNerds"
-            class="h-52 w-auto transition-opacity duration-300 hover:opacity-100"
-            style="opacity: 0.9;"
+            class="w-auto transition-opacity duration-300 hover:opacity-100"
+            style="height: clamp(6rem, 18vw, 14rem); opacity: 0.9;"
             onerror="this.onerror=null;this.src='/OnlyNerds.png'"
           />
-        </div>
-        <p class="font-mono text-xs leading-relaxed text-slate-400 transition-colors hover:text-slate-200">
-          Career intelligence for people who do their homework.
-          Free, community-built, no sign-ups.
-        </p>
+        </a>
       </div>
 
-      <!-- Navigation -->
-      <div>
+      <!-- Pages — 23% -->
+      <div class="lg:w-[23%] lg:pr-6">
         <p class="mb-5 font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Pages</p>
         <div class="flex flex-col gap-3">
           {[
-            { href: '/companies',  label: 'Companies'    },
-            { href: '/job-search', label: 'Job Search'   },
-            { href: '/resources',  label: 'Resources'    },
-            { href: '/contact',    label: 'Contact'      },
-            { href: '/brand',      label: 'Brand Assets' },
+            { href: '/companies',    label: 'Companies'     },
+            { href: '/job-search',   label: 'Job Search'    },
+            { href: '/dorking-jobs', label: 'Dorking Guide' },
+            { href: '/resources',    label: 'Resources'     },
+            { href: '/contact',      label: 'Contact'       },
+            { href: '/brand',        label: 'Brand Assets'  },
           ].map((l) => (
             <a
               href={l.href}
@@ -46,17 +44,17 @@ const year = new Date().getFullYear();
         </div>
       </div>
 
-      <!-- Creator -->
-      <div>
+      <!-- Creator — 23% -->
+      <div class="lg:w-[23%] lg:pr-6">
         <p class="mb-5 font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Creator</p>
         <p class="mb-0.5 font-sans text-sm font-semibold text-slate-100 transition-colors hover:text-white">Pavan Yellathakota</p>
         <p class="mb-5 font-mono text-xs text-slate-400">Data Scientist &amp; ML Practitioner</p>
         <div class="flex flex-wrap gap-2">
           {[
-            { href: 'https://pye.pages.dev',                  label: 'pye.pages.dev',    external: true  },
-            { href: 'https://github.com/yellatp',             label: 'GitHub',           external: true  },
-            { href: 'https://linkedin.com/in/yellatp',        label: 'LinkedIn',         external: true  },
-            { href: 'mailto:pavan.yellathakota.ds@gmail.com', label: 'Email',            external: false },
+            { href: 'https://pye.pages.dev',                  label: 'pye.pages.dev', external: true  },
+            { href: 'https://github.com/yellatp',             label: 'GitHub',        external: true  },
+            { href: 'https://linkedin.com/in/yellatp',        label: 'LinkedIn',      external: true  },
+            { href: 'mailto:pavan.yellathakota.ds@gmail.com', label: 'Email',         external: false },
           ].map((l) => (
             <a
               href={l.href}
@@ -73,8 +71,8 @@ const year = new Date().getFullYear();
         </div>
       </div>
 
-      <!-- Built With -->
-      <div>
+      <!-- Built With — 23% -->
+      <div class="lg:w-[23%]">
         <p class="mb-5 font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Built With</p>
         <a
           href="https://alphonsohq.com/"
@@ -96,20 +94,28 @@ const year = new Date().getFullYear();
         </p>
       </div>
 
+      <!-- 1% padding spacer (desktop only) -->
+      <div class="hidden lg:block lg:w-[1%]"></div>
+
     </div>
 
-    <!-- Bottom bar -->
+    <!-- Bottom bar: tagline + legal -->
     <div
-      class="flex flex-col gap-2 pt-6 sm:flex-row sm:items-center sm:justify-between"
+      class="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between"
       style="border-top: 0.5px solid #323028;"
     >
-      <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-slate-400 transition-colors hover:text-slate-200">
-        &copy; {year} OnlyNerds. Data from public records.
+      <p class="font-mono text-xs leading-relaxed text-slate-400">
+        Career intelligence for people who do their homework. Free, community-built, no sign-ups.
       </p>
-      <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-slate-400">
-        Licensed under
-        <a href="/LICENSE" class="text-slate-300 underline transition-colors hover:text-slate-100 ml-1">Apache 2.0</a>
-      </p>
+      <div class="flex flex-col gap-1 sm:items-end">
+        <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-slate-400">
+          &copy; {year} OnlyNerds. Data from public records.
+        </p>
+        <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-slate-400">
+          Licensed under
+          <a href="/LICENSE" class="text-slate-300 underline transition-colors hover:text-slate-100 ml-1">Apache 2.0</a>
+        </p>
+      </div>
     </div>
 
   </div>

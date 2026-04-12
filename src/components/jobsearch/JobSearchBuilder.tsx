@@ -320,12 +320,15 @@ export default function JobSearchBuilder({ roleGroups, atsSegments, levels, loca
 
         {/* Company / keyword */}
         <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-            Company or keyword (optional)
+          <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            Enter a company name or pick an ATS tier
+          </p>
+          <p class="mb-3 text-[10px] text-slate-500 leading-relaxed">
+            No idea which ATS a company uses? Just type the company name. If you know the ATS, select a tier above instead. Either approach works.
           </p>
           <input
             type="text"
-            placeholder="e.g. Stripe, OpenAI, fintech, healthcare..."
+            placeholder="e.g. Stripe, OpenAI, Palantir, fintech, healthcare..."
             value={companyFilter}
             onInput={(e) => setCompanyFilter((e.target as HTMLInputElement).value)}
             class="cn-input px-4"

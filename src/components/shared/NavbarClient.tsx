@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const links = [
-  { href: '/',           label: 'Home',       dot: null             },
-  { href: '/companies',  label: 'Companies',  dot: '#7AB87A'        },
-  { href: '/job-search', label: 'Job Search', dot: '#C49A3A'        },
-  { href: '/resources',  label: 'Resources',  dot: '#6B9AC4'        },
-  { href: '/contact',    label: 'Contact',    dot: null             },
+  { href: '/',             label: 'Home',          dot: null      },
+  { href: '/companies',    label: 'Companies',     dot: '#7AB87A' },
+  { href: '/job-search',   label: 'Job Search',    dot: '#C49A3A' },
+  { href: '/dorking-jobs', label: 'Dorking Guide', dot: '#fb923c' },
+  { href: '/resources',    label: 'Resources',     dot: '#6B9AC4' },
+  { href: '/contact',      label: 'Contact',       dot: null      },
 ];
 
 interface Props {

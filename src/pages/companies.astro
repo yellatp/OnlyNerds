@@ -26,9 +26,11 @@ const vcWithJob= vcFirms.filter((f) => f.hasJobBoard).length;
 const total = h1bCompanies.length + pmCompanies.length + vcFirms.length;
 
 const sections = [
-  { id: 'h1b',     label: 'H1B Sponsors' },
-  { id: 'private', label: 'Private Markets' },
-  { id: 'vc',      label: 'VC Portfolios' },
+  { id: 'h1b',          label: 'H1B Sponsors' },
+  { id: 'private',      label: 'Private Markets' },
+  { id: 'vc',           label: 'VC Portfolios' },
+  { id: 'accelerators', label: 'Startup Accelerators' },
+  { id: 'universities', label: 'Universities' },
 ];
 ---
 
@@ -155,6 +157,56 @@ const sections = [
             </a>
           </div>
           <VCDirectory client:load firms={vcFirms} />
+        </section>
+
+        <!-- ═══════════════════════════════════════
+             SECTION 4: STARTUP ACCELERATORS
+        ═══════════════════════════════════════ -->
+        <section id="accelerators" class="scroll-mt-28 border-t border-slate-800 py-10">
+          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div class="mb-2 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-orange-400"></span>
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-orange-500">Startup Accelerators</h2>
+              </div>
+              <p class="text-sm text-slate-400">
+                {accels.length} accelerators with portfolio job boards. Accelerator-backed companies hire fast.
+              </p>
+            </div>
+            <a href="/vc-portfolios" class="text-xs text-orange-400 hover:text-orange-300 transition-colors shrink-0">
+              Full VC/Accelerators page
+              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+          <!-- Filtered to accelerators only -->
+          <VCDirectory client:load firms={vcFirms.filter((f) => f.type === 'accelerator')} />
+        </section>
+
+        <!-- ═══════════════════════════════════════
+             SECTION 5: UNIVERSITIES
+        ═══════════════════════════════════════ -->
+        <section id="universities" class="scroll-mt-28 border-t border-slate-800 py-10">
+          <div class="mb-6 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-blue-500">Universities</h2>
+          </div>
+          <div class="flex flex-col items-center justify-center py-16 text-center" style="border: 0.5px solid #1C1C18; background: #141410;">
+            <div class="mb-4 font-mono text-4xl text-slate-600">[ ]</div>
+            <p class="mb-2 font-sans text-base font-semibold text-slate-300">Coming Soon</p>
+            <p class="mb-4 max-w-md font-mono text-xs leading-relaxed text-slate-500">
+              University career portals, research assistant roles, and academic hiring are being sourced.
+              Only publicly available and verified datasets will be added.
+            </p>
+            <a
+              href="mailto:pavan.yellathakota.ds@gmail.com"
+              class="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400 transition-colors hover:text-slate-200 px-4 py-2"
+              style="border: 0.5px solid #323028;"
+            >
+              Know a public dataset? Contribute
+            </a>
+          </div>
         </section>
 
       </div>

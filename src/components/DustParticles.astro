@@ -2,7 +2,7 @@
 interface Props {
   quantity?: number;
 }
-const { quantity = 90 } = Astro.props;
+const { quantity = 140 } = Astro.props;
 ---
 
 <canvas id="dust-canvas" aria-hidden="true"></canvas>
@@ -37,32 +37,45 @@ const { quantity = 90 } = Astro.props;
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    // Build particles
+    // Build particles — mix of sizes for depth
     const particles = Array.from({ length: quantity }, () => ({
       x:     Math.random() * W,
       y:     Math.random() * H,
-      vx:    (Math.random() - 0.5) * 0.25,
-      vy:    (Math.random() - 0.5) * 0.25,
-      r:     0.5 + Math.random() * 1.0,   // 0.5 - 1.5 px
-      alpha: 0.06 + Math.random() * 0.22,  // very subtle
+      vx:    (Math.random() - 0.5) * 1.4,
+      vy:    (Math.random() - 0.5) * 1.4,
+      r:     0.8 + Math.random() * 1.8,       // 0.8 - 2.6 px
+      alpha: 0.18 + Math.random() * 0.48,     // clearly visible
+      // Each particle gets a random direction-change interval
+      kickInterval: 18 + Math.floor(Math.random() * 40),
+      kickAge: 0,
     }));
 
     function tick() {
       ctx.clearRect(0, 0, W, H);
 
       for (const p of particles) {
-        // Brownian kick each frame
-        p.vx += (Math.random() - 0.5) * 0.035;
-        p.vy += (Math.random() - 0.5) * 0.035;
+        p.kickAge++;
 
-        // Viscous damping — keeps motion lazy
-        p.vx *= 0.982;
-        p.vy *= 0.982;
+        // Scheduled random direction reversal - makes motion aggressive
+        if (p.kickAge >= p.kickInterval) {
+          p.vx += (Math.random() - 0.5) * 2.2;
+          p.vy += (Math.random() - 0.5) * 2.2;
+          p.kickAge = 0;
+          p.kickInterval = 18 + Math.floor(Math.random() * 40);
+        }
 
-        // Hard speed cap so no particle ever "zooms"
+        // Per-frame micro turbulence
+        p.vx += (Math.random() - 0.5) * 0.18;
+        p.vy += (Math.random() - 0.5) * 0.18;
+
+        // Light damping - retains energy better than before
+        p.vx *= 0.97;
+        p.vy *= 0.97;
+
+        // Speed cap raised significantly for aggressive feel
         const spd = Math.hypot(p.vx, p.vy);
-        if (spd > 0.45) {
-          const inv = 0.45 / spd;
+        if (spd > 2.2) {
+          const inv = 2.2 / spd;
           p.vx *= inv;
           p.vy *= inv;
         }
@@ -78,14 +91,14 @@ const { quantity = 90 } = Astro.props;
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(240,235,225,${p.alpha})`;
+        ctx.fillStyle = `rgba(245,240,230,${p.alpha})`;
         ctx.fill();
       }
 
       raf = requestAnimationFrame(tick);
     }
 
-    // Pause when tab is hidden — saves CPU
+    // Pause when tab is hidden
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         cancelAnimationFrame(raf);

@@ -1,19 +1,18 @@
-__pycache__/
-*.pyc
-.github/
-
-# Secrets - never commit
-.env
-.env.*
-!.env.example
-secrets.txt
-Secrets.txt
-*.secret
-
-# Build
+# Build output
 dist/
 .astro/
 
 # Dependencies
 node_modules/
 
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Secrets (just in case)
+*.secret
+secrets.txt

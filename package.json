@@ -1,8 +1,8 @@
 {
-  "name": "careernext",
+  "name": "onlynerds",
   "type": "module",
   "version": "1.0.0",
-  "description": "High-end career intelligence platform for jobseekers",
+  "description": "Career intelligence for people who do their homework. Free, community-built resource repository for tech jobseekers.",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

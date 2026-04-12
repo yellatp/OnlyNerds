@@ -2,96 +2,95 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-auto border-t border-slate-800 py-10">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+<footer class="mt-auto py-14" style="border-top: 0.5px solid #1C1C18;">
+  <div class="mx-auto max-w-7xl px-6 sm:px-10">
 
-    <div class="mb-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="mb-12 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
       <!-- Brand -->
-      <div>
-        <div class="mb-2">
-          <img src="/OnlyNerds.svg" alt="OnlyNerds" class="h-16 w-auto" onerror="this.onerror=null;this.src='/OnlyNerds.png'" />
+      <div class="lg:col-span-1">
+        <div class="mb-4">
+          <img src="/OnlyNerds.svg" alt="OnlyNerds" class="h-32 w-auto" onerror="this.onerror=null;this.src='/OnlyNerds.png'" />
         </div>
-        <p class="text-xs text-slate-500 leading-relaxed">
-          Free, open-source career intelligence for jobseekers, students, and builders.
+        <p class="font-mono text-xs leading-relaxed text-slate-500">
+          Career intelligence for people who do their homework.
+          Free, community-built, no sign-ups.
         </p>
-        <div class="mt-3 inline-flex items-center gap-1.5 rounded-full border border-violet-800 bg-violet-950 px-2.5 py-1 text-[11px] font-medium text-violet-300">
-          <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
-          Open Source
-        </div>
       </div>
 
       <!-- Navigation -->
       <div>
-        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Pages</p>
-        <div class="flex flex-col gap-2">
+        <p class="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">Pages</p>
+        <div class="flex flex-col gap-2.5">
           {[
-            { href: '/companies',  label: 'Companies' },
-            { href: '/job-search', label: 'Job Search' },
-            { href: '/resources',  label: 'Resources' },
-            { href: '/contact',    label: 'Contact' },
+            { href: '/companies',  label: 'Companies'    },
+            { href: '/job-search', label: 'Job Search'   },
+            { href: '/resources',  label: 'Resources'    },
+            { href: '/contact',    label: 'Contact'      },
             { href: '/brand',      label: 'Brand Assets' },
           ].map((l) => (
-            <a href={l.href} class="text-xs text-slate-400 hover:text-white transition-colors">{l.label}</a>
+            <a href={l.href} class="font-mono text-xs uppercase tracking-[0.1em] text-slate-500 transition-colors hover:text-slate-300">
+              {l.label}
+            </a>
           ))}
         </div>
       </div>
 
       <!-- Creator -->
       <div>
-        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Creator</p>
-        <p class="mb-1 text-sm font-semibold text-white">Pavan Yellathakota</p>
-        <p class="mb-3 text-xs text-slate-500">Data Scientist &amp; ML Practitioner</p>
-        <div class="flex flex-wrap gap-3 text-xs text-slate-500">
-          <a href="https://pye.pages.dev" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition-colors">
-            pye.pages.dev
-          </a>
-          <a href="https://github.com/yellatp" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition-colors">
-            GitHub
-          </a>
-          <a href="https://linkedin.com/in/yellatp" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition-colors">
-            LinkedIn
-          </a>
-          <a href="mailto:pavan.yellathakota.ds@gmail.com" class="hover:text-slate-300 transition-colors">
-            Email
-          </a>
+        <p class="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">Creator</p>
+        <p class="mb-0.5 font-sans text-sm font-semibold text-slate-200">Pavan Yellathakota</p>
+        <p class="mb-4 font-mono text-xs text-slate-500">Data Scientist &amp; ML Practitioner</p>
+        <div class="flex flex-wrap gap-3">
+          {[
+            { href: 'https://pye.pages.dev',                     label: 'pye.pages.dev',  external: true  },
+            { href: 'https://github.com/yellatp',                label: 'GitHub',         external: true  },
+            { href: 'https://linkedin.com/in/yellatp',           label: 'LinkedIn',       external: true  },
+            { href: 'mailto:pavan.yellathakota.ds@gmail.com',    label: 'Email',          external: false },
+          ].map((l) => (
+            <a
+              href={l.href}
+              target={l.external ? '_blank' : undefined}
+              rel={l.external ? 'noopener noreferrer' : undefined}
+              class="font-mono text-xs uppercase tracking-[0.1em] text-slate-500 transition-colors hover:text-slate-300"
+            >
+              {l.label}
+            </a>
+          ))}
         </div>
       </div>
 
-      <!-- Built in association with -->
+      <!-- Built in Association With -->
       <div>
-        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Built in Association With</p>
+        <p class="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">Built With</p>
         <a
           href="https://alphonsohq.com/"
           target="_blank"
           rel="noopener noreferrer"
-          class="group inline-flex items-center gap-2.5 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 transition-colors hover:border-slate-600 hover:bg-slate-800"
+          class="group inline-flex items-center gap-2.5 px-3 py-2.5 transition-colors hover:bg-slate-900"
+          style="border: 0.5px solid #1C1C18;"
         >
-          <!-- Alphonso AI logo -->
-          <img
-            src="/Alphonso_logo.png"
-            alt="Alphonso AI"
-            class="h-6 w-6 rounded object-contain"
-          />
-          <!-- Styled text: Alphonso black/white + Ai green/white -->
+          <img src="/Alphonso_logo.png" alt="Alphonso AI" class="h-6 w-6 object-contain" />
           <span class="flex items-baseline gap-0">
-            <span class="rounded-l px-1.5 py-0.5 text-sm font-bold leading-none" style="background:#ffffff;color:#111111;">Alphonso</span>
-            <span class="rounded-r px-1.5 py-0.5 text-sm font-bold leading-none" style="background:#16a34a;color:#ffffff;">AI</span>
+            <span class="px-1.5 py-0.5 text-sm font-bold leading-none" style="background:#ffffff;color:#111111;">Alphonso</span>
+            <span class="px-1.5 py-0.5 text-sm font-bold leading-none" style="background:#16a34a;color:#ffffff;">AI</span>
           </span>
         </a>
-        <p class="mt-2 text-[11px] text-slate-600 leading-relaxed">
-          Co-founded by <span class="text-slate-500">Pavan Yellathakota (PYE)</span>
+        <p class="mt-2 font-mono text-[10px] uppercase tracking-[0.1em] text-slate-600">
+          Co-founded by Pavan Yellathakota
         </p>
       </div>
 
     </div>
 
     <!-- Bottom bar -->
-    <div class="flex flex-col gap-2 border-t border-slate-800 pt-6 sm:flex-row sm:items-center sm:justify-between">
-      <p class="text-xs text-slate-600">&copy; {year} OnlyNerds. Data from public records. Built to be shared.</p>
-      <p class="text-xs text-slate-600">
-        Want to contribute?
-        <a href="/contact" class="text-violet-400 hover:text-violet-300 transition-colors ml-1">Join as a contributor</a>
+    <div class="flex flex-col gap-2 pt-6 sm:flex-row sm:items-center sm:justify-between" style="border-top: 0.5px solid #1C1C18;">
+      <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-slate-600">
+        &copy; {year} OnlyNerds. Data from public records.
+      </p>
+      <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-slate-600">
+        Licensed under
+        <a href="/LICENSE" class="text-slate-500 transition-colors hover:text-slate-300 ml-1">Apache 2.0</a>
       </p>
     </div>
 

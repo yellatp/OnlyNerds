@@ -2,7 +2,7 @@
 
 **Career intelligence for people who do their homework.**
 
-Live at [onlynerds.win](https://onlynerds.win) — Free, community-built, no sign-ups, no paywalls.
+Live at [onlynerds.win](https://onlynerds.win) - Free, community-built, no sign-ups, no paywalls.
 
 ---
 
@@ -22,39 +22,63 @@ It surfaces data and tools that are otherwise scattered across dozens of sites:
 
 ## Features
 
-### `/companies` — Companies Directory
+### `/companies` - Companies Directory
 
 Combined, filterable view of three datasets in one page. Switch between H1B, Private Markets, and VC sections without leaving the page. Sticky section navigation with IntersectionObserver active highlighting.
 
-### `/h1b` — H1B Intelligence
+### `/h1b` - H1B Intelligence
 
 Searchable database of 2,200+ tech companies ranked by H1B sponsorship likelihood (Very High, High, Medium, Low). Filter by sector, category, Fortune 500 status, boutique firms, and analyst picks.
 
-### `/private-markets` — Private Market Companies
+Role targeting: type a role and pick a level - every company card link becomes a targeted Google dork scoped to that role on that company's ATS domain.
+
+### `/private-markets` - Private Market Companies
 
 Late-stage private companies filtered by sector, funding round (Series A through Pre-IPO), and amount raised. Surfaces firms that rarely appear on standard job boards.
 
-### `/vc-portfolios` — VC Portfolio Job Boards
+Role targeting on every card, same as H1B.
+
+### `/vc-portfolios` - VC Portfolio Job Boards
 
 Direct links to job boards for 100+ top VC firms and accelerators including a16z, Sequoia, Lightspeed, General Catalyst, Y Combinator, Techstars, and more.
 
-### `/job-search` — Job Search Builder
+Role + level targeting: when a role is typed, the "Job Board" button becomes a targeted dork on that firm's job board domain.
 
-Google Dorking query builder with:
+### `/job-search` - Job Search Builder
 
-- Role groups with automatic alias expansion (e.g. "Software Engineer" expands to SWE, SDE, Software Developer)
-- ATS segment targeting (Greenhouse, Lever, Workday, Ashby, etc.)
+Multi-engine Google Dorking query builder with engine-aware syntax:
+
+**Engine selector (Step 1)** - pick Google, Bing, or DuckDuckGo first. The query is generated specifically for the chosen engine because each engine parses Boolean operators differently.
+
+| Feature            | Google           | Bing                  | DuckDuckGo        |
+| ------------------ | ---------------- | --------------------- | ----------------- |
+| Nested `(A OR B)`  | Full support     | Flattened             | Dropped entirely  |
+| site: operators    | Unlimited        | Max 3, placed first   | Single site only  |
+| Alias expansion    | All aliases      | 2 per role            | None              |
+| Date filter        | `tbs=` URL param | UI dropdown only      | UI dropdown only  |
+| Query jitter       | Yes (auto)       | No                    | No                |
+| IP rate limits     | Yes (protected)  | Lenient               | None              |
+
+Additional features:
+- Role groups with automatic alias expansion (Google only)
+- ATS segment targeting (Greenhouse, Lever, Workday, Ashby, and more)
 - Seniority level filters (Intern through Staff/Principal)
-- Location hubs (Bay Area, NYC, Seattle, Austin, Remote, India, and more)
-- Posted time filter (Past 1h to Past week via `tbs=` parameter)
-- Smart job boards grid with direct links
+- Location hubs (Bay Area, NYC, Seattle, Austin, Remote, India, and more) + custom city/country inputs
+- Posted time filter for Google (Past 1h to Past week via `tbs=` parameter)
 
-### `/resources` — Resources Hub
+**IP Protection (Google only):**
+- 45-second soft cooldown between dork searches
+- 5-minute deep freeze after 5 searches in any 3-minute window
+- Query jitter: unique `-"x{hex}"` token on every Google URL so queries from the same IP look distinct
+- "Switch to Bing" button appears automatically during deep freeze
+- All state persists in localStorage across page refreshes
+
+### `/resources` - Resources Hub
 
 11-section knowledge base accessible via modal overlays:
 
 - Learning Paths (DS/ML/AI career tracks)
-- SQL Mastery (9 platforms + execution order reference + set theory vs imperative logic)
+- SQL Mastery (9 platforms + execution order reference)
 - AI/ML (courses, papers, tools)
 - DSA (LeetCode patterns, system design)
 - Tech Blogs and newsletters
@@ -64,7 +88,7 @@ Google Dorking query builder with:
 - Career strategy guides
 - Resume playbooks
 
-### `/brand` — Brand Assets
+### `/brand` - Brand Assets
 
 Download OnlyNerds logo assets (SVG + PNG) for use in blog posts, presentations, or contributions.
 
@@ -73,7 +97,7 @@ Download OnlyNerds logo assets (SVG + PNG) for use in blog posts, presentations,
 ## Tech Stack
 
 | Layer | Technology |
-| --- | --- |
+|---|---|
 | Framework | Astro 4 (`output: 'static'`) |
 | Styling | Tailwind CSS 3 with custom warm neutral palette |
 | Components | React 18 islands (`client:load`) |
@@ -82,7 +106,7 @@ Download OnlyNerds logo assets (SVG + PNG) for use in blog posts, presentations,
 | Data | CSV + JSON parsed at build time via Node `fs.readFileSync` |
 | Hosting | Cloudflare Pages |
 
-No databases. No APIs. No server runtime. Pure static output — every page is pre-rendered HTML.
+No databases. No APIs. No server runtime. Pure static output - every page is pre-rendered HTML.
 
 ---
 
@@ -96,10 +120,10 @@ src/
       Navbar.astro                  Thin Astro wrapper that passes pathname
       NavbarClient.tsx              React Navbar: scroll-aware glass, animated hamburger
       Footer.astro                  4-col footer with Alphonso AI credit
-    h1b/H1BFilter.tsx               Filterable H1B company grid
-    private/PrivateFilter.tsx       Filterable private market grid
-    vc/VCDirectory.tsx              VC portfolio directory with search
-    jobsearch/JobSearchBuilder.tsx  Dorking query builder
+    h1b/H1BFilter.tsx               Filterable H1B company grid + role targeting
+    private/PrivateFilter.tsx       Filterable private market grid + role targeting
+    vc/VCDirectory.tsx              VC portfolio directory + role targeting
+    jobsearch/JobSearchBuilder.tsx  Multi-engine dorking query builder
   data/
     h1b.ts                          Parses data/startups_h1b_database.csv
     privateMarkets.ts               Parses data/Privately_Listed_Companies.csv
@@ -107,6 +131,8 @@ src/
     resources.ts                    Job boards, learning resources, SQL resources
     jobSearch.ts                    Role groups, ATS segments, location hubs, posted times
     parser.ts                       CSV parser + smartCareerLink utility
+    dorkUtils.ts                    TARGET_LEVELS + buildTargetedUrl for company pages
+    dorkSafety.ts                   IP protection: cooldown, jitter, engine URL builder
   pages/
     index.astro
     companies.astro
@@ -117,17 +143,22 @@ src/
     resources.astro
     contact.astro
     brand.astro
+    universities.astro
   styles/global.css                 Design system, film grain, custom cursor
 data/
   startups_h1b_database.csv
   Privately_Listed_Companies.csv
   Portfolio.csv
+docs/
+  dorking-strategy.md               What dorking is, how the builder works, known limits
+  ip-protection.md                  IP protection design, jitter, cooldown, what it can't fix
+  engine-differences.md             Google vs Bing vs DDG syntax reference
 public/
-  OnlyNerds.svg / .png
-  OnlyNerds_Nav.svg / .png
-  Alphonso_logo.png
+  _headers                          Cloudflare Pages security headers
   robots.txt
   sitemap.xml
+  OnlyNerds.svg / .png
+  Alphonso_logo.png
 ```
 
 ---
@@ -149,27 +180,13 @@ Requires Node 18+.
 
 ## Contributing
 
-### Data contributions (no code needed)
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contributor guide including data column specs, code rules, and the PR checklist.
 
-- Know a company missing from the H1B or Private Markets database? Email the details.
-- Found a wrong career URL or outdated job board link? Report it via email or GitHub issue.
-- Have a VC firm or accelerator that should be listed? Open an issue with the name and URLs.
+The short version:
 
-### Code contributions
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-change`
-3. Make your changes
-4. Run `npm run build` to verify no build errors
-5. Open a pull request — describe what you changed and why
-
-### Resource contributions
-
-Found a learning resource, salary dataset, or career strategy that belongs here? Email [pavan.yellathakota.ds@gmail.com](mailto:pavan.yellathakota.ds@gmail.com) with the link and a one-line description. All contributions are credited by name on the platform.
-
-### Share it
-
-Share with one person who would benefit. That is the most effective form of contribution.
+- **Data fixes** (H1B likelihood, broken links, missing companies) - open a PR with a public source reference. No code required.
+- **Broken links** - open a GitHub issue with the format `[Broken Link] Company Name - page type`.
+- **Code** - fork, create a branch, run `npm run build` before opening a PR.
 
 ---
 
@@ -186,9 +203,19 @@ Brutalist editorial aesthetic:
 
 ---
 
+## Documentation
+
+Technical deep-dives are in [docs/](docs/):
+
+- [docs/dorking-strategy.md](docs/dorking-strategy.md) - What dorking is, how the builder works, problems solved and problems that remain
+- [docs/ip-protection.md](docs/ip-protection.md) - IP protection design rationale, jitter mechanics, shared-IP defense, what the system cannot fix
+- [docs/engine-differences.md](docs/engine-differences.md) - Google vs Bing vs DuckDuckGo operator support and query syntax reference
+
+---
+
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE).
+Apache License 2.0 - see [LICENSE](LICENSE).
 
 Copyright 2025 Pavan Yellathakota.
 
@@ -196,8 +223,8 @@ Copyright 2025 Pavan Yellathakota.
 
 ## Built By
 
-**Pavan Yellathakota (PYE)** — Data Scientist and ML Practitioner
+**Pavan Yellathakota (PYE)** - Data Scientist and ML Practitioner
 
-[pye.pages.dev](https://pye.pages.dev) · [GitHub](https://github.com/yellatp) · [LinkedIn](https://linkedin.com/in/yellatp)
+[pye.pages.dev](https://pye.pages.dev) - [GitHub](https://github.com/yellatp) - [LinkedIn](https://linkedin.com/in/yellatp)
 
-Built in association with [Alphonso AI](https://alphonsohq.com).
+Built in association with [Alphonso AI](https://alphonso.app).

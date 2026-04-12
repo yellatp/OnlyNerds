@@ -90,15 +90,20 @@ export function withJitter(query: string): string {
   return `${query} -"x${j}"`;
 }
 
-/** Build the final search URL for the chosen engine with jitter applied. */
+/**
+ * Build the final search URL for the chosen engine.
+ * Jitter is applied to Google only - on Bing the minus operator works differently,
+ * and on DDG the aggressive minus can suppress entire pages from results.
+ */
 export function buildEngineUrl(
   query: string,
   engine: 'google' | 'bing' | 'ddg',
   tbs?: string,
 ): string {
+  if (engine === 'bing') return `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+  if (engine === 'ddg')  return `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+  // Google only: apply jitter token
   const q = encodeURIComponent(withJitter(query));
-  if (engine === 'bing') return `https://www.bing.com/search?q=${q}`;
-  if (engine === 'ddg')  return `https://duckduckgo.com/?q=${q}`;
   let url = `https://www.google.com/search?q=${q}`;
   if (tbs) url += `&tbs=${tbs}`;
   return url;

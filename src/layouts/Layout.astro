@@ -96,6 +96,10 @@ const jsonLdWebsite = JSON.stringify({
     <!-- Structured Data -->
     <script type="application/ld+json" set:html={jsonLdOrg} />
     <script type="application/ld+json" set:html={jsonLdWebsite} />
+
+    <!-- Cloudflare Web Analytics (no cookies, GDPR-safe) -->
+    <!-- Get your token: CF Dashboard > Analytics > Web Analytics > Add site -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "PASTE_YOUR_CF_ANALYTICS_TOKEN_HERE"}'></script>
   </head>
   <body>
     <!-- Custom cursor -->

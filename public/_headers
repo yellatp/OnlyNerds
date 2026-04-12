@@ -1,0 +1,28 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+# Hashed JS/CSS chunks — cache indefinitely, they change hash on rebuild
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Static fonts and images
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=86400
+
+/*.png
+  Cache-Control: public, max-age=86400
+
+# Force CSV downloads (not inline preview)
+/usa-universities.csv
+  Content-Type: text/csv; charset=utf-8
+  Content-Disposition: attachment; filename="usa-universities.csv"
+
+/world-universities.csv
+  Content-Type: text/csv; charset=utf-8
+  Content-Disposition: attachment; filename="world-universities.csv"

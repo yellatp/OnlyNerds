@@ -84,11 +84,11 @@ const jsonLdWebsite = JSON.stringify({
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" href="/OnlyNerds.png" />
 
-    <!-- Fonts: Syne (display) + Space Grotesk (body) + Space Mono (mono) -->
+    <!-- Fonts: Fraunces (display serif) + Space Grotesk (sans) + JetBrains Mono (mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
       rel="stylesheet"
     />
 
@@ -97,6 +97,31 @@ const jsonLdWebsite = JSON.stringify({
     <script type="application/ld+json" set:html={jsonLdWebsite} />
   </head>
   <body>
+    <!-- Custom cursor -->
+    <div id="cursor" aria-hidden="true"></div>
+
     <slot />
   </body>
 </html>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  if (cursor && window.matchMedia('(pointer: fine)').matches) {
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.addEventListener('mouseover', (e) => {
+      const t = e.target as Element;
+      if (t && (t.matches('a,button,input,select,textarea,[role="button"]') || t.closest('a,button'))) {
+        cursor.classList.add('is-hovering');
+      } else {
+        cursor.classList.remove('is-hovering');
+      }
+    });
+    document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { cursor.style.opacity = '1'; });
+  } else if (cursor) {
+    cursor.style.display = 'none';
+  }
+</script>

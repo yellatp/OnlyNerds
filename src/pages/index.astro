@@ -23,137 +23,182 @@ const total     = h1bCount + pmCount + vcCount;
 
     <main class="flex-1">
 
-      <!-- Hero -->
-      <section class="border-b border-slate-800 bg-[#080810] px-4 py-16 sm:px-6 sm:py-24">
-        <div class="mx-auto max-w-4xl text-center">
-          <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-800 bg-violet-950 px-3 py-1 text-xs font-medium text-violet-300">
-            <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
-            Open source &amp; free forever
-          </div>
-
-          <h1 class="mb-5 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Career Intelligence<br />for Serious Builders
-          </h1>
-
-          <p class="mx-auto mb-4 max-w-2xl text-base text-slate-400 sm:text-lg">
-            {total.toLocaleString()}+ curated records across H1B sponsors, private-market firms, and VC-backed startups.
-            Every signal you need to land your next role, free and open to all.
-          </p>
-
-          <p class="mx-auto mb-8 max-w-xl text-sm text-slate-500 italic">
-            "I water you, you water me. We grow together."
-          </p>
-
-          <div class="flex flex-wrap justify-center gap-3">
-            <a href="/companies" class="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500">
-              Explore Companies
-            </a>
-            <a href="/job-search" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-500">
-              Job Search Builder
-            </a>
-            <a href="/resources" class="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700">
-              Resources
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Stats bar -->
-      <section class="border-b border-slate-800">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6">
-          <div class="grid grid-cols-2 divide-x divide-slate-800 sm:grid-cols-4">
-            {[
-              { value: h1bCount.toLocaleString(),  label: 'H1B Companies',  color: 'text-emerald-400' },
-              { value: pmCount.toLocaleString(),   label: 'Private Firms',  color: 'text-amber-400' },
-              { value: vcCount.toString(),         label: 'VC Funds',       color: 'text-violet-400' },
-              { value: '100% Free',                label: 'Always',         color: 'text-blue-400' },
-            ].map((s) => (
-              <div class="px-6 py-5">
-                <p class:list={['text-2xl font-bold', s.color]}>{s.value}</p>
-                <p class="mt-0.5 text-xs text-slate-500">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- What is OnlyNerds -->
-      <section class="px-4 py-14 sm:px-6">
+      <!-- ── Hero ── -->
+      <section
+        class="border-b border-slate-800 px-6 sm:px-10 lg:px-16"
+        style="padding-top:160px; padding-bottom:40px;"
+      >
         <div class="mx-auto max-w-7xl">
-          <h2 class="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Why OnlyNerds</h2>
-          <p class="mb-8 text-xl font-semibold text-white">Built for people who actually want to learn and grow</p>
+          <div class="grid grid-cols-1 gap-16 lg:grid-cols-12">
 
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Left: main content — 8 cols -->
+            <div class="lg:col-span-8">
+
+              <div class="mb-8 flex items-center gap-3">
+                <span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span>
+                <span class="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                  Open Source &middot; Free Forever &middot; Community Built
+                </span>
+              </div>
+
+              <h1 class="mb-8 font-display font-black text-slate-100" style="font-size:clamp(2.8rem,8vw,5.5rem); line-height:0.92; letter-spacing:-0.025em;">
+                Career Intelligence<br />
+                <span class="font-light italic text-slate-400" style="font-size:clamp(2.2rem,6.5vw,4.5rem);">for Serious Builders</span>
+              </h1>
+
+              <p class="mb-3 max-w-lg font-mono text-sm leading-relaxed text-slate-400">
+                {total.toLocaleString()}+ curated records across H1B sponsors, private-market firms, and VC-backed startups.
+                Every signal you need to land your next role, free and open to all.
+              </p>
+
+              <p class="mb-12 font-display text-base italic text-slate-500">
+                "I water you, you water me. We grow together."
+              </p>
+
+              <div class="flex flex-wrap gap-3">
+                <a
+                  href="/companies"
+                  class="inline-flex items-center gap-2 bg-slate-100 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-900 transition-colors hover:bg-white"
+                >
+                  Explore Companies
+                </a>
+                <a
+                  href="/job-search"
+                  class="inline-flex items-center gap-2 border border-slate-700 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100"
+                >
+                  Job Search Builder
+                </a>
+                <a
+                  href="/resources"
+                  class="inline-flex items-center gap-2 border border-slate-700 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100"
+                >
+                  Resources
+                </a>
+              </div>
+
+              <!-- Mobile stats grid — shown below CTA on small screens -->
+              <div class="mt-12 grid grid-cols-2 border border-slate-800 sm:grid-cols-4 lg:hidden">
+                {[
+                  { value: h1bCount.toLocaleString(), label: 'H1B Companies' },
+                  { value: pmCount.toLocaleString(),  label: 'Private Firms'  },
+                  { value: vcCount.toString(),        label: 'VC Funds'       },
+                  { value: '100%',                    label: 'Free Always'    },
+                ].map((s, i) => (
+                  <div class:list={['px-4 py-5', i > 0 && 'border-l border-slate-800']}>
+                    <p class="font-display text-2xl font-black leading-none text-slate-100">{s.value}</p>
+                    <p class="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+
+            <!-- Right: vertical stats column — desktop only -->
+            <div class="hidden border-l border-slate-800 pl-10 lg:col-span-4 lg:flex lg:flex-col lg:justify-end">
+              {[
+                { value: h1bCount.toLocaleString(), label: 'H1B Companies' },
+                { value: pmCount.toLocaleString(),  label: 'Private Firms'  },
+                { value: vcCount.toString(),        label: 'VC Funds'       },
+                { value: '100%',                    label: 'Free Always'    },
+              ].map((s) => (
+                <div class="border-b border-slate-800 py-6">
+                  <p class="font-display text-4xl font-black leading-none text-slate-100">{s.value}</p>
+                  <p class="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Feature tiles ── -->
+      <section class="px-6 py-20 sm:px-10 lg:px-16">
+        <div class="mx-auto max-w-7xl">
+
+          <div class="mb-14 grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <div class="lg:col-span-6">
+              <p class="mb-4 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">// Why OnlyNerds</p>
+              <h2 class="font-sans text-fluid-3xl font-bold leading-tight tracking-tight text-slate-100">
+                Built for people who actually want to learn and grow
+              </h2>
+            </div>
+          </div>
+
+          <!-- Tile grid — gap-px on bg-slate-800 creates 1px dividers without border markup -->
+          <div class="grid grid-cols-1 gap-px bg-slate-800 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
+                tag: '01 / H1B Intelligence',
                 title: 'H1B Sponsorship Intelligence',
                 body: 'Every company ranked by H1B sponsorship likelihood from Very High to Low, based on historical patterns. Target the right employers before you apply.',
-                accent: 'border-l-emerald-600',
               },
               {
+                tag: '02 / Private Markets',
                 title: 'Pre-IPO Private Market Access',
                 body: 'Most job boards only index public companies. OnlyNerds surfaces thousands of private, pre-IPO firms that are actively hiring but rarely appear in standard searches.',
-                accent: 'border-l-amber-500',
               },
               {
+                tag: '03 / VC Portfolio',
                 title: 'VC Portfolio Job Boards',
                 body: 'Funded startups hire fast and pay competitively. Browse direct job board links for 100+ top VC firms and accelerators including Y Combinator and Techstars.',
-                accent: 'border-l-violet-500',
               },
               {
+                tag: '04 / Search Builder',
                 title: 'Advanced Job Search Builder',
                 body: 'Select your role, level, ATS preference, and location. Get a precision Google Dorking query to find jobs that never make it to the big boards.',
-                accent: 'border-l-amber-500',
               },
               {
+                tag: '05 / Resources',
                 title: 'Curated Learning Resources',
                 body: 'Data Science, ML, engineering paths, salary intel, networking strategies, and resume guidance. Curated by practitioners, not content marketers.',
-                accent: 'border-l-blue-500',
               },
               {
+                tag: '06 / Open Source',
                 title: 'Community-Driven and Open Source',
                 body: 'Anyone can fork, contribute, and push updates. If you have better resources, strategies, or data, open a PR or reach out. This grows because you contribute.',
-                accent: 'border-l-violet-500',
               },
             ].map((item) => (
-              <div class:list={['cn-card border-l-2 p-5', item.accent]}>
-                <h3 class="mb-2 text-sm font-semibold text-white">{item.title}</h3>
-                <p class="text-sm leading-relaxed text-slate-400">{item.body}</p>
+              <div class="group bg-slate-900 p-7 transition-all duration-500 hover:bg-slate-800">
+                <p class="mb-5 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">{item.tag}</p>
+                <h3 class="mb-3 font-sans text-base font-semibold leading-snug text-slate-100">{item.title}</h3>
+                <p class="font-mono text-xs leading-relaxed text-slate-400">{item.body}</p>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      <!-- Open Source CTA -->
-      <section class="border-t border-slate-800 px-4 py-12 sm:px-6">
+      <!-- ── Open Source CTA ── -->
+      <section class="border-t border-slate-800 px-6 py-20 sm:px-10 lg:px-16">
         <div class="mx-auto max-w-7xl">
-          <div class="rounded-2xl border-2 border-violet-800 bg-violet-950/30 p-8">
-            <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <div class="max-w-2xl">
-                <div class="mb-3 flex items-center gap-2">
-                  <span class="rounded-md bg-violet-700 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">Open Source</span>
-                  <span class="text-xs text-violet-400">onlynerds.win</span>
-                </div>
-                <h2 class="mb-2 text-xl font-bold text-white">Join as a Contributor</h2>
-                <p class="text-sm text-slate-300 leading-relaxed">
-                  OnlyNerds is a platform built on the principle of shared growth. Fork the repo, add resources you have discovered, push better data, or improve the UI.
-                  Every contribution will be credited. If you share a resource, it goes up with your name on it.
+          <div class="border border-slate-800 p-8 sm:p-12">
+            <div class="grid grid-cols-1 gap-8 sm:grid-cols-12 sm:items-end">
+              <div class="sm:col-span-8">
+                <p class="mb-4 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">// Open Source</p>
+                <h2 class="mb-3 font-sans text-fluid-2xl font-bold leading-tight tracking-tight text-slate-100">
+                  Join as a Contributor
+                </h2>
+                <p class="max-w-xl font-mono text-xs leading-relaxed text-slate-400">
+                  OnlyNerds is a platform built on the principle of shared growth. Fork the repo, add resources you have discovered,
+                  push better data, or improve the UI. Every contribution will be credited.
+                  If you share a resource, it goes up with your name on it.
                 </p>
               </div>
-              <div class="flex shrink-0 flex-col gap-3 sm:items-end">
+              <div class="sm:col-span-4 sm:flex sm:flex-col sm:items-end sm:gap-3">
                 <a
-                  href="https://github.com/yellatp"
+                  href="https://github.com/yellatp/OnlyNerds"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500"
+                  class="inline-flex items-center gap-2 bg-slate-100 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-900 transition-colors hover:bg-white"
                 >
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
                   </svg>
                   Fork on GitHub
                 </a>
-                <a href="/contact" class="text-xs text-violet-400 hover:text-violet-300 transition-colors">
+                <a href="/contact" class="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500 transition-colors hover:text-slate-300">
                   Share a resource or idea
                 </a>
               </div>
@@ -162,66 +207,46 @@ const total     = h1bCount + pmCount + vcCount;
         </div>
       </section>
 
-      <!-- Explore grid -->
-      <section class="border-t border-slate-800 px-4 py-12 sm:px-6">
+      <!-- ── Explore grid ── -->
+      <section class="border-t border-slate-800 px-6 py-20 sm:px-10 lg:px-16">
         <div class="mx-auto max-w-7xl">
-          <h2 class="mb-6 text-xs font-semibold uppercase tracking-widest text-slate-500">Explore</h2>
-          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <p class="mb-8 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">// Explore</p>
+          <div class="grid grid-cols-1 gap-px bg-slate-800 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 href: '/companies',
                 label: 'Companies',
                 count: `${total.toLocaleString()} records`,
                 desc: 'H1B, private markets, and VC portfolios in one place',
-                dot: 'bg-emerald-400',
-                badge: 'bg-emerald-950 text-emerald-400 border border-emerald-900',
-                hover: 'hover:border-emerald-800',
               },
               {
                 href: '/job-search',
                 label: 'Job Search Builder',
                 count: 'Precision dorking',
                 desc: 'Build targeted search queries by role, level, and ATS',
-                dot: 'bg-amber-400',
-                badge: 'bg-amber-950 text-amber-400 border border-amber-900',
-                hover: 'hover:border-amber-800',
               },
               {
                 href: '/resources',
                 label: 'Resources',
                 count: 'Curated toolkit',
                 desc: 'DS/ML learning paths, salary intel, networking strategies',
-                dot: 'bg-blue-400',
-                badge: 'bg-blue-950 text-blue-400 border border-blue-900',
-                hover: 'hover:border-blue-800',
               },
               {
                 href: '/contact',
                 label: 'Contribute',
                 count: 'Open to all',
                 desc: 'Share resources, ideas, or join as a contributor',
-                dot: 'bg-violet-400',
-                badge: 'bg-violet-950 text-violet-400 border border-violet-900',
-                hover: 'hover:border-violet-800',
               },
             ].map((item) => (
               <a
                 href={item.href}
-                class:list={['group cn-card p-5 transition-colors hover:bg-slate-800', item.hover]}
+                class="group bg-slate-900 p-7 transition-all duration-500 hover:bg-slate-800"
               >
-                <div class="mb-4 flex items-center justify-between">
-                  <span class:list={['h-2 w-2 rounded-full', item.dot]} />
-                  <span class:list={['rounded-full px-2.5 py-1 text-xs font-medium', item.badge]}>
-                    {item.count}
-                  </span>
-                </div>
-                <h3 class="mb-1 text-sm font-semibold text-white">{item.label}</h3>
-                <p class="text-xs text-slate-500">{item.desc}</p>
-                <div class="mt-4 flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors group-hover:text-white">
-                  Explore
-                  <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M9 5l7 7-7 7"/>
-                  </svg>
+                <p class="mb-6 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{item.count}</p>
+                <h3 class="mb-2 font-sans text-base font-semibold leading-tight text-slate-100">{item.label}</h3>
+                <p class="font-mono text-xs leading-relaxed text-slate-500">{item.desc}</p>
+                <div class="mt-8 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-600 transition-colors group-hover:text-slate-300">
+                  Explore &rarr;
                 </div>
               </a>
             ))}

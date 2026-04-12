@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TARGET_LEVELS, buildTargetedUrl } from '../../data/dorkUtils';
 
 export interface PrivateCompany {
   name: string;
@@ -30,6 +31,8 @@ export default function PrivateFilter({ companies, sectors, rounds }: Props) {
   const [sort,       setSort]       = useState<'name'|'sector'|'round'>('name');
   const [pageSize,   setPageSize]   = useState<10|15|25>(15);
   const [page,       setPage]       = useState(1);
+  const [targetRole,  setTargetRole]  = useState('');
+  const [targetLevel, setTargetLevel] = useState('');
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -84,8 +87,59 @@ export default function PrivateFilter({ companies, sectors, rounds }: Props) {
     })
     .slice(0, 12);
 
+  const selectedLevelQuery = TARGET_LEVELS.find((l) => l.label === targetLevel)?.query ?? '';
+
   return (
     <div className="space-y-4">
+
+      {/* Role + Level targeting */}
+      <div className="rounded-xl border border-amber-900/40 bg-amber-950/20 p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+          <p className="text-xs font-semibold uppercase tracking-widest text-amber-500">
+            Target a Role (optional)
+          </p>
+          {(targetRole || targetLevel) && (
+            <button
+              type="button"
+              onClick={() => { setTargetRole(''); setTargetLevel(''); }}
+              className="ml-auto text-[10px] text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              Clear targeting
+            </button>
+          )}
+        </div>
+        <div className="mb-3">
+          <input
+            type="text"
+            placeholder="SWE, SDE, SRE, Data Engineer, Data Analyst, ML Engineer..."
+            value={targetRole}
+            onChange={(e) => setTargetRole(e.target.value)}
+            className="w-full rounded-lg border border-slate-700 bg-slate-800 py-2 px-4 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-amber-700"
+          />
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {TARGET_LEVELS.map((l) => (
+            <button
+              key={l.label}
+              type="button"
+              onClick={() => setTargetLevel(targetLevel === l.label ? '' : l.label)}
+              className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
+                targetLevel === l.label
+                  ? 'border-amber-600 bg-amber-900 text-amber-200'
+                  : 'border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+        {targetRole && (
+          <p className="mt-2 text-[10px] text-amber-600">
+            Company links will open a Google dork scoped to "{targetRole}"{targetLevel ? ` at ${targetLevel} level` : ''}.
+          </p>
+        )}
+      </div>
 
       {/* Filter panel */}
       <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
@@ -184,7 +238,7 @@ export default function PrivateFilter({ companies, sectors, rounds }: Props) {
           {slice.map((c, i) => (
             <motion.a
               key={c.name + i}
-              href={c.careerUrl}
+              href={buildTargetedUrl(c.careerUrl, c.name, targetRole, selectedLevelQuery)}
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 8 }}
@@ -194,6 +248,12 @@ export default function PrivateFilter({ companies, sectors, rounds }: Props) {
               whileHover={{ y: -2 }}
               className="group flex flex-col gap-2 rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-slate-700 hover:bg-slate-800"
             >
+              {targetRole && (
+                <div className="flex items-center gap-1 rounded bg-amber-950/60 px-2 py-0.5 text-[9px] text-amber-400 font-mono -mb-1">
+                  <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                  dork: {targetRole}{targetLevel ? ` · ${targetLevel}` : ''}
+                </div>
+              )}
               <h3 className="text-sm font-semibold text-white leading-snug group-hover:text-amber-100 transition-colors line-clamp-2">
                 {c.name}
               </h3>

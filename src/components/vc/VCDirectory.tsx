@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TARGET_LEVELS, buildTargetedUrl } from '../../data/dorkUtils';
 
 export interface VCFirm {
   name: string;
@@ -15,6 +16,8 @@ interface Props { firms: VCFirm[] }
 export default function VCDirectory({ firms }: Props) {
   const [typeFilter, setTypeFilter] = useState<'all'|'VC'|'accelerator'>('all');
   const [search, setSearch] = useState('');
+  const [targetRole,  setTargetRole]  = useState('');
+  const [targetLevel, setTargetLevel] = useState('');
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -47,8 +50,59 @@ export default function VCDirectory({ firms }: Props) {
   const vcs    = filtered.filter((f) => f.type === 'VC');
   const accels = filtered.filter((f) => f.type === 'accelerator');
 
+  const selectedLevelQuery = TARGET_LEVELS.find((l) => l.label === targetLevel)?.query ?? '';
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+
+      {/* Role + Level targeting */}
+      <div className="rounded-xl border border-violet-900/40 bg-violet-950/20 p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+          <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">
+            Target a Role (optional)
+          </p>
+          {(targetRole || targetLevel) && (
+            <button
+              type="button"
+              onClick={() => { setTargetRole(''); setTargetLevel(''); }}
+              className="ml-auto text-[10px] text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              Clear targeting
+            </button>
+          )}
+        </div>
+        <div className="mb-3">
+          <input
+            type="text"
+            placeholder="SWE, SDE, SRE, Data Engineer, Data Analyst, ML Engineer..."
+            value={targetRole}
+            onChange={(e) => setTargetRole(e.target.value)}
+            className="w-full rounded-lg border border-slate-700 bg-slate-800 py-2 px-4 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-violet-700"
+          />
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {TARGET_LEVELS.map((l) => (
+            <button
+              key={l.label}
+              type="button"
+              onClick={() => setTargetLevel(targetLevel === l.label ? '' : l.label)}
+              className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
+                targetLevel === l.label
+                  ? 'border-violet-600 bg-violet-900 text-violet-200'
+                  : 'border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+        {targetRole && (
+          <p className="mt-2 text-[10px] text-violet-500">
+            Job Board links will open a Google dork scoped to "{targetRole}"{targetLevel ? ` at ${targetLevel} level` : ''}.
+          </p>
+        )}
+      </div>
 
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3">
@@ -94,7 +148,10 @@ export default function VCDirectory({ firms }: Props) {
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">VC Firms ({vcs.length})</p>
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {vcs.map((firm, i) => <FirmCard key={firm.name} firm={firm} index={i} accent="violet" />)}
+              {vcs.map((firm, i) => (
+                <FirmCard key={firm.name} firm={firm} index={i} accent="violet"
+                  targetRole={targetRole} targetLevel={targetLevel} levelQuery={selectedLevelQuery} />
+              ))}
             </div>
           </motion.section>
         )}
@@ -109,7 +166,10 @@ export default function VCDirectory({ firms }: Props) {
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Accelerators ({accels.length})</p>
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {accels.map((firm, i) => <FirmCard key={firm.name} firm={firm} index={i} accent="blue" />)}
+              {accels.map((firm, i) => (
+                <FirmCard key={firm.name} firm={firm} index={i} accent="blue"
+                  targetRole={targetRole} targetLevel={targetLevel} levelQuery={selectedLevelQuery} />
+              ))}
             </div>
           </motion.section>
         )}
@@ -118,11 +178,22 @@ export default function VCDirectory({ firms }: Props) {
   );
 }
 
-function FirmCard({ firm, index, accent }: { firm: VCFirm; index: number; accent: 'violet'|'blue' }) {
+function FirmCard({
+  firm, index, accent, targetRole, targetLevel, levelQuery,
+}: {
+  firm: VCFirm;
+  index: number;
+  accent: 'violet'|'blue';
+  targetRole: string;
+  targetLevel: string;
+  levelQuery: string;
+}) {
   const s = {
-    violet: { badge: 'bg-violet-950 text-violet-400 border border-violet-900', label: 'text-violet-500', jobBtn: 'bg-violet-900 text-violet-200 hover:bg-violet-800', border: 'hover:border-violet-800' },
-    blue:   { badge: 'bg-blue-950 text-blue-400 border border-blue-900',       label: 'text-blue-500',   jobBtn: 'bg-blue-900 text-blue-200 hover:bg-blue-800',       border: 'hover:border-blue-800' },
+    violet: { badge: 'bg-violet-950 text-violet-400 border border-violet-900', label: 'text-violet-500', jobBtn: 'bg-violet-900 text-violet-200 hover:bg-violet-800', border: 'hover:border-violet-800', dork: 'bg-violet-950/60 text-violet-400' },
+    blue:   { badge: 'bg-blue-950 text-blue-400 border border-blue-900',       label: 'text-blue-500',   jobBtn: 'bg-blue-900 text-blue-200 hover:bg-blue-800',       border: 'hover:border-blue-800',   dork: 'bg-blue-950/60 text-blue-400' },
   }[accent];
+
+  const jobHref = buildTargetedUrl(firm.jobBoardUrl, firm.displayName, targetRole, levelQuery);
 
   return (
     <motion.div
@@ -131,6 +202,13 @@ function FirmCard({ firm, index, accent }: { firm: VCFirm; index: number; accent
       transition={{ duration: 0.12, delay: Math.min(index * 0.025, 0.4) }}
       className={`rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:bg-slate-800 ${s.border}`}
     >
+      {targetRole && (
+        <div className={`mb-2 flex items-center gap-1 rounded px-2 py-0.5 text-[9px] font-mono ${s.dork}`}>
+          <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          dork: {targetRole}{targetLevel ? ` · ${targetLevel}` : ''}
+        </div>
+      )}
+
       <div className="mb-3 flex items-center gap-3">
         <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${s.badge}`}>
           {firm.displayName.slice(0, 2).toUpperCase()}
@@ -152,12 +230,12 @@ function FirmCard({ firm, index, accent }: { firm: VCFirm; index: number; accent
 
       <div className="flex gap-2">
         <a
-          href={firm.jobBoardUrl}
+          href={jobHref}
           target="_blank"
           rel="noopener noreferrer"
           className={`flex-1 rounded-lg py-2 text-center text-xs font-semibold transition-colors ${s.jobBtn}`}
         >
-          {firm.hasJobBoard ? 'Job Board' : 'Search Jobs'}
+          {targetRole ? 'Search Jobs' : firm.hasJobBoard ? 'Job Board' : 'Search Jobs'}
         </a>
         {firm.portfolioUrl && (
           <a

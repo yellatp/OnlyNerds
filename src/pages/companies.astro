@@ -3,27 +3,75 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/shared/Navbar.astro';
 import Footer from '../components/shared/Footer.astro';
-import H1BFilter from '../components/h1b/H1BFilter';
-import PrivateFilter from '../components/private/PrivateFilter';
-import VCDirectory from '../components/vc/VCDirectory';
-import { getH1BCompanies, getH1BSectors, getH1BCategories } from '../data/h1b';
-import { getPrivateCompanies, getPrivateSectors, getPrivateRounds } from '../data/privateMarkets';
-import { getVCFirms, getVCFirmsByType } from '../data/vcPortfolios';
+import { getH1BCompanies } from '../data/h1b';
+import { getPrivateCompanies } from '../data/privateMarkets';
+import { getVCFirms } from '../data/vcPortfolios';
 
-const h1bCompanies  = getH1BCompanies();
-const h1bSectors    = getH1BSectors();
-const h1bCategories = getH1BCategories();
+// ── Fisher-Yates shuffle (build-time, different every deploy) ──────────────
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-const pmCompanies = getPrivateCompanies();
-const pmSectors   = getPrivateSectors();
-const pmRounds    = getPrivateRounds();
+const PREVIEW = 12; // 3 rows × 4 cols
 
-const vcFirms  = getVCFirms();
-const vcs      = getVCFirmsByType('VC');
-const accels   = getVCFirmsByType('accelerator');
-const vcWithJob= vcFirms.filter((f) => f.hasJobBoard).length;
+// H1B
+const allH1B     = getH1BCompanies();
+const h1bPreview = shuffle(allH1B).slice(0, PREVIEW);
 
-const total = h1bCompanies.length + pmCompanies.length + vcFirms.length;
+const likelihoodColor: Record<string, string> = {
+  'Very High': '#7AB87A',
+  'High':      '#9EC49E',
+  'Medium':    '#C49A3A',
+  'Low':       '#C47A7A',
+  'Unknown':   '#706E66',
+};
+
+// Private Markets
+const allPrivate     = getPrivateCompanies();
+const privatePreview = shuffle(allPrivate).slice(0, PREVIEW);
+
+const roundColor: Record<string, string> = {
+  'Series A': '#7AB87A',
+  'Series B': '#9EC49E',
+  'Series C': '#C49A3A',
+  'Series D': '#C49A3A',
+  'Series E': '#fb923c',
+  'Series F': '#fb923c',
+  'IPO':      '#9B8EC4',
+  'Pre-IPO':  '#9B8EC4',
+  'Seed':     '#6B9AC4',
+};
+
+// VC
+const allVCFirms  = getVCFirms();
+const vcOnly      = allVCFirms.filter((f) => f.type === 'VC');
+const accelsOnly  = allVCFirms.filter((f) => f.type === 'accelerator');
+const vcPreview   = shuffle(vcOnly).slice(0, PREVIEW);
+const accelPreview = shuffle(accelsOnly).slice(0, PREVIEW);
+
+// ── Totals ─────────────────────────────────────────────────────────────────
+const total = allH1B.length + allPrivate.length + allVCFirms.length;
+
+// ── Hardcoded US university spotlight (career links) ──────────────────────
+const universities = [
+  { name: 'MIT',                  location: 'Cambridge, MA',    url: 'https://careers.mit.edu/' },
+  { name: 'Stanford University',  location: 'Stanford, CA',     url: 'https://careersearch.stanford.edu/' },
+  { name: 'Harvard University',   location: 'Cambridge, MA',    url: 'https://careers.harvard.edu/' },
+  { name: 'Carnegie Mellon',      location: 'Pittsburgh, PA',   url: 'https://www.cmu.edu/jobs/' },
+  { name: 'UC Berkeley',          location: 'Berkeley, CA',     url: 'https://jobs.berkeley.edu/' },
+  { name: 'Univ. of Michigan',    location: 'Ann Arbor, MI',    url: 'https://careers.umich.edu/' },
+  { name: 'Georgia Tech',         location: 'Atlanta, GA',      url: 'https://hr.gatech.edu/careers' },
+  { name: 'Caltech',              location: 'Pasadena, CA',     url: 'https://hr.caltech.edu/work_at_caltech' },
+  { name: 'Cornell University',   location: 'Ithaca, NY',       url: 'https://hr.cornell.edu/careers' },
+  { name: 'Univ. of Washington',  location: 'Seattle, WA',      url: 'https://www.washington.edu/jobs/' },
+  { name: 'UT Austin',            location: 'Austin, TX',       url: 'https://utjobs.utexas.edu/' },
+  { name: 'Columbia University',  location: 'New York, NY',     url: 'https://jobs.columbia.edu/' },
+];
 
 const sections = [
   { id: 'h1b',          label: 'H1B Sponsors' },
@@ -43,14 +91,15 @@ const sections = [
     <Navbar />
 
     <!-- Sticky section nav -->
-    <div class="sticky top-14 z-30 border-b border-slate-800 bg-[#080810]">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="sticky top-24 z-30" style="border-bottom: 0.5px solid #1C1C18; background:#0D0D0D;">
+      <div class="mx-auto max-w-7xl px-6 sm:px-10">
         <div class="flex items-center gap-1 overflow-x-auto py-2" style="scrollbar-width:none">
           {sections.map((s) => (
             <a
               href={`#${s.id}`}
               data-section={s.id}
-              class="section-link shrink-0 rounded-md px-3 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-800 hover:text-white"
+              class="section-link shrink-0 px-3 py-1.5 font-mono text-[10px] font-medium uppercase tracking-widest transition-colors"
+              style="color:#706E66;"
             >
               {s.label}
             </a>
@@ -60,29 +109,33 @@ const sections = [
     </div>
 
     <main class="flex-1">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="mx-auto max-w-7xl px-6 sm:px-10">
 
         <!-- Page header -->
-        <div class="py-10">
+        <div class="border-b py-10" style="border-color:#1C1C18;">
           <div class="mb-3 flex items-center gap-2">
-            <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-            <span class="text-xs font-semibold uppercase tracking-widest text-emerald-500">Company Directory</span>
+            <span class="h-2 w-2 rounded-full" style="background:#7AB87A;"></span>
+            <span class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#7AB87A;">Company Directory</span>
           </div>
-          <h1 class="mb-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Companies</h1>
-          <p class="max-w-xl text-sm text-slate-400 leading-relaxed">
+          <h1 class="mb-3 font-display" style="font-size:clamp(1.8rem,4vw,3rem);color:#EDEDEA;font-weight:700;">Companies</h1>
+          <p class="mb-6 max-w-xl font-sans text-sm leading-relaxed" style="color:#8A8880;">
             {total.toLocaleString()} total records across H1B sponsors, private-market firms, and VC-backed portfolios.
-            All in one place.
+            Showing 12 shuffled previews per section - visit each dedicated page for full search and filters.
           </p>
-          <div class="mt-5 flex flex-wrap gap-3">
+          <div class="flex flex-wrap gap-3">
             {[
-              { value: h1bCompanies.length.toLocaleString(), label: 'H1B Companies',   color: 'text-emerald-400' },
-              { value: pmCompanies.length.toLocaleString(),  label: 'Private Firms',   color: 'text-amber-400' },
-              { value: vcFirms.length.toString(),            label: 'VC Funds',        color: 'text-violet-400' },
+              { value: allH1B.length.toLocaleString(),     label: 'H1B Companies',  color: '#7AB87A',  href: '/h1b'             },
+              { value: allPrivate.length.toLocaleString(),  label: 'Private Firms',  color: '#C49A3A',  href: '/private-markets'  },
+              { value: vcOnly.length.toString(),            label: 'VC Funds',       color: '#9B8EC4',  href: '/vc-portfolios'    },
+              { value: accelsOnly.length.toString(),        label: 'Accelerators',   color: '#fb923c',  href: '/vc-portfolios'    },
             ].map((s) => (
-              <div class="rounded-xl border border-slate-800 bg-slate-900 px-4 py-3">
-                <p class:list={['text-xl font-bold', s.color]}>{s.value}</p>
-                <p class="text-xs text-slate-500">{s.label}</p>
-              </div>
+              <a href={s.href} style={`display:block;border:0.5px solid #1C1C18;background:#141410;padding:0.75rem 1.25rem;text-decoration:none;transition:border-color 0.2s ease;`}
+                onmouseover={`this.style.borderColor='${s.color}40'`}
+                onmouseout="this.style.borderColor='#1C1C18'"
+              >
+                <p class="font-mono text-xl font-bold" style={`color:${s.color}`}>{s.value}</p>
+                <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#706E66;">{s.label}</p>
+              </a>
             ))}
           </div>
         </div>
@@ -90,122 +143,231 @@ const sections = [
         <!-- ═══════════════════════════════════════
              SECTION 1: H1B SPONSORS
         ═══════════════════════════════════════ -->
-        <section id="h1b" class="scroll-mt-28 border-t border-slate-800 py-10">
+        <section id="h1b" class="scroll-mt-36 border-b py-10" style="border-color:#1C1C18;">
           <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div class="mb-2 flex items-center gap-2">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                <h2 class="text-xs font-semibold uppercase tracking-widest text-emerald-500">H1B Sponsors</h2>
+                <span class="h-1.5 w-1.5 rounded-full" style="background:#7AB87A;"></span>
+                <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#7AB87A;">H1B Sponsors</h2>
               </div>
-              <p class="text-sm text-slate-400">
-                {h1bCompanies.length.toLocaleString()} companies ranked by visa sponsorship likelihood.
+              <p class="font-sans text-sm" style="color:#706E66;">
+                Showing 12 of {allH1B.length.toLocaleString()} - shuffled each deploy
               </p>
             </div>
-            <a href="/h1b" class="text-xs text-emerald-400 hover:text-emerald-300 transition-colors shrink-0">
-              Full H1B page
-              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 5l7 7-7 7"/>
-              </svg>
+            <a href="/h1b" class="font-mono text-[10px] uppercase tracking-widest transition-colors shrink-0 flex items-center gap-1"
+               style="color:#7AB87A;" onmouseover="this.style.color='#A3C4A0'" onmouseout="this.style.color='#7AB87A'">
+              View all {allH1B.length.toLocaleString()} with filters
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
-          <H1BFilter client:load companies={h1bCompanies} sectors={h1bSectors} categories={h1bCategories} />
+
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4" style="background:#1C1C18;">
+            {h1bPreview.map((c) => (
+              <a
+                href={c.careerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style="display:block;background:#0D0D0B;padding:1.25rem;text-decoration:none;transition:background 0.2s ease;"
+                onmouseover="this.style.background='#141410'"
+                onmouseout="this.style.background='#0D0D0B'"
+              >
+                <div class="mb-2 flex items-start justify-between gap-2">
+                  <p class="font-sans text-sm font-semibold leading-tight" style="color:#EDEDEA;">{c.name}</p>
+                  <span class="shrink-0 font-mono text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+                    style={`color:${likelihoodColor[c.likelihood] ?? '#706E66'};border:0.5px solid ${likelihoodColor[c.likelihood] ?? '#706E66'}40;`}>
+                    {c.likelihood}
+                  </span>
+                </div>
+                <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#4A4844;">{c.sector || 'Other'}</p>
+              </a>
+            ))}
+          </div>
         </section>
 
         <!-- ═══════════════════════════════════════
              SECTION 2: PRIVATE MARKETS
         ═══════════════════════════════════════ -->
-        <section id="private" class="scroll-mt-28 border-t border-slate-800 py-10">
+        <section id="private" class="scroll-mt-36 border-b py-10" style="border-color:#1C1C18;">
           <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div class="mb-2 flex items-center gap-2">
-                <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
-                <h2 class="text-xs font-semibold uppercase tracking-widest text-amber-500">Private Markets</h2>
+                <span class="h-1.5 w-1.5 rounded-full" style="background:#C49A3A;"></span>
+                <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#C49A3A;">Private Markets</h2>
               </div>
-              <p class="text-sm text-slate-400">
-                {pmCompanies.length.toLocaleString()} privately-listed firms sourced from institutional research.
+              <p class="font-sans text-sm" style="color:#706E66;">
+                Showing 12 of {allPrivate.length.toLocaleString()} - shuffled each deploy
               </p>
             </div>
-            <a href="/private-markets" class="text-xs text-amber-400 hover:text-amber-300 transition-colors shrink-0">
-              Full Private Markets page
-              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 5l7 7-7 7"/>
-              </svg>
+            <a href="/private-markets" class="font-mono text-[10px] uppercase tracking-widest transition-colors shrink-0 flex items-center gap-1"
+               style="color:#C49A3A;" onmouseover="this.style.color='#D4B060'" onmouseout="this.style.color='#C49A3A'">
+              View all {allPrivate.length.toLocaleString()} with filters
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
-          <PrivateFilter client:load companies={pmCompanies} sectors={pmSectors} rounds={pmRounds} />
+
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4" style="background:#1C1C18;">
+            {privatePreview.map((c) => (
+              <a
+                href={c.careerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style="display:block;background:#0D0D0B;padding:1.25rem;text-decoration:none;transition:background 0.2s ease;"
+                onmouseover="this.style.background='#141410'"
+                onmouseout="this.style.background='#0D0D0B'"
+              >
+                <p class="mb-2 font-sans text-sm font-semibold leading-tight" style="color:#EDEDEA;">{c.name}</p>
+                <p class="mb-1.5 font-mono text-[10px] uppercase tracking-widest" style="color:#4A4844;">{c.sector}</p>
+                {c.fundingRound && c.fundingRound !== '--' && (
+                  <span class="font-mono text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+                    style={`color:${roundColor[c.fundingRound] ?? '#706E66'};border:0.5px solid ${roundColor[c.fundingRound] ?? '#706E66'}40;`}>
+                    {c.fundingRound}
+                  </span>
+                )}
+              </a>
+            ))}
+          </div>
         </section>
 
         <!-- ═══════════════════════════════════════
              SECTION 3: VC PORTFOLIOS
         ═══════════════════════════════════════ -->
-        <section id="vc" class="scroll-mt-28 border-t border-slate-800 py-10">
+        <section id="vc" class="scroll-mt-36 border-b py-10" style="border-color:#1C1C18;">
           <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div class="mb-2 flex items-center gap-2">
-                <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
-                <h2 class="text-xs font-semibold uppercase tracking-widest text-violet-500">VC Portfolios</h2>
+                <span class="h-1.5 w-1.5 rounded-full" style="background:#9B8EC4;"></span>
+                <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#9B8EC4;">VC Portfolios</h2>
               </div>
-              <p class="text-sm text-slate-400">
-                {vcs.length} VC firms, {accels.length} accelerators, {vcWithJob} with direct job boards.
+              <p class="font-sans text-sm" style="color:#706E66;">
+                Showing 12 of {vcOnly.length} firms - shuffled each deploy
               </p>
             </div>
-            <a href="/vc-portfolios" class="text-xs text-violet-400 hover:text-violet-300 transition-colors shrink-0">
-              Full VC Portfolios page
-              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 5l7 7-7 7"/>
-              </svg>
+            <a href="/vc-portfolios" class="font-mono text-[10px] uppercase tracking-widest transition-colors shrink-0 flex items-center gap-1"
+               style="color:#9B8EC4;" onmouseover="this.style.color='#B8AAD8'" onmouseout="this.style.color='#9B8EC4'">
+              View all {vcOnly.length} with filters
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
-          <VCDirectory client:load firms={vcFirms} />
+
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4" style="background:#1C1C18;">
+            {vcPreview.map((f) => (
+              <div style="background:#0D0D0B;padding:1.25rem;">
+                <p class="mb-2 font-sans text-sm font-semibold leading-tight" style="color:#EDEDEA;">{f.displayName}</p>
+                <div class="mb-3 flex gap-2">
+                  <span class="font-mono text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+                    style="color:#9B8EC4;border:0.5px solid #9B8EC440;">VC</span>
+                  {f.hasJobBoard && (
+                    <span class="font-mono text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+                      style="color:#7AB87A;border:0.5px solid #7AB87A40;">Jobs Board</span>
+                  )}
+                </div>
+                <div class="flex gap-3">
+                  <a href={f.portfolioUrl} target="_blank" rel="noopener noreferrer"
+                    class="font-mono text-[9px] uppercase tracking-widest transition-colors"
+                    style="color:#706E66;" onmouseover="this.style.color='#C8C6BE'" onmouseout="this.style.color='#706E66'">
+                    Portfolio
+                  </a>
+                  <a href={f.jobBoardUrl} target="_blank" rel="noopener noreferrer"
+                    class="font-mono text-[9px] uppercase tracking-widest transition-colors"
+                    style="color:#706E66;" onmouseover="this.style.color='#C8C6BE'" onmouseout="this.style.color='#706E66'">
+                    Jobs
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         <!-- ═══════════════════════════════════════
              SECTION 4: STARTUP ACCELERATORS
         ═══════════════════════════════════════ -->
-        <section id="accelerators" class="scroll-mt-28 border-t border-slate-800 py-10">
+        <section id="accelerators" class="scroll-mt-36 border-b py-10" style="border-color:#1C1C18;">
           <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div class="mb-2 flex items-center gap-2">
-                <span class="h-1.5 w-1.5 rounded-full bg-orange-400"></span>
-                <h2 class="text-xs font-semibold uppercase tracking-widest text-orange-500">Startup Accelerators</h2>
+                <span class="h-1.5 w-1.5 rounded-full" style="background:#fb923c;"></span>
+                <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#fb923c;">Startup Accelerators</h2>
               </div>
-              <p class="text-sm text-slate-400">
-                {accels.length} accelerators with portfolio job boards. Accelerator-backed companies hire fast.
+              <p class="font-sans text-sm" style="color:#706E66;">
+                Showing 12 of {accelsOnly.length} accelerators - shuffled each deploy
               </p>
             </div>
-            <a href="/vc-portfolios" class="text-xs text-orange-400 hover:text-orange-300 transition-colors shrink-0">
-              Full VC/Accelerators page
-              <svg class="inline h-3 w-3 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 5l7 7-7 7"/>
-              </svg>
+            <a href="/vc-portfolios" class="font-mono text-[10px] uppercase tracking-widest transition-colors shrink-0 flex items-center gap-1"
+               style="color:#fb923c;" onmouseover="this.style.color='#FCA570'" onmouseout="this.style.color='#fb923c'">
+              View all {accelsOnly.length} accelerators
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
-          <!-- Filtered to accelerators only -->
-          <VCDirectory client:load firms={vcFirms.filter((f) => f.type === 'accelerator')} />
+
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4" style="background:#1C1C18;">
+            {accelPreview.map((f) => (
+              <div style="background:#0D0D0B;padding:1.25rem;">
+                <p class="mb-2 font-sans text-sm font-semibold leading-tight" style="color:#EDEDEA;">{f.displayName}</p>
+                <div class="mb-3 flex gap-2">
+                  <span class="font-mono text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+                    style="color:#fb923c;border:0.5px solid #fb923c40;">Accelerator</span>
+                  {f.hasJobBoard && (
+                    <span class="font-mono text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+                      style="color:#7AB87A;border:0.5px solid #7AB87A40;">Jobs Board</span>
+                  )}
+                </div>
+                <div class="flex gap-3">
+                  <a href={f.portfolioUrl} target="_blank" rel="noopener noreferrer"
+                    class="font-mono text-[9px] uppercase tracking-widest transition-colors"
+                    style="color:#706E66;" onmouseover="this.style.color='#C8C6BE'" onmouseout="this.style.color='#706E66'">
+                    Portfolio
+                  </a>
+                  <a href={f.jobBoardUrl} target="_blank" rel="noopener noreferrer"
+                    class="font-mono text-[9px] uppercase tracking-widest transition-colors"
+                    style="color:#706E66;" onmouseover="this.style.color='#C8C6BE'" onmouseout="this.style.color='#706E66'">
+                    Jobs
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         <!-- ═══════════════════════════════════════
              SECTION 5: UNIVERSITIES
         ═══════════════════════════════════════ -->
-        <section id="universities" class="scroll-mt-28 border-t border-slate-800 py-10">
-          <div class="mb-6 flex items-center gap-2">
-            <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
-            <h2 class="text-xs font-semibold uppercase tracking-widest text-blue-500">Universities</h2>
-          </div>
-          <div class="flex flex-col items-center justify-center py-16 text-center" style="border: 0.5px solid #1C1C18; background: #141410;">
-            <div class="mb-4 font-mono text-4xl text-slate-600">[ ]</div>
-            <p class="mb-2 font-sans text-base font-semibold text-slate-300">Coming Soon</p>
-            <p class="mb-4 max-w-md font-mono text-xs leading-relaxed text-slate-500">
-              University career portals, research assistant roles, and academic hiring are being sourced.
-              Only publicly available and verified datasets will be added.
-            </p>
-            <a
-              href="mailto:pavan.yellathakota.ds@gmail.com"
-              class="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400 transition-colors hover:text-slate-200 px-4 py-2"
-              style="border: 0.5px solid #323028;"
-            >
-              Know a public dataset? Contribute
+        <section id="universities" class="scroll-mt-36 py-10">
+          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div class="mb-2 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full" style="background:#6B9AC4;"></span>
+                <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#6B9AC4;">Universities</h2>
+              </div>
+              <p class="font-sans text-sm" style="color:#706E66;">
+                12 US university career portals - 2,000+ available for download
+              </p>
+            </div>
+            <a href="/universities" class="font-mono text-[10px] uppercase tracking-widest transition-colors shrink-0 flex items-center gap-1"
+               style="color:#6B9AC4;" onmouseover="this.style.color='#8BB5D8'" onmouseout="this.style.color='#6B9AC4'">
+              Download full dataset
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
+          </div>
+
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4" style="background:#1C1C18;">
+            {universities.map((u) => (
+              <a
+                href={u.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style="display:block;background:#0D0D0B;padding:1.25rem;text-decoration:none;transition:background 0.2s ease;"
+                onmouseover="this.style.background='#141410'"
+                onmouseout="this.style.background='#0D0D0B'"
+              >
+                <p class="mb-1.5 font-sans text-sm font-semibold leading-tight" style="color:#EDEDEA;">{u.name}</p>
+                <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#4A4844;">{u.location}</p>
+              </a>
+            ))}
+          </div>
+
+          <div class="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style="color:#4A4844;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+            Career portals link directly to university HR systems. Only publicly listed roles.
           </div>
         </section>
 
@@ -219,7 +381,6 @@ const sections = [
 <script>
   /* Active section highlighting */
   const navLinks = document.querySelectorAll<HTMLAnchorElement>('.section-link');
-  const sectionIds = Array.from(navLinks).map((l) => l.getAttribute('data-section') ?? '');
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -227,17 +388,22 @@ const sections = [
         if (entry.isIntersecting) {
           navLinks.forEach((l) => {
             const active = l.getAttribute('data-section') === entry.target.id;
-            l.classList.toggle('bg-slate-800', active);
-            l.classList.toggle('text-white', active);
-            l.classList.toggle('text-slate-500', !active);
+            if (active) {
+              l.style.color = '#EDEDEA';
+              l.style.background = '#1C1C18';
+            } else {
+              l.style.color = '#706E66';
+              l.style.background = 'transparent';
+            }
           });
         }
       });
     },
-    { rootMargin: '-100px 0px -60% 0px', threshold: 0 }
+    { rootMargin: '-120px 0px -60% 0px', threshold: 0 }
   );
 
-  sectionIds.forEach((id) => {
+  navLinks.forEach((l) => {
+    const id = l.getAttribute('data-section') ?? '';
     const el = document.getElementById(id);
     if (el) observer.observe(el);
   });

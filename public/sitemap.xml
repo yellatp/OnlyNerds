@@ -53,6 +53,12 @@
   </url>
 
   <url>
+    <loc>https://onlynerds.win/universities/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
     <loc>https://onlynerds.win/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

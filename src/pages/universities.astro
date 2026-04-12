@@ -1,0 +1,179 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+---
+
+<Layout
+  title="University Dataset Download - OnlyNerds"
+  description="Download 2,000+ US universities and 9,000+ worldwide university datasets as CSV. Free, publicly sourced university directory for research and job search."
+  keywords="university dataset download, US universities CSV, world universities list, university job boards, academic careers database"
+>
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1">
+      <div class="mx-auto max-w-7xl px-6 sm:px-10">
+
+        <!-- Header -->
+        <div class="border-b py-16 sm:py-24" style="border-color:#1C1C18;">
+          <div class="mb-4 flex items-center gap-3">
+            <span class="h-2 w-2 rounded-full" style="background:#6B9AC4;"></span>
+            <span class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#6B9AC4;">Universities</span>
+          </div>
+          <h1 class="mb-4 font-display" style="font-size:clamp(2rem,5vw,4rem);line-height:1.05;color:#EDEDEA;font-weight:700;">
+            University Datasets
+          </h1>
+          <p class="max-w-2xl font-sans leading-relaxed" style="color:#8A8880;font-size:1rem;">
+            2,000+ US universities and 9,000+ worldwide universities sourced from public records.
+            Datasets are too large to render in-browser - download the CSV and open in Excel, Google Sheets, or your data tool of choice.
+          </p>
+        </div>
+
+        <!-- Download Cards -->
+        <div class="border-b py-14" style="border-color:#1C1C18;">
+          <div class="mb-8 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#6B9AC4;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#6B9AC4;">Available Downloads</h2>
+          </div>
+
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2" style="background:#1C1C18;">
+
+            <!-- USA Universities -->
+            <div style="background:#0D0D0B;padding:2rem;">
+              <div class="mb-4 flex items-center gap-3">
+                <span class="font-mono text-[10px] font-bold uppercase tracking-widest px-2 py-1" style="color:#6B9AC4;border:0.5px solid #6B9AC440;">US Only</span>
+              </div>
+              <h3 class="mb-2 font-sans text-xl font-bold" style="color:#EDEDEA;">USA Universities</h3>
+              <p class="mb-6 font-sans text-sm leading-relaxed" style="color:#8A8880;">
+                2,000+ accredited US universities and colleges. Includes institution name, state, and official website.
+                Sourced from publicly available academic directories.
+              </p>
+              <div class="mb-6 flex flex-wrap gap-4 font-mono text-xs" style="color:#706E66;">
+                <span>~2,000 records</span>
+                <span style="color:#1C1C18;">|</span>
+                <span>CSV format</span>
+                <span style="color:#1C1C18;">|</span>
+                <span>3 columns</span>
+              </div>
+              <a
+                href="/usa-universities.csv"
+                download="usa-universities.csv"
+                style="display:inline-flex;align-items:center;gap:8px;background:#6B9AC4;color:#0D0D0D;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:opacity 0.2s ease;"
+                onmouseover="this.style.opacity='0.85'"
+                onmouseout="this.style.opacity='1'"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                Download USA CSV
+              </a>
+            </div>
+
+            <!-- World Universities -->
+            <div style="background:#0D0D0B;padding:2rem;">
+              <div class="mb-4 flex items-center gap-3">
+                <span class="font-mono text-[10px] font-bold uppercase tracking-widest px-2 py-1" style="color:#9B8EC4;border:0.5px solid #9B8EC440;">Worldwide</span>
+              </div>
+              <h3 class="mb-2 font-sans text-xl font-bold" style="color:#EDEDEA;">World Universities</h3>
+              <p class="mb-6 font-sans text-sm leading-relaxed" style="color:#8A8880;">
+                9,000+ universities across 200+ countries, including all US institutions.
+                Includes country code, institution name, and official website. Sourced from public academic registries.
+              </p>
+              <div class="mb-6 flex flex-wrap gap-4 font-mono text-xs" style="color:#706E66;">
+                <span>~9,000 records</span>
+                <span style="color:#1C1C18;">|</span>
+                <span>CSV format</span>
+                <span style="color:#1C1C18;">|</span>
+                <span>3 columns</span>
+              </div>
+              <a
+                href="/world-universities.csv"
+                download="world-universities.csv"
+                style="display:inline-flex;align-items:center;gap:8px;background:#9B8EC4;color:#0D0D0D;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:opacity 0.2s ease;"
+                onmouseover="this.style.opacity='0.85'"
+                onmouseout="this.style.opacity='1'"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                Download World CSV
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Column reference -->
+        <section class="border-b py-14" style="border-color:#1C1C18;">
+          <div class="mb-6 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#C49A3A;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#C49A3A;">CSV Schema</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full font-mono text-xs" style="border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:0.5px solid #323028;">
+                  <th class="py-2.5 text-left" style="color:#706E66;padding-right:2rem;min-width:140px;">Column</th>
+                  <th class="py-2.5 text-left" style="color:#706E66;padding-right:2rem;">Type</th>
+                  <th class="py-2.5 text-left" style="color:#706E66;">Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ['Country Code', 'String (ISO 3166-1 alpha-2)', 'US'],
+                  ['University Name', 'String', 'Massachusetts Institute of Technology'],
+                  ['Website', 'URL', 'http://web.mit.edu/'],
+                ].map(([col, type, ex]) => (
+                  <tr style="border-bottom:0.5px solid #1C1C18;">
+                    <td class="py-3 font-bold" style="color:#C8C6BE;padding-right:2rem;">{col}</td>
+                    <td class="py-3" style="color:#8A8880;padding-right:2rem;">{type}</td>
+                    <td class="py-3" style="color:#706E66;">{ex}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Data notes -->
+        <section class="py-14">
+          <div class="mb-6 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#706E66;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#706E66;">Data Notes</h2>
+          </div>
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-3" style="background:#1C1C18;">
+            {[
+              { n: '01', t: 'Public records only', b: 'All data sourced from publicly available academic directories. No scraping of gated or private systems.' },
+              { n: '02', t: 'Not career-portal specific', b: 'These CSVs contain university websites, not direct career portals. Use the Companies page for the 12 featured university career links.' },
+              { n: '03', t: 'Contribute updates', b: 'If you find outdated or missing entries, contribute via the contact page. Only verified public data accepted.' },
+            ].map((item) => (
+              <div style="background:#0D0D0B;padding:1.5rem;">
+                <div class="mb-2 flex items-center gap-3">
+                  <span class="font-mono text-[10px]" style="color:#4A4844;">{item.n}</span>
+                  <p class="font-sans text-sm font-semibold" style="color:#EDEDEA;">{item.t}</p>
+                </div>
+                <p class="font-sans text-xs leading-relaxed" style="color:#706E66;">{item.b}</p>
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-8">
+            <a
+              href="/companies#universities"
+              style="display:inline-flex;align-items:center;gap:8px;border:0.5px solid #323028;color:#706E66;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:border-color 0.2s ease,color 0.2s ease;"
+              onmouseover="this.style.borderColor='#706E66';this.style.color='#C8C6BE'"
+              onmouseout="this.style.borderColor='#323028';this.style.color='#706E66'"
+            >
+              Back to Companies
+            </a>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

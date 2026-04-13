@@ -6,9 +6,9 @@ import Footer from '../components/shared/Footer.astro';
 ---
 
 <Layout
-  title="University Dataset Download - OnlyNerds"
-  description="Download 2,000+ US universities and 9,000+ worldwide university datasets as CSV. Free, publicly sourced university directory for research and job search."
-  keywords="university dataset download, US universities CSV, world universities list, university job boards, academic careers database"
+  title="Data Downloads"
+  description="Download the complete OnlyNerds dataset (H1B companies, private market firms, VC portfolios) and university directories as compressed zip files. Free, no sign-up."
+  keywords="download H1B database, startup companies CSV, university dataset download, career data download, free career data"
 >
   <div class="flex min-h-screen flex-col">
     <Navbar />
@@ -19,23 +19,61 @@ import Footer from '../components/shared/Footer.astro';
         <!-- Header -->
         <div class="border-b py-16 sm:py-24" style="border-color:#1C1C18;">
           <div class="mb-4 flex items-center gap-3">
-            <span class="h-2 w-2 rounded-full" style="background:#6B9AC4;"></span>
-            <span class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#6B9AC4;">Universities</span>
+            <span class="h-2 w-2 rounded-full" style="background:#C49A3A;"></span>
+            <span class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#C49A3A;">// Data Downloads</span>
           </div>
           <h1 class="mb-4 font-display" style="font-size:clamp(2rem,5vw,4rem);line-height:1.05;color:#EDEDEA;font-weight:700;">
-            University Datasets
+            Download the Data
           </h1>
-          <p class="max-w-2xl font-sans leading-relaxed" style="color:#8A8880;font-size:1rem;">
-            2,000+ US universities and 9,000+ worldwide universities sourced from public records.
-            Datasets are too large to render in-browser - download the CSV and open in Excel, Google Sheets, or your data tool of choice.
+          <p class="max-w-2xl font-mono text-sm leading-relaxed" style="color:#8A8880;">
+            All datasets are compressed zip files — faster to download, smaller to store.
+            Open in Excel, Google Sheets, Python, or any data tool.
+            No sign-up. No paywall.
           </p>
         </div>
 
-        <!-- Download Cards -->
+        <!-- Complete bundle — featured prominently -->
         <div class="border-b py-14" style="border-color:#1C1C18;">
-          <div class="mb-8 flex items-center gap-2">
+          <div class="mb-6 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#C49A3A;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#C49A3A;">Complete Dataset</h2>
+          </div>
+
+          <div style="background:#141410;border:0.5px solid #323028;padding:2rem 2.5rem;">
+            <div class="mb-3 flex flex-wrap items-center gap-3">
+              <span class="font-mono text-[10px] font-bold uppercase tracking-widest px-2 py-1" style="color:#C49A3A;border:0.5px solid #C49A3A60;">All-in-one bundle</span>
+              <span class="font-mono text-[10px]" style="color:#4A4844;">ZIP · 2.9 MB</span>
+            </div>
+            <h3 class="mb-2 font-sans text-2xl font-bold" style="color:#EDEDEA;">OnlyNerds Complete Data</h3>
+            <p class="mb-2 font-mono text-sm leading-relaxed" style="color:#8A8880;">
+              Everything in one archive — H1B companies, private market firms, VC portfolios,
+              USA universities, and world universities.
+              The fastest way to get all the data.
+            </p>
+            <p class="mb-6 font-mono text-xs" style="color:#4A4844;">
+              Contains: startups_h1b_database.csv &nbsp;·&nbsp; Privately_Listed_Companies.csv &nbsp;·&nbsp;
+              Portfolio.csv &nbsp;·&nbsp; usa-universities.csv &nbsp;·&nbsp; world-universities.csv
+            </p>
+            <a
+              href="/OnlyNerds_Data.zip"
+              download="OnlyNerds_Data.zip"
+              style="display:inline-flex;align-items:center;gap:10px;background:#C49A3A;color:#0D0D0D;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:12px 24px;transition:opacity 0.2s ease;"
+              onmouseover="this.style.opacity='0.85'"
+              onmouseout="this.style.opacity='1'"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              Download Complete Data (2.9 MB)
+            </a>
+          </div>
+        </div>
+
+        <!-- Individual files -->
+        <div class="border-b py-14" style="border-color:#1C1C18;">
+          <div class="mb-6 flex items-center gap-2">
             <span class="h-1.5 w-1.5 rounded-full" style="background:#6B9AC4;"></span>
-            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#6B9AC4;">Available Downloads</h2>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#6B9AC4;">Individual Files</h2>
           </div>
 
           <div class="grid grid-cols-1 gap-px sm:grid-cols-2" style="background:#1C1C18;">
@@ -44,22 +82,22 @@ import Footer from '../components/shared/Footer.astro';
             <div style="background:#0D0D0B;padding:2rem;">
               <div class="mb-4 flex items-center gap-3">
                 <span class="font-mono text-[10px] font-bold uppercase tracking-widest px-2 py-1" style="color:#6B9AC4;border:0.5px solid #6B9AC440;">US Only</span>
+                <span class="font-mono text-[10px]" style="color:#4A4844;">ZIP · 24 KB</span>
               </div>
               <h3 class="mb-2 font-sans text-xl font-bold" style="color:#EDEDEA;">USA Universities</h3>
-              <p class="mb-6 font-sans text-sm leading-relaxed" style="color:#8A8880;">
-                2,000+ accredited US universities and colleges. Includes institution name, state, and official website.
+              <p class="mb-4 font-mono text-xs leading-relaxed" style="color:#8A8880;">
+                2,000+ accredited US universities and colleges.
+                Institution name, state, and official website.
                 Sourced from publicly available academic directories.
               </p>
-              <div class="mb-6 flex flex-wrap gap-4 font-mono text-xs" style="color:#706E66;">
+              <div class="mb-6 flex flex-wrap gap-4 font-mono text-[10px]" style="color:#706E66;">
                 <span>~2,000 records</span>
-                <span style="color:#1C1C18;">|</span>
-                <span>CSV format</span>
-                <span style="color:#1C1C18;">|</span>
                 <span>3 columns</span>
+                <span>CSV inside ZIP</span>
               </div>
               <a
-                href="/usa-universities.csv"
-                download="usa-universities.csv"
+                href="/usa-universities.zip"
+                download="usa-universities.zip"
                 style="display:inline-flex;align-items:center;gap:8px;background:#6B9AC4;color:#0D0D0D;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:opacity 0.2s ease;"
                 onmouseover="this.style.opacity='0.85'"
                 onmouseout="this.style.opacity='1'"
@@ -67,7 +105,7 @@ import Footer from '../components/shared/Footer.astro';
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
                 </svg>
-                Download USA CSV
+                Download USA ZIP
               </a>
             </div>
 
@@ -75,22 +113,22 @@ import Footer from '../components/shared/Footer.astro';
             <div style="background:#0D0D0B;padding:2rem;">
               <div class="mb-4 flex items-center gap-3">
                 <span class="font-mono text-[10px] font-bold uppercase tracking-widest px-2 py-1" style="color:#9B8EC4;border:0.5px solid #9B8EC440;">Worldwide</span>
+                <span class="font-mono text-[10px]" style="color:#4A4844;">ZIP · 124 KB</span>
               </div>
               <h3 class="mb-2 font-sans text-xl font-bold" style="color:#EDEDEA;">World Universities</h3>
-              <p class="mb-6 font-sans text-sm leading-relaxed" style="color:#8A8880;">
-                9,000+ universities across 200+ countries, including all US institutions.
-                Includes country code, institution name, and official website. Sourced from public academic registries.
+              <p class="mb-4 font-mono text-xs leading-relaxed" style="color:#8A8880;">
+                9,000+ universities across 200+ countries including all US institutions.
+                Country code, institution name, and official website.
+                Sourced from public academic registries.
               </p>
-              <div class="mb-6 flex flex-wrap gap-4 font-mono text-xs" style="color:#706E66;">
+              <div class="mb-6 flex flex-wrap gap-4 font-mono text-[10px]" style="color:#706E66;">
                 <span>~9,000 records</span>
-                <span style="color:#1C1C18;">|</span>
-                <span>CSV format</span>
-                <span style="color:#1C1C18;">|</span>
                 <span>3 columns</span>
+                <span>CSV inside ZIP</span>
               </div>
               <a
-                href="/world-universities.csv"
-                download="world-universities.csv"
+                href="/world-universities.zip"
+                download="world-universities.zip"
                 style="display:inline-flex;align-items:center;gap:8px;background:#9B8EC4;color:#0D0D0D;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:opacity 0.2s ease;"
                 onmouseover="this.style.opacity='0.85'"
                 onmouseout="this.style.opacity='1'"
@@ -98,42 +136,137 @@ import Footer from '../components/shared/Footer.astro';
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
                 </svg>
-                Download World CSV
+                Download World ZIP
               </a>
             </div>
 
           </div>
         </div>
 
-        <!-- Column reference -->
+        <!-- Schema reference -->
         <section class="border-b py-14" style="border-color:#1C1C18;">
           <div class="mb-6 flex items-center gap-2">
             <span class="h-1.5 w-1.5 rounded-full" style="background:#C49A3A;"></span>
-            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#C49A3A;">CSV Schema</h2>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#C49A3A;">CSV Schemas</h2>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full font-mono text-xs" style="border-collapse:collapse;">
-              <thead>
-                <tr style="border-bottom:0.5px solid #323028;">
-                  <th class="py-2.5 text-left" style="color:#706E66;padding-right:2rem;min-width:140px;">Column</th>
-                  <th class="py-2.5 text-left" style="color:#706E66;padding-right:2rem;">Type</th>
-                  <th class="py-2.5 text-left" style="color:#706E66;">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ['Country Code', 'String (ISO 3166-1 alpha-2)', 'US'],
-                  ['University Name', 'String', 'Massachusetts Institute of Technology'],
-                  ['Website', 'URL', 'http://web.mit.edu/'],
-                ].map(([col, type, ex]) => (
-                  <tr style="border-bottom:0.5px solid #1C1C18;">
-                    <td class="py-3 font-bold" style="color:#C8C6BE;padding-right:2rem;">{col}</td>
-                    <td class="py-3" style="color:#8A8880;padding-right:2rem;">{type}</td>
-                    <td class="py-3" style="color:#706E66;">{ex}</td>
+
+          <!-- H1B schema -->
+          <div class="mb-8">
+            <p class="mb-3 font-mono text-[10px] font-semibold uppercase tracking-widest" style="color:#7AB87A;">startups_h1b_database.csv</p>
+            <div class="overflow-x-auto">
+              <table class="w-full font-mono text-xs" style="border-collapse:collapse;">
+                <thead>
+                  <tr style="border-bottom:0.5px solid #323028;">
+                    <th class="py-2 text-left pr-8" style="color:#706E66;min-width:180px;">Column</th>
+                    <th class="py-2 text-left pr-8" style="color:#706E66;">Values</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {[
+                    ['Company Name', 'String'],
+                    ['Business Sector', 'String'],
+                    ['Category', 'String'],
+                    ['Tags', 'Comma-separated string'],
+                    ['H1B Sponsorship Likelihood', 'Very High / High / Medium / Low / Unknown'],
+                    ['Fortune 500', 'Yes / No'],
+                    ['Fortune 1500', 'Yes / No'],
+                    ['Boutique', 'Yes / No'],
+                    ['AnalystsPick', 'Yes / No'],
+                    ['Publicly traded', 'Yes / No'],
+                  ].map(([col, val]) => (
+                    <tr style="border-bottom:0.5px solid #1C1C18;">
+                      <td class="py-2.5 font-bold pr-8" style="color:#C8C6BE;">{col}</td>
+                      <td class="py-2.5" style="color:#706E66;">{val}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Private Markets schema -->
+          <div class="mb-8">
+            <p class="mb-3 font-mono text-[10px] font-semibold uppercase tracking-widest" style="color:#C49A3A;">Privately_Listed_Companies.csv</p>
+            <div class="overflow-x-auto">
+              <table class="w-full font-mono text-xs" style="border-collapse:collapse;">
+                <thead>
+                  <tr style="border-bottom:0.5px solid #323028;">
+                    <th class="py-2 text-left pr-8" style="color:#706E66;min-width:180px;">Column</th>
+                    <th class="py-2 text-left pr-8" style="color:#706E66;">Values</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Company_Name', 'String'],
+                    ['Sector', 'String'],
+                    ['Funding_round', 'Pre-Seed / Seed / Series A–F / Growth / Late Stage / Private Equity'],
+                    ['Amount_raised', 'String (e.g. $50M) or --'],
+                    ['Sub-sector', 'String'],
+                    ['Source Website', 'URL'],
+                  ].map(([col, val]) => (
+                    <tr style="border-bottom:0.5px solid #1C1C18;">
+                      <td class="py-2.5 font-bold pr-8" style="color:#C8C6BE;">{col}</td>
+                      <td class="py-2.5" style="color:#706E66;">{val}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- VC Portfolio schema -->
+          <div class="mb-8">
+            <p class="mb-3 font-mono text-[10px] font-semibold uppercase tracking-widest" style="color:#9B8EC4;">Portfolio.csv</p>
+            <div class="overflow-x-auto">
+              <table class="w-full font-mono text-xs" style="border-collapse:collapse;">
+                <thead>
+                  <tr style="border-bottom:0.5px solid #323028;">
+                    <th class="py-2 text-left pr-8" style="color:#706E66;min-width:180px;">Column</th>
+                    <th class="py-2 text-left pr-8" style="color:#706E66;">Values</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Name', 'String'],
+                    ['Type', 'VC / accelerator'],
+                    ['Portfolio', 'URL'],
+                    ['JobBoard', 'URL or N/A'],
+                  ].map(([col, val]) => (
+                    <tr style="border-bottom:0.5px solid #1C1C18;">
+                      <td class="py-2.5 font-bold pr-8" style="color:#C8C6BE;">{col}</td>
+                      <td class="py-2.5" style="color:#706E66;">{val}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Universities schema -->
+          <div>
+            <p class="mb-3 font-mono text-[10px] font-semibold uppercase tracking-widest" style="color:#6B9AC4;">usa-universities.csv &nbsp;/&nbsp; world-universities.csv</p>
+            <div class="overflow-x-auto">
+              <table class="w-full font-mono text-xs" style="border-collapse:collapse;">
+                <thead>
+                  <tr style="border-bottom:0.5px solid #323028;">
+                    <th class="py-2 text-left pr-8" style="color:#706E66;min-width:180px;">Column</th>
+                    <th class="py-2 text-left pr-8" style="color:#706E66;">Values</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Country Code', 'ISO 3166-1 alpha-2 (e.g. US, IN, DE)'],
+                    ['University Name', 'String'],
+                    ['Website', 'URL'],
+                  ].map(([col, val]) => (
+                    <tr style="border-bottom:0.5px solid #1C1C18;">
+                      <td class="py-2.5 font-bold pr-8" style="color:#C8C6BE;">{col}</td>
+                      <td class="py-2.5" style="color:#706E66;">{val}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
@@ -141,32 +274,42 @@ import Footer from '../components/shared/Footer.astro';
         <section class="py-14">
           <div class="mb-6 flex items-center gap-2">
             <span class="h-1.5 w-1.5 rounded-full" style="background:#706E66;"></span>
-            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#706E66;">Data Notes</h2>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#706E66;">Notes</h2>
           </div>
           <div class="grid grid-cols-1 gap-px sm:grid-cols-3" style="background:#1C1C18;">
             {[
-              { n: '01', t: 'Public records only', b: 'All data sourced from publicly available academic directories. No scraping of gated or private systems.' },
-              { n: '02', t: 'Not career-portal specific', b: 'These CSVs contain university websites, not direct career portals. Use the Companies page for the 12 featured university career links.' },
-              { n: '03', t: 'Contribute updates', b: 'If you find outdated or missing entries, contribute via the contact page. Only verified public data accepted.' },
+              { n: '01', t: 'Public records only', b: 'All data sourced from publicly available records - USCIS filings, company career pages, LCA disclosures, and public academic registries. No paywalled or scraped data.' },
+              { n: '02', t: 'Licensed Apache 2.0', b: 'Free to use, fork, and build on. Attribution appreciated. See the GitHub repo for the full license. Do not re-sell the data as-is.' },
+              { n: '03', t: 'Contribute updates', b: 'If you find outdated entries, open a GitHub issue or PR with a public source reference. Community-maintained data stays fresh.' },
             ].map((item) => (
               <div style="background:#0D0D0B;padding:1.5rem;">
                 <div class="mb-2 flex items-center gap-3">
                   <span class="font-mono text-[10px]" style="color:#4A4844;">{item.n}</span>
                   <p class="font-sans text-sm font-semibold" style="color:#EDEDEA;">{item.t}</p>
                 </div>
-                <p class="font-sans text-xs leading-relaxed" style="color:#706E66;">{item.b}</p>
+                <p class="font-mono text-xs leading-relaxed" style="color:#706E66;">{item.b}</p>
               </div>
             ))}
           </div>
 
-          <div class="mt-8">
+          <div class="mt-8 flex flex-wrap gap-3">
             <a
-              href="/companies#universities"
+              href="/companies"
               style="display:inline-flex;align-items:center;gap:8px;border:0.5px solid #323028;color:#706E66;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:border-color 0.2s ease,color 0.2s ease;"
               onmouseover="this.style.borderColor='#706E66';this.style.color='#C8C6BE'"
               onmouseout="this.style.borderColor='#323028';this.style.color='#706E66'"
             >
-              Back to Companies
+              Browse Companies
+            </a>
+            <a
+              href="https://github.com/yellatp/OnlyNerds"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="display:inline-flex;align-items:center;gap:8px;border:0.5px solid #323028;color:#706E66;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:border-color 0.2s ease,color 0.2s ease;"
+              onmouseover="this.style.borderColor='#706E66';this.style.color='#C8C6BE'"
+              onmouseout="this.style.borderColor='#323028';this.style.color='#706E66'"
+            >
+              GitHub Repo
             </a>
           </div>
         </section>

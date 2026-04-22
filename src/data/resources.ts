@@ -15,6 +15,7 @@ export interface DorkQuery {
 export const SMART_JOB_BOARDS: ResourceLink[] = [
   { name: 'hiring.cafe',            url: 'https://hiring.cafe/',                              desc: 'Modern job aggregator with real-time filtering and transparency scores. Less noise than the big boards.' },
   { name: 'AI Hacker Jobs',         url: 'https://aihackerjobs.com/',                         desc: 'AI-focused job board with an autonomous agent that scouts matches, customizes your resume per application, and coaches you through interviews.' },
+  { name: 'MyVisaJobs',             url: 'https://www.myvisajobs.com/',                       desc: 'H1B visa sponsor database with salary data and petition history. Find employers who actively sponsor work visas by role, city, and industry.' },
   { name: 'VC Careers',             url: 'https://venturecapitalcareers.com/',                desc: 'Jobs specifically at VC and PE firms. Analyst to Partner-track roles.' },
   { name: 'Thiel Fellowship Jobs',  url: 'https://thielfellowship.org/jobs',                  desc: 'Roles at companies founded by Thiel Fellows. Exceptional early-stage opportunities.' },
   { name: 'Built In',               url: 'https://builtin.com/jobs',                          desc: 'Tech company jobs with culture data and salary ranges. City-specific editions.' },

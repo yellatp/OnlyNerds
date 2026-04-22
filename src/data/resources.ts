@@ -14,6 +14,7 @@ export interface DorkQuery {
 
 export const SMART_JOB_BOARDS: ResourceLink[] = [
   { name: 'hiring.cafe',            url: 'https://hiring.cafe/',                              desc: 'Modern job aggregator with real-time filtering and transparency scores. Less noise than the big boards.' },
+  { name: 'AI Hacker Jobs',         url: 'https://aihackerjobs.com/',                         desc: 'AI-focused job board with an autonomous agent that scouts matches, customizes your resume per application, and coaches you through interviews.' },
   { name: 'VC Careers',             url: 'https://venturecapitalcareers.com/',                desc: 'Jobs specifically at VC and PE firms. Analyst to Partner-track roles.' },
   { name: 'Thiel Fellowship Jobs',  url: 'https://thielfellowship.org/jobs',                  desc: 'Roles at companies founded by Thiel Fellows. Exceptional early-stage opportunities.' },
   { name: 'Built In',               url: 'https://builtin.com/jobs',                          desc: 'Tech company jobs with culture data and salary ranges. City-specific editions.' },
@@ -37,9 +38,12 @@ export const TECH_BLOGS: ResourceLink[] = [
 
 export const DSA_PREP: ResourceLink[] = [
   { name: 'LeetCode Patterns',    url: 'https://seanprashad.com/leetcode-patterns/',        desc: "Sean Prashad's categorized problem guide. The most efficient approach to recognizing problem types." },
-  { name: 'Striver A2Z Sheet',    url: 'https://takeuforward.org/dsa/strivers-a2z-sheet-learn-dsa-a-to-z', desc: 'Complete DSA learning path from zero to advanced. TakeUForward flagship resource.' },
+  { name: 'Striver A2Z Sheet',    url: 'https://takeuforward.org/dsa/strivers-a2z-sheet-learn-dsa-a-to-z', desc: 'Complete DSA learning path from zero to advanced. TakeUForward flagship resource by Raj Vikramaditya.' },
   { name: 'Striver SDE Sheet',    url: 'https://takeuforward.org/uncategorized/strivers-sde-sheet-challenge', desc: 'Top 180 curated interview problems for SDE roles. Battle-tested by thousands of candidates.' },
   { name: 'NeetCode (Blind 75)',   url: 'https://neetcode.io/',                             desc: 'Blind 75 and NeetCode 150 with video walkthroughs. Gold standard for FAANG-level prep.' },
+  { name: 'Abdul Bari',            url: 'https://www.youtube.com/@abdul_bari',              desc: 'Deep-dive DSA series covering algorithms from first principles. The go-to resource for understanding time and space complexity intuitively.' },
+  { name: 'Gaurav Sen',            url: 'https://www.youtube.com/@gkcs',                    desc: 'System design and distributed systems explained clearly. Widely used for FAANG-level system design interview prep.' },
+  { name: 'Keerti Purswani',       url: 'https://www.youtube.com/channel/UCqPw78XvJUKtGiq3TzAcwJQ', desc: 'System design and CS fundamentals on YouTube. Clear explanations of architecture patterns and interview-level design problems.' },
 ];
 
 export const SQL_RESOURCES: ResourceLink[] = [
@@ -58,6 +62,7 @@ export const AI_ML_LEARNING: ResourceLink[] = [
   { name: 'Claude Skills',        url: 'https://anthropic.skilljar.com/',                   desc: 'Official Anthropic courses on building with Claude and the API. Free, structured, and up to date.' },
   { name: 'Andrej Karpathy',      url: 'https://www.youtube.com/@AndrejKarpathy',           desc: 'Former Tesla AI Director. His neural network and GPT from scratch series is the best ground-up deep learning resource.' },
   { name: 'Andrew Ng',            url: 'https://www.deeplearning.ai/',                      desc: 'DeepLearning.AI: ML specializations, MLOps, LLMs. The industry standard for structured learning paths.' },
+  { name: 'DataWars',             url: 'https://www.datawars.io/',                           desc: 'Practice data science with real-world projects. Community-driven platform with hands-on challenges across Python, SQL, and ML. Build your portfolio while you learn.' },
   { name: 'CampusX',              url: 'https://www.youtube.com/@campusx-official',         desc: 'Applied DS and ML content. Excellent for project-based learning and interview prep.' },
   { name: 'Krishnaik',            url: 'https://www.youtube.com/@krishnaik06',              desc: 'Practical data science, ML, and MLOps tutorials. Focuses on job-ready skills and real-world tools.' },
   { name: 'HuggingFace',          url: 'https://huggingface.co/learn',                      desc: 'Free NLP, diffusion, and LLM courses from the team behind Transformers. Hands-on and current.' },
@@ -90,6 +95,7 @@ export const NETWORKING_TOOLS: ResourceLink[] = [
 
 export const AUTOFILL_TOOLS: ResourceLink[] = [
   { name: 'Jobright.ai',          url: 'https://jobright.ai/',                              desc: 'AI job matching and autofill. Cuts application time significantly and surfaces relevant roles.' },
+  { name: 'AI Hacker Jobs',       url: 'https://aihackerjobs.com/',                         desc: 'AI agent that scouts job matches, customizes your resume for every application, and coaches you through the interview process.' },
   { name: 'Simplify',             url: 'https://simplify.jobs/',                            desc: 'One-click autofill across most ATS systems. Install the browser extension and stop retyping.' },
 ];
 

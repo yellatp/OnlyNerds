@@ -1,0 +1,186 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+
+const lastUpdated = 'April 22, 2025';
+const siteUrl = 'https://onlynerds.win';
+const contactEmail = 'pavan.yellathakota.ds@gmail.com';
+---
+
+<Layout
+  title="Privacy Policy"
+  description="OnlyNerds privacy policy. We use minimal analytics to improve the platform and do not sell or share your data. No account required, no personal data stored."
+  keywords="OnlyNerds privacy policy, data collection, analytics, Cloudflare analytics, Microsoft Clarity"
+>
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6 py-12">
+
+        <!-- Header -->
+        <div class="mb-10">
+          <div class="mb-3 flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-blue-400"></span>
+            <span class="text-xs font-semibold uppercase tracking-widest text-blue-500">Legal</span>
+          </div>
+          <h1 class="mb-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Privacy Policy</h1>
+          <p class="text-sm text-slate-500">Last updated: {lastUpdated}</p>
+        </div>
+
+        <div class="space-y-10 text-sm text-slate-400 leading-relaxed">
+
+          <!-- Overview -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Overview</h2>
+            <p>
+              OnlyNerds (<a href={siteUrl} class="text-blue-400 hover:text-blue-300 transition-colors">{siteUrl}</a>) is a free career intelligence platform for tech jobseekers.
+              We do not require account registration, we do not collect personal information, and we do not sell any data to third parties.
+            </p>
+            <p class="mt-3">
+              This policy describes the limited analytics tools we use to understand how visitors use the platform so we can improve it.
+            </p>
+          </section>
+
+          <!-- What we collect -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Information We Collect</h2>
+            <p class="mb-4">We do not collect any personally identifiable information (PII). We use two third-party analytics tools that collect anonymized, aggregated data:</p>
+
+            <!-- Cloudflare -->
+            <div class="rounded-xl border border-slate-800 bg-slate-900 p-5 mb-4">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="h-1.5 w-1.5 rounded-full bg-orange-400"></span>
+                <h3 class="text-sm font-semibold text-white">Cloudflare Web Analytics</h3>
+              </div>
+              <p class="mb-2">
+                We use Cloudflare Web Analytics to measure page views and traffic patterns. Cloudflare Web Analytics is designed to be privacy-first:
+              </p>
+              <ul class="list-disc list-inside space-y-1 pl-2 text-slate-400">
+                <li>No cookies are set</li>
+                <li>No personal data is collected</li>
+                <li>IP addresses are not stored</li>
+                <li>Data is not shared with advertisers</li>
+                <li>Compliant with GDPR, CCPA, and PECR</li>
+              </ul>
+              <p class="mt-3">
+                Data collected: page URL, referrer, country (country-level only), device type, browser type. All data is aggregated and anonymized.
+              </p>
+              <p class="mt-2 text-xs text-slate-500">
+                Cloudflare privacy policy: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 transition-colors">cloudflare.com/privacypolicy</a>
+              </p>
+            </div>
+
+            <!-- Microsoft Clarity -->
+            <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+                <h3 class="text-sm font-semibold text-white">Microsoft Clarity</h3>
+              </div>
+              <p class="mb-2">
+                We use Microsoft Clarity to understand how visitors interact with the site through session recordings, heatmaps, and click analytics. This helps us identify usability issues and improve the platform.
+              </p>
+              <p class="mb-2">Microsoft Clarity may collect:</p>
+              <ul class="list-disc list-inside space-y-1 pl-2 text-slate-400">
+                <li>Mouse movements, clicks, and scroll depth</li>
+                <li>Pages visited and navigation patterns</li>
+                <li>Device type, browser, and operating system</li>
+                <li>General geographic location (country or region level)</li>
+                <li>Session duration and interaction events</li>
+              </ul>
+              <p class="mt-3">
+                Clarity does not collect passwords, payment details, or any form data you submit. Personally identifiable text visible on the screen is automatically masked.
+              </p>
+              <p class="mt-2 text-xs text-slate-500">
+                Microsoft privacy policy: <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 transition-colors">privacy.microsoft.com</a>
+              </p>
+            </div>
+          </section>
+
+          <!-- What we do not collect -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">What We Do Not Collect</h2>
+            <ul class="list-disc list-inside space-y-1 pl-2">
+              <li>Names, email addresses, or any account information (no sign-ups exist)</li>
+              <li>Financial or payment information</li>
+              <li>Precise geographic location</li>
+              <li>Search queries you type on the platform</li>
+              <li>Any data sold or shared with advertisers or data brokers</li>
+            </ul>
+          </section>
+
+          <!-- Cookies -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Cookies</h2>
+            <p>
+              OnlyNerds does not set first-party cookies. Cloudflare Web Analytics is cookie-free by design.
+              Microsoft Clarity may use cookies or local storage to maintain session continuity for session recording. These are functional to the analytics service and do not track you across other websites.
+            </p>
+          </section>
+
+          <!-- Third-party links -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Third-Party Links</h2>
+            <p>
+              OnlyNerds links to external job boards, learning platforms, and tools. Once you leave our site, this privacy policy no longer applies.
+              We are not responsible for the privacy practices of those third-party services. We encourage you to review their policies before providing any personal information.
+            </p>
+          </section>
+
+          <!-- GDPR / CCPA -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Your Rights (GDPR, CCPA, and other regulations)</h2>
+            <p class="mb-3">
+              Because we do not collect personally identifiable information, most data rights requests (access, deletion, portability) do not apply to data held by OnlyNerds directly.
+              For data held by our analytics providers, please refer to their respective privacy policies and opt-out mechanisms:
+            </p>
+            <ul class="list-disc list-inside space-y-1 pl-2">
+              <li>
+                Cloudflare: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 transition-colors">cloudflare.com/privacypolicy</a>
+              </li>
+              <li>
+                Microsoft Clarity opt-out: <a href="https://clarity.microsoft.com/privacy" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 transition-colors">clarity.microsoft.com/privacy</a>
+              </li>
+            </ul>
+            <p class="mt-3">
+              If you are a resident of California (CCPA), the European Union (GDPR), or any other jurisdiction with applicable privacy laws, you may disable analytics by using a browser extension such as uBlock Origin, which will block both Cloudflare and Clarity scripts entirely.
+            </p>
+          </section>
+
+          <!-- Children -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Children's Privacy</h2>
+            <p>
+              OnlyNerds is not directed at children under the age of 13. We do not knowingly collect any information from anyone under 13 years of age.
+            </p>
+          </section>
+
+          <!-- Changes -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Changes to This Policy</h2>
+            <p>
+              We may update this privacy policy as the platform evolves. Any material changes will be reflected in the "Last updated" date at the top of this page.
+              Continued use of the platform after changes are posted constitutes acceptance of the updated policy.
+            </p>
+          </section>
+
+          <!-- Contact -->
+          <section>
+            <h2 class="mb-3 text-base font-semibold text-white">Contact</h2>
+            <p>
+              If you have questions about this privacy policy or how the platform handles data, reach out directly:
+            </p>
+            <p class="mt-2">
+              <a href={`mailto:${contactEmail}`} class="text-blue-400 hover:text-blue-300 transition-colors">{contactEmail}</a>
+            </p>
+          </section>
+
+        </div>
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

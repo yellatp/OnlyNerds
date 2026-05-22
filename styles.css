@@ -452,22 +452,25 @@ body {
     letter-spacing: 0.3px;
 }
 
-/* Category badge colors */
-.category-technology { background: rgba(108, 92, 231, 0.2); color: #6c5ce7; }
-.category-it-&-infrastructure { background: rgba(9, 132, 227, 0.2); color: #0984e3; }
-.category-data-&-ai { background: rgba(0, 184, 148, 0.2); color: #00b894; }
-.category-security { background: rgba(225, 112, 85, 0.2); color: #e17055; }
-.category-product { background: rgba(253, 121, 168, 0.2); color: #fd79a8; }
-.category-design { background: rgba(162, 155, 254, 0.2); color: #a29bfe; }
-.category-marketing { background: rgba(253, 203, 110, 0.2); color: #fdcb6e; }
-.category-sales { background: rgba(0, 206, 201, 0.2); color: #00cec9; }
-.category-finance { background: rgba(85, 239, 196, 0.2); color: #55efc4; }
-.category-business-&-operations { background: rgba(116, 185, 255, 0.2); color: #74b9ff; }
-.category-hr-&-recruiting { background: rgba(232, 67, 147, 0.2); color: #e84393; }
-.category-corporate { background: rgba(99, 110, 114, 0.2); color: #636e72; }
-.category-hardware-&-embedded-systems { background: rgba(250, 177, 160, 0.2); color: #fab1a0; }
-.category-operations-skilled-work { background: rgba(253, 203, 110, 0.25); color: #d4a017; }
-.category-uncategorized { background: rgba(178, 190, 195, 0.2); color: #b2bec3; }
+/* Category badge colors — standardized with theme-aware CSS variables */
+.category-technology,
+.category-it-&-infrastructure,
+.category-data-&-ai,
+.category-security,
+.category-product,
+.category-design,
+.category-marketing,
+.category-sales,
+.category-finance,
+.category-business-&-operations,
+.category-hr-&-recruiting,
+.category-corporate,
+.category-hardware-&-embedded-systems,
+.category-operations-skilled-work,
+.category-uncategorized {
+    background: var(--accent-light);
+    color: var(--accent);
+}
 
 /* Filter Grid */
 .filter-grid {
@@ -694,25 +697,13 @@ body {
     letter-spacing: 0.3px;
 }
 
-/* Employment type badges */
-.badge-type-full-time {
-    background: #dfe6e9;
-    color: #2d3436;
-}
-
-.badge-type-part-time {
-    background: #ffeaa7;
-    color: #6c5ce7;
-}
-
-.badge-type-contract {
-    background: #fab1a0;
-    color: #c0392b;
-}
-
+/* Employment type badges — single neutral style */
+.badge-type-full-time,
+.badge-type-part-time,
+.badge-type-contract,
 .badge-type-internship {
-    background: #81ecec;
-    color: #00b894;
+    background: var(--border);
+    color: var(--text);
 }
 
 /* Department badge */
@@ -721,66 +712,26 @@ body {
     color: var(--accent);
 }
 
-/* Skill level badges */
-.badge-skill-intern {
-    background: #81ecec;
-    color: #00b894;
-}
-
-.badge-skill-entry {
-    background: #74b9ff;
-    color: #0984e3;
-}
-
-.badge-skill-mid {
-    background: #a29bfe;
-    color: #6c5ce7;
-}
-
+/* Skill level badges — single neutral style */
+.badge-skill-intern,
+.badge-skill-entry,
+.badge-skill-mid,
 .badge-skill-senior {
-    background: #fd79a8;
-    color: #e84393;
+    background: var(--border);
+    color: var(--text);
 }
 
-/* ATS badges */
-.badge-ats-greenhouse {
-    background: #dcf5e7;
-    color: #166534;
-}
-
-.badge-ats-lever {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.badge-ats-workday {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.badge-ats-ashby {
-    background: #ede9fe;
-    color: #5b21b6;
-}
-
-.badge-ats-icims {
-    background: #cffafe;
-    color: #155e75;
-}
-
-.badge-ats-bamboohr {
-    background: #fbcfe8;
-    color: #831843;
-}
-
-.badge-ats-workable {
-    background: #f1f5f9;
-    color: #334155;
-}
-
+/* ATS badges — single neutral style */
+.badge-ats-greenhouse,
+.badge-ats-lever,
+.badge-ats-workday,
+.badge-ats-ashby,
+.badge-ats-icims,
+.badge-ats-bamboohr,
+.badge-ats-workable,
 .badge-ats-unknown {
-    background: #f1f5f9;
-    color: #64748b;
+    background: var(--input-bg);
+    color: var(--text-light);
 }
 
 /* Tile Actions */

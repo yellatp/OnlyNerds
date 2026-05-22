@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnlyNerds</title>
+    <meta name="description" content="Aggregated tech job listings from top ATS platforms — Greenhouse, Lever, Ashby, Workday, BambooHR, iCIMS, Workable">
+    <meta name="keywords" content="tech jobs, software engineering, data science, remote jobs, onlynerds">
+    <meta name="author" content="OnlyNerds">
+    <meta property="og:title" content="OnlyNerds">
+    <meta property="og:description" content="Aggregated tech job listings from top ATS platforms">
+    <meta property="og:image" content="assets/JobBoard.svg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="OnlyNerds">
+    <meta name="twitter:description" content="Aggregated tech job listings from top ATS platforms">
+    <link rel="icon" type="image/svg+xml" href="assets/OnlyNerds.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main class="container mt-4">
+        <!-- Job Board Header -->
+        <div class="job-board-header">
+            <!-- Left Panel: Compact Branding & Stats -->
+            <div class="left-panel">
+                <div class="brand-card">
+                    <a href="https://onlynerds.win" target="_blank" rel="noopener noreferrer" class="brand-logo-link">
+                        <img src="assets/JobBoard.svg" alt="OnlyNerds - Job Board" class="brand-logo">
+                    </a>
+                    <div class="brand-stats">
+                        <div class="brand-counts">
+                            <span id="total-jobs">Loading...</span> jobs from <span id="total-companies">0</span> companies
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Search + Controls in a single horizontal row -->
+            <div class="right-panel">
+                <div class="search-controls-row">
+                    <!-- Title Search -->
+                    <div class="search-field search-field-compact">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        <input type="text" id="filter-search" class="search-input" placeholder="Search title, company...">
+                    </div>
+
+                    <!-- Location Search -->
+                    <div class="search-field search-field-compact">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                        </svg>
+                        <input type="text" id="filter-location" class="search-input" placeholder="Location...">
+                    </div>
+
+                    <!-- All Jobs / Domain Toggle -->
+                    <div class="control-group">
+                        <button class="control-toggle active" data-target="domain-section" aria-expanded="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2 1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2zm0 8a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H2zm8-8a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-4zm0 8a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-4z"/>
+                            </svg>
+                            All Jobs
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Sort Dropdown -->
+                    <div class="control-group">
+                        <button class="control-toggle" data-target="sort-section" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3.5 2a.5.5 0 0 1 .5.5v10.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L5 13.293V2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
+                            </svg>
+                            Sort
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </button>
+                        <div id="sort-section" class="control-panel" style="display:none;">
+                            <select id="sort-select" class="form-select form-select-sm">
+                                <option value="freshness-desc">Freshness (Newest)</option>
+                                <option value="published_on-desc">Date (Newest)</option>
+                                <option value="published_on-asc">Date (Oldest)</option>
+                                <option value="relevance">Relevance</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Filters Toggle -->
+                    <div class="control-group">
+                        <button class="control-toggle" data-target="filter-section" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                            </svg>
+                            Filters
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Layout Selector -->
+                    <div class="control-group layout-group">
+                        <label class="layout-label">Layout</label>
+                        <select id="tiles-per-row" class="form-select form-select-sm" title="Tiles per row">
+                            <option value="5" selected>5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Domain Section (collapsible) -->
+                <div id="domain-section" class="control-section">
+                    <div id="domain-toggle" class="domain-toggle">
+                        <!-- Rendered by JS -->
+                    </div>
+                    <!-- Category Pills -->
+                    <div id="category-pills" class="category-pills">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Filter Section (collapsible) -->
+                <div id="filter-section" class="control-section" style="display:none;">
+                    <div class="filter-grid">
+                        <!-- Row 1: Core Filters -->
+                        <div class="filter-field">
+                            <label for="filter-location-adv" class="visually-hidden">Location</label>
+                            <input type="text" id="filter-location-adv" class="form-control" placeholder="Location">
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-company" class="visually-hidden">Company</label>
+                            <select id="filter-company" class="form-select">
+                                <option value="">Company</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-department" class="visually-hidden">Department</label>
+                            <select id="filter-department" class="form-select">
+                                <option value="">Department</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-ats" class="visually-hidden">ATS</label>
+                            <select id="filter-ats" class="form-select">
+                                <option value="">ATS</option>
+                                <option value="Ashby">Ashby</option>
+                                <option value="Bamboohr">BambooHR</option>
+                                <option value="Greenhouse">Greenhouse</option>
+                                <option value="Lever">Lever</option>
+                                <option value="Workday">Workday</option>
+                                <option value="iCIMS">iCIMS</option>
+                                <option value="Workable">Workable</option>
+                            </select>
+                        </div>
+                        <!-- Row 2: Advanced Filters -->
+                        <div class="filter-field">
+                            <label for="filter-salary-min" class="visually-hidden">Min Salary</label>
+                            <input type="number" id="filter-salary-min" class="form-control" placeholder="Min salary">
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-skill-level" class="visually-hidden">Experience</label>
+                            <select id="filter-skill-level" class="form-select">
+                                <option value="">Experience</option>
+                                <option value="intern">Intern</option>
+                                <option value="entry">Entry</option>
+                                <option value="mid">Mid</option>
+                                <option value="senior">Senior</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-employment-type" class="visually-hidden">Type</label>
+                            <select id="filter-employment-type" class="form-select">
+                                <option value="">Type</option>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-remote" class="visually-hidden">Workplace</label>
+                            <select id="filter-remote" class="form-select">
+                                <option value="">Workplace</option>
+                                <option value="remote">Remote Only</option>
+                                <option value="onsite">On-site Only</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-freshness" class="visually-hidden">Freshness</label>
+                            <select id="filter-freshness" class="form-select">
+                                <option value="">Posted</option>
+                                <option value="24h">Past 24 hours</option>
+                                <option value="3d">Past 3 days</option>
+                                <option value="7d">Past 7 days</option>
+                                <option value="14d">Past 14 days</option>
+                                <option value="30d">Past 30 days</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="filter-show" class="visually-hidden">Show</label>
+                            <select id="filter-show" class="form-select">
+                                <option value="">All Jobs</option>
+                                <option value="saved">Saved Only</option>
+                                <option value="applied">Applied Only</option>
+                            </select>
+                        </div>
+                        <!-- Filter Actions Row -->
+                        <div class="filter-actions">
+                            <button type="button" class="btn-clear" id="clear-filters">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar d-flex justify-content-between align-items-center mb-3 px-2">
+            <div>
+                <span id="page-info">Page 1 of 1</span>
+                <span class="stats-freshness-badge" id="stats-freshness">(Past 30 days)</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary" id="saved-count">0 saved</span>
+                <select id="per-page" class="form-select form-select-sm" style="width: auto;" title="Jobs per page">
+                    <option value="25">25</option>
+                    <option value="50" selected>50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading jobs...</span>
+            </div>
+            <p class="mt-3">Loading job listings...</p>
+        </div>
+
+        <!-- Job Grid (Tiles) -->
+        <div id="results" style="display:none;">
+            <div id="job-grid" class="job-grid tiles-5">
+                <!-- Tiles rendered by JS -->
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="pagination-controls d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <span id="page-info-bottom">Page 1 of 1</span>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-primary" id="prev-page" disabled>← Previous</button>
+                    <button class="btn btn-sm btn-outline-primary" id="next-page">Next →</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <!-- Column 1: Logo (30%) -->
+            <div class="footer-col footer-col-logo">
+                <a href="https://onlynerds.win" target="_blank" rel="noopener noreferrer" class="footer-logo-link">
+                    <img src="assets/OnlyNerds.svg" alt="OnlyNerds"
+                         class="footer-logo"
+                         onerror="this.onerror=null; this.src='assets/OnlyNerds.png'" />
+                </a>
+            </div>
+
+            <!-- Column 2: Pages (23%) -->
+            <div class="footer-col footer-col-pages">
+                <span class="footer-label">Pages</span>
+                <nav class="footer-nav">
+                    <a href="https://onlynerds.win" target="_blank" rel="noopener noreferrer">Home</a>
+                    <a href="/">Job Board</a>
+                    <a href="/about">About</a>
+                </nav>
+            </div>
+
+            <!-- Column 3: Creator (23%) -->
+            <div class="footer-col footer-col-creator">
+                <span class="footer-label">Created by</span>
+                <div class="footer-creator-info">
+                    <span class="footer-creator-name">Pavan Yellathakota</span>
+                    <span class="footer-creator-role">Data Scientist & ML Practitioner</span>
+                    <span class="footer-creator-org">Co-founder, Alphonso AI</span>
+                </div>
+            </div>
+
+            <!-- Column 4: Association (23%) -->
+            <div class="footer-col footer-col-association">
+                <span class="footer-label">Built in association with</span>
+                <div class="footer-association-info">
+                    <a href="https://alphonso.app/" target="_blank" rel="noopener noreferrer" class="footer-association-link">Alphonso AI</a>
+                    <span class="footer-copy">&copy; 2026 OnlyNerds</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060;">
+        <div id="job-toast" class="toast align-items-center text-white bg-primary border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

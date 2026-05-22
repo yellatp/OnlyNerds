@@ -1,32 +1,7 @@
 /* ========================================
-   ONLY NERDS — GLOBAL & THEME (Dark — Default)
+   ONLY NERDS — GLOBAL & THEME (Light — Default)
    ======================================== */
 :root,
-[data-theme="dark"] {
-    --bg: #0A0A0A;
-    --card-bg: #111111;
-    --card-border: #323028;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
-    --accent: #6c5ce7;
-    --accent-hover: #5a4bd1;
-    --accent-light: rgba(108, 92, 231, 0.15);
-    --text: #EDEDEA;
-    --text-light: #A09E96;
-    --text-muted: #706E66;
-    --border: #323028;
-    --input-bg: #1A1A1A;
-    --fresh-green: #00b894;
-    --fresh-blue: #0984e3;
-    --fresh-gray: #636e72;
-    --fresh-light: #b2bec3;
-    --tile-radius: 16px;
-    --theme-icon: "🌙";
-}
-
-/* ========================================
-   LIGHT THEME OVERRIDES
-   ======================================== */
 [data-theme="light"] {
     --bg: #F5F5F0;
     --card-bg: #FFFFFF;
@@ -47,6 +22,31 @@
     --fresh-light: #b2bec3;
     --tile-radius: 16px;
     --theme-icon: "☀️";
+}
+
+/* ========================================
+   DARK THEME OVERRIDES
+   ======================================== */
+[data-theme="dark"] {
+    --bg: #0A0A0A;
+    --card-bg: #111111;
+    --card-border: #323028;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+    --accent: #6c5ce7;
+    --accent-hover: #5a4bd1;
+    --accent-light: rgba(108, 92, 231, 0.15);
+    --text: #EDEDEA;
+    --text-light: #A09E96;
+    --text-muted: #706E66;
+    --border: #323028;
+    --input-bg: #1A1A1A;
+    --fresh-green: #00b894;
+    --fresh-blue: #0984e3;
+    --fresh-gray: #636e72;
+    --fresh-light: #b2bec3;
+    --tile-radius: 16px;
+    --theme-icon: "🌙";
 }
 
 * {
@@ -1242,6 +1242,41 @@ body {
     }
 }
 
+/* ========================================
+   THEME TOGGLE BUTTON
+   ======================================== */
+.theme-toggle-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    color: var(--text);
+}
+
+.theme-toggle-btn:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+}
+
+/* ========================================
+   SMOOTH THEME TRANSITIONS
+   ======================================== */
+*,
+*::before,
+*::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Prevent flash of wrong theme on page load */
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+    transition: none !important;
+}
 @media (max-width: 1100px) {
     .job-grid.tiles-5,
     .job-grid.tiles-6,
@@ -1266,42 +1301,3 @@ body {
     }
 }
 
-/* ========================================
-   THEME TOGGLE BUTTON
-   ======================================== */
-.theme-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    font-size: 18px;
-    line-height: 1;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--text);
-    flex-shrink: 0;
-}
-
-.theme-toggle-btn:hover {
-    border-color: var(--accent);
-    background: var(--accent-light);
-}
-
-/* Smooth theme transition */
-*,
-*::before,
-*::after {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Disable transitions on page load to prevent flash */
-.theme-transitioning *,
-.theme-transitioning *::before,
-.theme-transitioning *::after {
-    transition: none !important;
-}

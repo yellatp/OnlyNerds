@@ -199,23 +199,19 @@ class JobBoardApp {
 
     // ── Sorting ──────────────────────────────────────────────
     handleSort(key) {
-        // Parse compound values like "freshness-desc", "published_on-asc"
+        // Parse compound values like "published_on-desc", "title-asc"
         // The sort dropdown uses format: "{sortKey}-{direction}"
         const parts = key.split('-');
         const sortKey = parts[0];
         const sortDir = parts[1];
 
         if (sortDir === 'asc' || sortDir === 'desc') {
-            // Compound value: set both key and direction
-            if (this.sortState.key === sortKey && this.sortState.direction === sortDir) {
-                // Already set — toggle direction
-                this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                this.sortState.key = sortKey;
-                this.sortState.direction = sortDir;
-            }
+            // Compound value from dropdown: direction is explicitly specified
+            // Never toggle — the dropdown value IS the desired sort
+            this.sortState.key = sortKey;
+            this.sortState.direction = sortDir;
         } else {
-            // Simple value: toggle if same key, else set with default direction
+            // Simple value (e.g. "relevance"): toggle if same key, else set with default direction
             if (this.sortState.key === key) {
                 this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
             } else {

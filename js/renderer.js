@@ -59,15 +59,15 @@ function getFreshness(job) {
  */
 function getAtsClass(ats) {
     const map = {
-        'greenhouse': 'ats-greenhouse',
-        'lever': 'ats-lever',
-        'workday': 'ats-workday',
-        'ashby': 'ats-ashby',
-        'icims': 'ats-icims',
-        'bamboohr': 'ats-bamboohr',
-        'workable': 'ats-workable',
+        'greenhouse': 'badge-ats-greenhouse',
+        'lever': 'badge-ats-lever',
+        'workday': 'badge-ats-workday',
+        'ashby': 'badge-ats-ashby',
+        'icims': 'badge-ats-icims',
+        'bamboohr': 'badge-ats-bamboohr',
+        'workable': 'badge-ats-workable',
     };
-    return map[ats?.toLowerCase()] || 'ats-unknown';
+    return map[ats?.toLowerCase()] || 'badge-ats-unknown';
 }
 
 /**

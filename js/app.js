@@ -295,11 +295,8 @@ const STORAGE_KEY = 'onlynerds-theme';
 function getPreferredTheme() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'light' || stored === 'dark') return stored;
-    // Respect OS preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        return 'light';
-    }
-    return 'dark';
+    // Default to light mode
+    return 'light';
 }
 
 function setTheme(theme) {
@@ -313,7 +310,7 @@ function setTheme(theme) {
 }
 
 function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
     const next = current === 'dark' ? 'light' : 'dark';
     setTheme(next);
 }

@@ -450,26 +450,8 @@ body {
     border-radius: 4px !important;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-}
-
-/* Category badge colors — standardized with theme-aware CSS variables */
-.category-technology,
-.category-it-&-infrastructure,
-.category-data-&-ai,
-.category-security,
-.category-product,
-.category-design,
-.category-marketing,
-.category-sales,
-.category-finance,
-.category-business-&-operations,
-.category-hr-&-recruiting,
-.category-corporate,
-.category-hardware-&-embedded-systems,
-.category-operations-skilled-work,
-.category-uncategorized {
-    background: var(--accent-light);
-    color: var(--accent);
+    color: var(--accent) !important;
+    background: var(--accent-light) !important;
 }
 
 /* Filter Grid */

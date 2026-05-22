@@ -47,6 +47,7 @@
 - Cloudflare Pages serves the files directly from the repository
 - Job data is loaded from local `data/chunks/` directory (gzip JSON files)
 - No Node.js, no npm, no build tools needed
+- **Light/Dark theme toggle** — persists preference in `localStorage`, respects OS `prefers-color-scheme`
 
 ---
 

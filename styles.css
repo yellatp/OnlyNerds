@@ -1,7 +1,8 @@
 /* ========================================
-   ONLY NERDS — GLOBAL & THEME (Dark)
+   ONLY NERDS — GLOBAL & THEME (Dark — Default)
    ======================================== */
-:root {
+:root,
+[data-theme="dark"] {
     --bg: #0A0A0A;
     --card-bg: #111111;
     --card-border: #323028;
@@ -20,6 +21,32 @@
     --fresh-gray: #636e72;
     --fresh-light: #b2bec3;
     --tile-radius: 16px;
+    --theme-icon: "🌙";
+}
+
+/* ========================================
+   LIGHT THEME OVERRIDES
+   ======================================== */
+[data-theme="light"] {
+    --bg: #F5F5F0;
+    --card-bg: #FFFFFF;
+    --card-border: #D4D0C8;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --accent: #6c5ce7;
+    --accent-hover: #5a4bd1;
+    --accent-light: rgba(108, 92, 231, 0.1);
+    --text: #1A1A1A;
+    --text-light: #555555;
+    --text-muted: #888888;
+    --border: #D4D0C8;
+    --input-bg: #FFFFFF;
+    --fresh-green: #00b894;
+    --fresh-blue: #0984e3;
+    --fresh-gray: #636e72;
+    --fresh-light: #b2bec3;
+    --tile-radius: 16px;
+    --theme-icon: "☀️";
 }
 
 * {
@@ -1238,3 +1265,42 @@ body {
     }
 }
 
+/* ========================================
+   THEME TOGGLE BUTTON
+   ======================================== */
+.theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    font-size: 18px;
+    line-height: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text);
+    flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+/* Smooth theme transition */
+*,
+*::before,
+*::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Disable transitions on page load to prevent flash */
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+    transition: none !important;
+}

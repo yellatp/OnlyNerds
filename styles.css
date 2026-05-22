@@ -466,7 +466,7 @@ body {
 .category-hr-&-recruiting { background: rgba(232, 67, 147, 0.2); color: #e84393; }
 .category-corporate { background: rgba(99, 110, 114, 0.2); color: #636e72; }
 .category-hardware-&-embedded-systems { background: rgba(250, 177, 160, 0.2); color: #fab1a0; }
-.category-operations-&-skilled-work { background: rgba(253, 203, 110, 0.25); color: #d4a017; }
+.category-operations-skilled-work { background: rgba(253, 203, 110, 0.25); color: #d4a017; }
 .category-uncategorized { background: rgba(178, 190, 195, 0.2); color: #b2bec3; }
 
 /* Filter Grid */

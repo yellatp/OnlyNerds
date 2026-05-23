@@ -47,7 +47,7 @@ class JobBoardApp {
         const resultsEl = document.getElementById('results');
 
         try {
-            await loadJobsProgressive(this);
+            await loadJobsProgressive(this, 'https://pub-44ec4fb39628423389fcf31e0c2ec994.r2.dev/chunks');
 
             // Classify all jobs after loading
             classifyJobs(this.allJobs);

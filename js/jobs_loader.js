@@ -52,6 +52,7 @@ export async function fetchD1Page(filters = {}, offset = 0, limit = BULK_LIMIT) 
 
     // Pass all active filters to the API
     if (filters.search) params.set('q', filters.search);
+    if (filters.location) params.set('location', filters.location);
     if (filters.company) params.set('company', filters.company);
     if (filters.ats) params.set('ats', filters.ats);
     if (filters.category) params.set('category', filters.category);
@@ -60,6 +61,9 @@ export async function fetchD1Page(filters = {}, offset = 0, limit = BULK_LIMIT) 
     if (filters.employment_type) params.set('employment_type', filters.employment_type);
     if (filters.remote === '1' || filters.remote === 'true') params.set('remote', '1');
     if (filters.freshness) params.set('freshness', filters.freshness);
+    // Pass sort params to the API
+    if (filters.sort) params.set('sort', filters.sort);
+    if (filters.dir) params.set('dir', filters.dir);
 
     const url = `${D1_API_BASE}?${params.toString()}`;
     const response = await fetch(url);

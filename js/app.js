@@ -18,7 +18,7 @@ class JobBoardApp {
         this.filteredJobs = [];
         this.currentPage = 1;
         this.perPage = window.innerWidth <= 900 ? 25 : 50;
-        this.sortState = { key: 'published_on', direction: 'desc' };
+        this.sortState = { key: 'scraped_at', direction: 'desc' };
 
         this.filterState = {
             search: '', location: '', company: '', department: '',
@@ -59,7 +59,7 @@ class JobBoardApp {
             // Classify all jobs after loading
             classifyJobs(this.allJobs);
 
-            this.sortState = { key: 'published_on', direction: 'desc' };
+            this.sortState = { key: 'scraped_at', direction: 'desc' };
 
             // Default freshness filter: show all jobs (no date restriction)
             if (!this.filterState.freshness) {
@@ -91,6 +91,8 @@ class JobBoardApp {
     debounceRender() {
         clearTimeout(this.debounceTimer);
         this.debounceTimer = setTimeout(() => {
+            // Sync all filter values from DOM before querying
+            this._syncFilterStateFromDOM();
             if (this.serverSide) {
                 this.applyFilters();
             } else {
@@ -225,6 +227,7 @@ class JobBoardApp {
         const params = {};
 
         if (f.search) params.search = f.search;
+        if (f.location) params.location = f.location;
         if (f.company) params.company = f.company;
         if (f.ats) params.ats = f.ats;
         if (f.category || this.selectedCategory) params.category = f.category || this.selectedCategory;
@@ -233,6 +236,11 @@ class JobBoardApp {
         if (f.employment_type) params.employment_type = f.employment_type;
         if (f.remote) params.remote = f.remote;
         if (f.freshness) params.freshness = f.freshness;
+        // Include sort params for server-side sorting
+        if (this.sortState.key) {
+            params.sort = this.sortState.key;
+            params.dir = this.sortState.direction;
+        }
 
         return params;
     }
@@ -320,7 +328,13 @@ class JobBoardApp {
 
         this.currentPage = 1;
         updateURL(this.filterState, this.currentPage, this.sortState);
-        this.render();
+
+        // In server-side mode, query the API with the new sort
+        if (this.serverSide) {
+            this._queryServer(this.currentPage);
+        } else {
+            this.render();
+        }
     }
 
     // ── Pagination ───────────────────────────────────────────
@@ -366,9 +380,11 @@ class JobBoardApp {
         if (params.sort) {
             const parts = params.sort.split('-');
             if (parts.length === 2) {
-                this.sortState.key = parts[0];
+                // Map old 'published_on' sort key to 'scraped_at'
+                const sortKey = parts[0] === 'published_on' ? 'scraped_at' : parts[0];
+                this.sortState.key = sortKey;
                 this.sortState.direction = parts[1];
-                setVal('sort-select', params.sort);
+                setVal('sort-select', `${sortKey}-${parts[1]}`);
             }
         }
         if (params.page) {

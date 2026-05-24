@@ -46,6 +46,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       bindings.push(searchTerm, searchTerm, searchTerm);
     }
 
+    // Location filter
+    const location = params.get('location');
+    if (location && location.trim()) {
+      conditions.push('location LIKE ?');
+      bindings.push(`%${location.trim()}%`);
+    }
+
     // Company filter
     const company = params.get('company');
     if (company && company.trim()) {
@@ -111,16 +118,32 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const maxHours = hoursMap[freshness.trim()];
       if (maxHours) {
         // Use published_on if available, otherwise scraped_at
+        // NOTE: scraped_at is stored as ISO 8601 (e.g. "2026-05-20T02:42:49.242485Z")
+        // SQLite's unixepoch() cannot parse 'T' separator or 'Z' timezone.
+        // We use strftime('%s', ...) with REPLACE to normalize the format.
         conditions.push(
           `(CASE
             WHEN published_on IS NOT NULL AND published_on != ''
-              THEN (unixepoch('now') - unixepoch(published_on)) / 3600.0
+              THEN (strftime('%s','now') - strftime('%s', published_on)) / 3600.0
             WHEN scraped_at IS NOT NULL AND scraped_at != ''
-              THEN (unixepoch('now') - unixepoch(scraped_at)) / 3600.0
+              THEN (strftime('%s','now') - strftime('%s', REPLACE(REPLACE(scraped_at, 'T', ' '), 'Z', ''))) / 3600.0
             ELSE 999999
           END) <= ?`
         );
         bindings.push(maxHours);
+      }
+    }
+
+    // Sort parameter
+    let orderClause = 'ORDER BY scraped_at DESC';
+    const sort = params.get('sort');
+    const dir = params.get('dir');
+    if (sort && sort.trim()) {
+      const allowedSortCols = ['scraped_at', 'published_on', 'company', 'title', 'location'];
+      const sortCol = sort.trim().toLowerCase();
+      if (allowedSortCols.includes(sortCol)) {
+        const sortDir = dir === 'asc' ? 'ASC' : 'DESC';
+        orderClause = `ORDER BY ${sortCol} ${sortDir}`;
       }
     }
 
@@ -138,8 +161,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const countResult = await env.DB.prepare(countQuery).bind(...bindings).all();
     const total = (countResult.results?.[0] as any)?.total || 0;
 
-    // Get paginated results
-    const dataQuery = `SELECT * FROM jobs ${whereClause} ORDER BY scraped_at DESC LIMIT ? OFFSET ?`;
+    // Get paginated results with sort
+    const dataQuery = `SELECT * FROM jobs ${whereClause} ${orderClause} LIMIT ? OFFSET ?`;
     const dataResult = await env.DB.prepare(dataQuery).bind(...bindings, limit, offset).all();
 
     return new Response(JSON.stringify({

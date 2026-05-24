@@ -136,7 +136,49 @@ In the Cloudflare Dashboard:
 
 ---
 
+## D1 Database API Endpoints
+
+The frontend now includes **Cloudflare Pages Functions** that query the **D1 database** directly. These provide real-time stats, search, and click tracking alongside the static chunk files.
+
+### Available Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/stats` | GET | Returns `{ totalJobs, totalCompanies, totalPlatforms, lastUpdated }` |
+| `/api/search?q=...&company=...&ats=...&category=...&limit=50&offset=0` | GET | Search/filter jobs with pagination |
+| `/api/click` | POST | Record an apply click `{ url, title?, company? }` |
+
+### Required D1 Binding
+
+In the **Cloudflare Dashboard** → `onlynerds-jobs` → **Settings** → **Functions** → **D1 database bindings**:
+
+| Variable name | Database |
+|---------------|----------|
+| `DB` | `job-aggregator-db` (ID: `d27185cb-ca2d-4dc3-96bf-d21d558fced3`) |
+
+### Initialize the D1 Schema
+
+After creating the D1 binding, run the schema against the database:
+
+```bash
+npx wrangler d1 execute job-aggregator-db --file=./schema.sql
+```
+
+Or via the Cloudflare Dashboard → D1 → `job-aggregator-db` → **Query** tab → paste the contents of `schema.sql`.
+
+### How the Frontend Uses D1
+
+The frontend still loads job data from `data/chunks/` (gzip JSON files) for the main job board. The D1 endpoints are used for:
+
+- **Stats**: `/api/stats` provides real-time job/company/platform counts
+- **Search**: `/api/search` enables server-side filtering without loading all chunks
+- **Click tracking**: `/api/click` records apply clicks for analytics
+
+---
+
 ## Data Updates
+
+### Static Chunks (for main job board)
 
 The job data is stored in `data/chunks/` as gzip JSON files. To update the data:
 
@@ -150,6 +192,16 @@ cp -r /path/to/backend/data/chunks ./frontend/data/
 git add data/chunks/
 git commit -m "Update job data chunks"
 git push origin main
+```
+
+### D1 Database (for real-time queries)
+
+The D1 database is populated by the backend scraper directly (via the D1 HTTP API). No manual data copy needed for D1 — the backend inserts jobs as it scrapes them.
+
+To manually export D1 data to R2 chunks (if needed):
+
+```bash
+cd backend && npx tsx src/index.ts --export-chunks
 ```
 
 ---

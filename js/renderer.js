@@ -225,7 +225,7 @@ export function render(app) {
 
     if (pageJobs.length === 0) {
         grid.innerHTML = '<div class="text-center py-5" style="color:#dfe6e9;grid-column:1/-1;"><p class="fs-5">No jobs found</p><p class="text-muted">Try adjusting your filters.</p></div>';
-        updatePagination(app.currentPage, 1, app.filteredJobs.length);
+        updatePagination(app.currentPage, 1, app.filteredJobs.length, app.filterState?.freshness);
         return;
     }
 
@@ -240,5 +240,5 @@ export function render(app) {
         if (tile) grid.appendChild(tile);
     });
 
-    updatePagination(app.currentPage, totalPages, app.filteredJobs.length);
+    updatePagination(app.currentPage, totalPages, app.filteredJobs.length, app.filterState?.freshness);
 }

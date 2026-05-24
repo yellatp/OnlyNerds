@@ -67,19 +67,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       bindings.push(ats.trim().toLowerCase());
     }
 
-    // Category filter
-    const category = params.get('category');
-    if (category && category.trim()) {
-      conditions.push('category = ?');
-      bindings.push(category.trim());
-    }
-
-    // Domain filter
-    const domain = params.get('domain');
-    if (domain && domain.trim()) {
-      conditions.push('domain = ?');
-      bindings.push(domain.trim());
-    }
+    // NOTE: category and domain are NOT filtered at the SQL level
+    // because the D1 database has category = NULL and domain = NULL
+    // for all jobs (classification happens client-side).
+    // The frontend applies category/domain filtering client-side
+    // on the returned page of jobs.
+    // See: frontend/js/filters.js filterJobs() lines 244-254
 
     // Skill level filter
     const skillLevel = params.get('skill_level');

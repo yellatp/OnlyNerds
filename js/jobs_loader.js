@@ -51,12 +51,13 @@ export async function fetchD1Page(filters = {}, offset = 0, limit = BULK_LIMIT) 
     params.set('offset', offset);
 
     // Pass all active filters to the API
+    // NOTE: category and domain are NOT sent to the API because
+    // D1 has NULL for these columns (classification happens client-side).
+    // They are filtered client-side in app.js _queryServer().
     if (filters.search) params.set('q', filters.search);
     if (filters.location) params.set('location', filters.location);
     if (filters.company) params.set('company', filters.company);
     if (filters.ats) params.set('ats', filters.ats);
-    if (filters.category) params.set('category', filters.category);
-    if (filters.domain) params.set('domain', filters.domain);
     if (filters.skill_level) params.set('skill_level', filters.skill_level);
     if (filters.employment_type) params.set('employment_type', filters.employment_type);
     if (filters.remote === '1' || filters.remote === 'true') params.set('remote', '1');

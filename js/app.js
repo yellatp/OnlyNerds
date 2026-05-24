@@ -195,8 +195,40 @@ class JobBoardApp {
             const filters = this._buildFilterParams();
             const result = await queryD1WithFilters(this, filters, page, this.perPage);
 
-            this.filteredJobs = result.jobs;
-            this.totalJobCount = result.total;
+            // Apply category/domain filtering client-side since D1 has NULL for these columns
+            let pageJobs = result.jobs || [];
+            let totalCount = result.total || 0;
+            if (this.selectedCategory || this.selectedDomain) {
+                pageJobs = pageJobs.filter(job => {
+                    if (this.selectedCategory) {
+                        const jobCat = job.category || '';
+                        if (jobCat !== this.selectedCategory) return false;
+                    }
+                    if (this.selectedDomain) {
+                        const jobDomain = job.domain || '';
+                        if (jobDomain !== this.selectedDomain) return false;
+                    }
+                    return true;
+                });
+                // Estimate total from client-side allJobs for category/domain filters
+                if (this.allJobs && this.allJobs.length > 0) {
+                    const filteredAll = this.allJobs.filter(job => {
+                        if (this.selectedCategory) {
+                            const jobCat = job.category || '';
+                            if (jobCat !== this.selectedCategory) return false;
+                        }
+                        if (this.selectedDomain) {
+                            const jobDomain = job.domain || '';
+                            if (jobDomain !== this.selectedDomain) return false;
+                        }
+                        return true;
+                    });
+                    totalCount = filteredAll.length;
+                }
+            }
+
+            this.filteredJobs = pageJobs;
+            this.totalJobCount = totalCount;
             this.currentPage = page;
 
             updateURL(this.filterState, this.currentPage, this.sortState);
@@ -230,8 +262,9 @@ class JobBoardApp {
         if (f.location) params.location = f.location;
         if (f.company) params.company = f.company;
         if (f.ats) params.ats = f.ats;
-        if (f.category || this.selectedCategory) params.category = f.category || this.selectedCategory;
-        if (f.domain || this.selectedDomain) params.domain = f.domain || this.selectedDomain;
+        // NOTE: category and domain are NOT sent to the API because
+        // D1 has NULL for these columns (classification happens client-side).
+        // They are filtered client-side in _queryServer() after receiving API results.
         if (f.skill_level) params.skill_level = f.skill_level;
         if (f.employment_type) params.employment_type = f.employment_type;
         if (f.remote) params.remote = f.remote;

@@ -4,7 +4,7 @@
 
 import { showToast, showLoadingToast } from './ui_utils.js';
 import { loadApplicationStatus, getSavedJobsCount } from './storage.js';
-import { loadJobsProgressive, updateStats } from './jobs_loader.js';
+import { loadJobsProgressive, updateStats, fetchD1Page, queryD1WithFilters } from './jobs_loader.js';
 import { filterJobs, clearFilterInputs, populateFilterOptions } from './filters.js';
 import { render } from './renderer.js';
 import { updateURL, loadFromURL } from './url_state.js';
@@ -30,14 +30,19 @@ class JobBoardApp {
         this.debounceTimer = null;
         this.selectedCategory = '';
         this.selectedDomain = '';
+
+        // Server-side query mode: when true, filters/pagination query D1 API
+        this.serverSide = true;
+        // Total job count from D1 stats API
+        this.totalJobCount = 0;
+        // Loading state for server-side queries
+        this._loading = false;
     }
 
     // ── Initialization ───────────────────────────────────────────
     async init() {
         await this.loadJobs();
         setupEventListeners(this);
-        // loadFromURL is called after all chunks are loaded (in jobs_loader.js completion handler)
-        // to avoid race condition where URL filters only apply to first chunk
         this.render();
     }
 
@@ -55,7 +60,6 @@ class JobBoardApp {
             this.sortState = { key: 'published_on', direction: 'desc' };
 
             // Default freshness filter: show all jobs (no date restriction)
-            // Only apply if no explicit freshness filter is set from URL
             if (!this.filterState.freshness) {
                 this.filterState.freshness = '';
                 const freshnessEl = document.getElementById('filter-freshness');
@@ -65,7 +69,7 @@ class JobBoardApp {
             loadingEl.style.display = 'none';
             resultsEl.style.display = 'block';
 
-            console.log(`Loaded ${this.allJobs.length} jobs`);
+            console.log(`Loaded ${this.allJobs.length} jobs (${this.totalJobCount} total in DB)`);
 
         } catch (error) {
             console.error('Error loading jobs:', error);
@@ -84,21 +88,34 @@ class JobBoardApp {
 
     debounceRender() {
         clearTimeout(this.debounceTimer);
-        this.debounceTimer = setTimeout(() => this.render(), 300);
+        this.debounceTimer = setTimeout(() => {
+            if (this.serverSide) {
+                this.applyFilters();
+            } else {
+                this.render();
+            }
+        }, 300);
     }
 
     // ── Filtering ────────────────────────────────────────────
-    applyFilters() {
-        // Pass domain/category from app state (not DOM) into filterJobs
-        const { filteredJobs, filterState } = filterJobs(this.allJobs, {
-            domain: this.selectedDomain,
-            category: this.selectedCategory
-        });
-        this.filteredJobs = filteredJobs;
-        this.filterState = filterState;
-        this.currentPage = 1;
-        updateURL(this.filterState, this.currentPage, this.sortState);
-        this.render();
+    async applyFilters() {
+        if (this._loading) return;
+
+        if (this.serverSide) {
+            // Server-side filtering: query D1 API
+            await this._queryServer(this.currentPage);
+        } else {
+            // Client-side filtering (R2 fallback mode)
+            const { filteredJobs, filterState } = filterJobs(this.allJobs, {
+                domain: this.selectedDomain,
+                category: this.selectedCategory
+            });
+            this.filteredJobs = filteredJobs;
+            this.filterState = filterState;
+            this.currentPage = 1;
+            updateURL(this.filterState, this.currentPage, this.sortState);
+            this.render();
+        }
     }
 
     clearFilters() {
@@ -111,15 +128,22 @@ class JobBoardApp {
         };
         this.selectedCategory = '';
         this.selectedDomain = '';
-        this.filteredJobs = [...this.allJobs];
-        this.currentPage = 1;
-        updateURL(this.filterState, this.currentPage, this.sortState);
-        this.render();
+
+        if (this.serverSide) {
+            this._queryServer(1);
+        } else {
+            this.filteredJobs = [...this.allJobs];
+            this.currentPage = 1;
+            updateURL(this.filterState, this.currentPage, this.sortState);
+            this.render();
+        }
     }
 
     refilter() {
         if (this.hasActiveFilters()) {
             this.applyFilters();
+        } else if (this.serverSide) {
+            this._queryServer(1);
         } else {
             this.filteredJobs = [...this.allJobs];
         }
@@ -133,10 +157,63 @@ class JobBoardApp {
             f.domain || f.category;
     }
 
+    /**
+     * Query the D1 API with current filters and pagination.
+     * Updates filteredJobs with the server response.
+     */
+    async _queryServer(page) {
+        this._loading = true;
+        try {
+            const filters = this._buildFilterParams();
+            const result = await queryD1WithFilters(this, filters, page, this.perPage);
+
+            this.filteredJobs = result.jobs;
+            this.totalJobCount = result.total;
+            this.currentPage = page;
+
+            updateURL(this.filterState, this.currentPage, this.sortState);
+            this.render();
+        } catch (err) {
+            console.error('Server query failed, falling back to client-side:', err);
+            // Fall back to client-side filtering
+            this.serverSide = false;
+            const { filteredJobs, filterState } = filterJobs(this.allJobs, {
+                domain: this.selectedDomain,
+                category: this.selectedCategory
+            });
+            this.filteredJobs = filteredJobs;
+            this.filterState = filterState;
+            this.currentPage = 1;
+            updateURL(this.filterState, this.currentPage, this.sortState);
+            this.render();
+        } finally {
+            this._loading = false;
+        }
+    }
+
+    /**
+     * Build filter parameters object from current filterState.
+     */
+    _buildFilterParams() {
+        const f = this.filterState;
+        const params = {};
+
+        if (f.search) params.search = f.search;
+        if (f.company) params.company = f.company;
+        if (f.ats) params.ats = f.ats;
+        if (f.category || this.selectedCategory) params.category = f.category || this.selectedCategory;
+        if (f.domain || this.selectedDomain) params.domain = f.domain || this.selectedDomain;
+        if (f.skill_level) params.skill_level = f.skill_level;
+        if (f.employment_type) params.employment_type = f.employment_type;
+        if (f.remote) params.remote = f.remote;
+        if (f.freshness) params.freshness = f.freshness;
+
+        return params;
+    }
+
     // ── Category Selection ───────────────────────────────────
     selectCategory(category) {
         if (this.selectedCategory === category) {
-            // Toggle off
             this.selectedCategory = '';
             this.filterState.category = '';
         } else {
@@ -199,19 +276,14 @@ class JobBoardApp {
 
     // ── Sorting ──────────────────────────────────────────────
     handleSort(key) {
-        // Parse compound values like "published_on-desc", "title-asc"
-        // The sort dropdown uses format: "{sortKey}-{direction}"
         const parts = key.split('-');
         const sortKey = parts[0];
         const sortDir = parts[1];
 
         if (sortDir === 'asc' || sortDir === 'desc') {
-            // Compound value from dropdown: direction is explicitly specified
-            // Never toggle — the dropdown value IS the desired sort
             this.sortState.key = sortKey;
             this.sortState.direction = sortDir;
         } else {
-            // Simple value (e.g. "relevance"): toggle if same key, else set with default direction
             if (this.sortState.key === key) {
                 this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
             } else {
@@ -228,106 +300,127 @@ class JobBoardApp {
     // ── Pagination ───────────────────────────────────────────
     previousPage() {
         if (this.currentPage > 1) {
-            this.currentPage--;
-            this.render();
+            if (this.serverSide) {
+                this._queryServer(this.currentPage - 1);
+            } else {
+                this.currentPage--;
+                this.render();
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
     nextPage() {
-        const totalPages = Math.ceil(this.filteredJobs.length / this.perPage);
+        const totalPages = Math.ceil((this.serverSide ? this.totalJobCount : this.filteredJobs.length) / this.perPage);
         if (this.currentPage < totalPages) {
-            this.currentPage++;
-            this.render();
+            if (this.serverSide) {
+                this._queryServer(this.currentPage + 1);
+            } else {
+                this.currentPage++;
+                this.render();
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
     // ── URL State ────────────────────────────────────────────
     loadFromURL() {
-        const { hasFilters, page, domain, category } = loadFromURL();
-        this.currentPage = page;
-        // Read domain/category from URL
-        if (domain) {
-            this.selectedDomain = domain;
-            this.filterState.domain = domain;
+        const params = loadFromURL();
+        if (!params) return;
+
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val !== undefined && val !== null) el.value = val;
+        };
+
+        if (params.freshness) {
+            this.filterState.freshness = params.freshness;
+            setVal('filter-freshness', params.freshness);
         }
-        if (category) {
-            this.selectedCategory = category;
-            this.filterState.category = category;
+        if (params.sort) {
+            const parts = params.sort.split('-');
+            if (parts.length === 2) {
+                this.sortState.key = parts[0];
+                this.sortState.direction = parts[1];
+                setVal('sort-select', params.sort);
+            }
         }
-        if (hasFilters) {
-            const { filteredJobs, filterState } = filterJobs(this.allJobs, {
-                domain: this.selectedDomain,
-                category: this.selectedCategory
-            });
-            this.filteredJobs = filteredJobs;
-            this.filterState = filterState;
+        if (params.page) {
+            this.currentPage = parseInt(params.page, 10) || 1;
+        }
+        if (params.q) {
+            this.filterState.search = params.q;
+            setVal('filter-search', params.q);
+        }
+        if (params.company) {
+            this.filterState.company = params.company;
+            setVal('filter-company', params.company);
+        }
+        if (params.ats) {
+            this.filterState.ats = params.ats;
+            setVal('filter-ats', params.ats);
+        }
+        if (params.category) {
+            this.selectedCategory = params.category;
+            this.filterState.category = params.category;
+        }
+        if (params.domain) {
+            this.selectedDomain = params.domain;
+            this.filterState.domain = params.domain;
+        }
+        if (params.skill_level) {
+            this.filterState.skill_level = params.skill_level;
+            setVal('filter-skill-level', params.skill_level);
+        }
+        if (params.employment_type) {
+            this.filterState.employment_type = params.employment_type;
+            setVal('filter-employment-type', params.employment_type);
+        }
+        if (params.remote) {
+            this.filterState.remote = params.remote;
+            setVal('filter-remote', params.remote);
+        }
+        if (params.show) {
+            this.filterState.show = params.show;
+            setVal('filter-show', params.show);
         }
     }
 
-    /**
-     * Called after ALL chunks are loaded (from jobs_loader.js completion handler).
-     * This ensures URL filters apply to the full dataset, not just the first chunk.
-     */
     loadFromURLAfterAllChunks() {
         this.loadFromURL();
-        this.render();
+        this.applyFilters();
     }
 
-    // ── Saved Jobs Count ─────────────────────────────────────
+    // ── Saved Jobs ───────────────────────────────────────────
     updateSavedCount() {
         const count = getSavedJobsCount();
         const el = document.getElementById('saved-count');
-        if (el) el.textContent = `${count} saved`;
+        if (el) el.textContent = count;
     }
 }
 
-// ============================================================
-// THEME TOGGLE
-// ============================================================
-const STORAGE_KEY = 'onlynerds-theme';
-
+// ── Theme ──────────────────────────────────────────────────
 function getPreferredTheme() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'light' || stored === 'dark') return stored;
-    // Default to light mode
-    return 'light';
+    const stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(STORAGE_KEY, theme);
-    const btn = document.getElementById('theme-toggle');
-    if (btn) {
-        btn.textContent = theme === 'dark' ? '🌙' : '☀️';
-        btn.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`);
-    }
+    document.documentElement.setAttribute('data-bs-theme', theme);
+    localStorage.setItem('theme', theme);
 }
 
 function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    setTheme(next);
+    const current = document.documentElement.getAttribute('data-bs-theme');
+    setTheme(current === 'dark' ? 'light' : 'dark');
 }
 
-// ============================================================
-// INITIALIZE APP
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-    // Apply theme before anything renders to prevent flash
-    const theme = getPreferredTheme();
-    document.documentElement.setAttribute('data-theme', theme);
+// ── Bootstrap ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+    setTheme(getPreferredTheme());
 
     const app = new JobBoardApp();
-    app.init();
-
-    // Wire up theme toggle
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (toggleBtn) {
-        // Set initial icon
-        toggleBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
-        toggleBtn.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`);
-        toggleBtn.addEventListener('click', toggleTheme);
-    }
+    window.app = app;
+    await app.init();
 });

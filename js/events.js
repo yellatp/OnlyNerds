@@ -19,7 +19,11 @@ export function setupEventListeners(app) {
     document.getElementById('per-page')?.addEventListener('change', (e) => {
         app.perPage = parseInt(e.target.value);
         app.currentPage = 1;
-        app.render();
+        if (app.serverSide) {
+            app.applyFilters();
+        } else {
+            app.render();
+        }
     });
 
     // ── Tiles-per-row selector ──────────────────────────────
@@ -61,10 +65,24 @@ export function setupEventListeners(app) {
     debouncedIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.addEventListener('input', () => app.debounceRender());
+            el.addEventListener('input', () => {
+                // Update filterState from DOM before debounced query
+                const val = el.value;
+                const key = id.replace('filter-', '').replace('-adv', '');
+                if (key === 'search') app.filterState.search = val;
+                else if (key === 'location') app.filterState.location = val;
+                else if (key === 'salary') app.filterState.salary_min = val;
+                app.debounceRender();
+            });
             el.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     clearTimeout(app.debounceTimer);
+                    // Update filterState from DOM
+                    const val = el.value;
+                    const key = id.replace('filter-', '').replace('-adv', '');
+                    if (key === 'search') app.filterState.search = val;
+                    else if (key === 'location') app.filterState.location = val;
+                    else if (key === 'salary') app.filterState.salary_min = val;
                     app.applyFilters();
                 }
             });

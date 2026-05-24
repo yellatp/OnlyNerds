@@ -28,19 +28,10 @@ function showFileProtocolWarning() {
     const resultsEl = document.getElementById('results');
     if (loadingEl) {
         loadingEl.innerHTML = `
-            <div style="text-align:center;padding:40px 20px;max-width:500px;margin:0 auto;">
-                <div style="font-size:48px;margin-bottom:16px;color:var(--accent);">!</div>
-                <h3 style="color:var(--text);margin-bottom:12px;">Cannot load job data directly</h3>
-                <p style="color:var(--text-light);margin-bottom:20px;line-height:1.6;">
-                    The job board needs to be served via HTTP to load data.
-                    Open a terminal in the project root and run:
-                </p>
-                <code style="display:inline-block;background:var(--input-bg);padding:10px 20px;border-radius:8px;border:1px solid var(--border);color:var(--accent);font-size:14px;margin-bottom:20px;">
-                    npx serve . -p 4323 -s
-                </code>
-                <p style="color:var(--text-muted);font-size:13px;margin-top:12px;">
-                    Then open <strong>http://localhost:4323</strong> in your browser.
-                </p>
+            <div class="alert alert-warning">
+                <h4>Cannot load job data</h4>
+                <p>This page must be served via HTTP to load job data.</p>
+                <p>Try: <code>npx serve .</code> or open via <code>http://localhost</code></p>
             </div>
         `;
     }
@@ -48,27 +39,29 @@ function showFileProtocolWarning() {
 }
 
 /**
- * Fetch and decompress a single gzipped JSON file (R2 fallback).
- * @param {string} url - Path to the .json.gz file
- * @returns {Promise<Array>} Parsed JSON array
- */
-export async function fetchAndDecompress(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to load ${url}`);
-    const blob = await response.blob();
-    const ds = new DecompressionStream('gzip');
-    const text = await new Response(blob.stream().pipeThrough(ds)).blob().then(b => b.text());
-    return JSON.parse(text);
-}
-
-/**
- * Fetch a page of jobs from the D1 search API.
+ * Fetch a page of jobs from the D1 search API with filters.
+ * @param {Object} filters - Filter parameters
  * @param {number} offset - Pagination offset
  * @param {number} limit - Page size (max 2000)
  * @returns {Promise<{jobs: Array, total: number, hasMore: boolean}>}
  */
-async function fetchD1Page(offset = 0, limit = BULK_LIMIT) {
-    const url = `${D1_API_BASE}?limit=${limit}&offset=${offset}`;
+export async function fetchD1Page(filters = {}, offset = 0, limit = BULK_LIMIT) {
+    const params = new URLSearchParams();
+    params.set('limit', limit);
+    params.set('offset', offset);
+
+    // Pass all active filters to the API
+    if (filters.search) params.set('q', filters.search);
+    if (filters.company) params.set('company', filters.company);
+    if (filters.ats) params.set('ats', filters.ats);
+    if (filters.category) params.set('category', filters.category);
+    if (filters.domain) params.set('domain', filters.domain);
+    if (filters.skill_level) params.set('skill_level', filters.skill_level);
+    if (filters.employment_type) params.set('employment_type', filters.employment_type);
+    if (filters.remote === '1' || filters.remote === 'true') params.set('remote', '1');
+    if (filters.freshness) params.set('freshness', filters.freshness);
+
+    const url = `${D1_API_BASE}?${params.toString()}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(`D1 API returned ${response.status}`);
     return response.json();
@@ -144,7 +137,7 @@ async function loadFromR2Chunks(app) {
 /**
  * Load jobs progressively from D1 API:
  *   - First page on main thread → renders immediately
- *   - Remaining pages via web worker
+ *   - Stats from /api/stats for accurate counts
  * Falls back to R2 chunks if D1 API is unavailable.
  * @param {Object} app - App instance
  */
@@ -170,13 +163,13 @@ export async function loadJobsProgressive(app) {
 }
 
 /**
- * Load all jobs from D1 API with pagination.
- * First page loads on main thread, remaining pages via web worker.
+ * Load initial data from D1 API.
+ * Only loads the first page + stats. All filtering/pagination
+ * is done server-side via the D1 search API.
  */
 async function loadFromD1API(app) {
-    // Fetch first page on main thread
-    const firstPage = await fetchD1Page(0, BULK_LIMIT);
-    const totalJobs = firstPage.total || 0;
+    // Fetch first page on main thread (no filters = all jobs)
+    const firstPage = await fetchD1Page({}, 0, BULK_LIMIT);
 
     if (firstPage.jobs.length === 0) {
         throw new Error('D1 API returned empty results');
@@ -186,6 +179,9 @@ async function loadFromD1API(app) {
     classifyJobs(firstPage.jobs);
     app.allJobs = firstPage.jobs;
     app.filteredJobs = firstPage.jobs;
+
+    // Store the total count from D1 for accurate pagination
+    app.totalJobCount = firstPage.total || 0;
 
     // Update stats from D1 stats API (accurate counts)
     const stats = await fetchD1Stats();
@@ -198,78 +194,29 @@ async function loadFromD1API(app) {
     populateFilterOptions(app.allJobs);
     app.render();
 
-    // If all jobs fit in one page, we're done
-    if (!firstPage.hasMore) {
-        if (typeof app.loadFromURLAfterAllChunks === 'function') {
-            app.loadFromURLAfterAllChunks();
-        }
-        console.log(`Loaded ${app.allJobs.length} jobs from D1`);
-        return;
-    }
+    console.log(`Loaded ${app.allJobs.length} jobs from D1 (${app.totalJobCount} total in DB)`);
+}
 
-    // Load remaining pages via web worker
-    const workerCode = `
-        self.onmessage = async ({ data: { apiBase, limit, total } }) => {
-            const pageSize = limit;
-            const startOffset = pageSize; // Skip first page (already loaded)
-            for (let offset = startOffset; offset < total; offset += pageSize) {
-                try {
-                    const url = apiBase + '?limit=' + pageSize + '&offset=' + offset;
-                    const res = await fetch(url);
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    const data = await res.json();
-                    self.postMessage({ type: 'page', jobs: data.jobs || [] });
-                } catch (err) {
-                    self.postMessage({ type: 'error', error: err.message });
-                }
-            }
-            self.postMessage({ type: 'done' });
-        };
-    `;
-    const blob = new Blob([workerCode], { type: 'application/javascript' });
-    const workerUrl = URL.createObjectURL(blob);
-    const worker = new Worker(workerUrl);
+/**
+ * Query D1 API with current filters and pagination.
+ * Used when filters change or page changes.
+ * @param {Object} app - App instance
+ * @param {Object} filters - Current filter state
+ * @param {number} page - Page number (1-based)
+ * @param {number} perPage - Jobs per page
+ * @returns {Promise<{jobs: Array, total: number}>}
+ */
+export async function queryD1WithFilters(app, filters, page, perPage) {
+    const offset = (page - 1) * perPage;
+    const result = await fetchD1Page(filters, offset, perPage);
 
-    worker.onmessage = ({ data }) => {
-        if (data.type === 'page') {
-            const jobs = data.jobs;
-            if (jobs.length === 0) return;
-            classifyJobs(jobs);
-            app.allJobs.push(...jobs);
-            app.refilter();
-            app.render();
-            if (stats) {
-                updateStatsFromD1(stats);
-            } else {
-                updateStats(app.allJobs, null);
-            }
-        } else if (data.type === 'error') {
-            console.error('D1 worker error:', data.error);
-        } else if (data.type === 'done') {
-            worker.terminate();
-            URL.revokeObjectURL(workerUrl);
-            // Re-populate filter options with full dataset
-            populateFilterOptions(app.allJobs);
-            // Apply URL filters now that ALL jobs are loaded
-            if (typeof app.loadFromURLAfterAllChunks === 'function') {
-                app.loadFromURLAfterAllChunks();
-            }
-            console.log(`Loaded ${app.allJobs.length} jobs from D1`);
-        }
+    // Classify the returned jobs
+    classifyJobs(result.jobs);
+
+    return {
+        jobs: result.jobs,
+        total: result.total || 0
     };
-
-    worker.onerror = (err) => {
-        console.error('D1 worker error:', err);
-        worker.terminate();
-        URL.revokeObjectURL(workerUrl);
-    };
-
-    // Start the worker
-    worker.postMessage({
-        apiBase: D1_API_BASE,
-        limit: BULK_LIMIT,
-        total: totalJobs
-    });
 }
 
 /**
@@ -279,17 +226,33 @@ async function loadFromD1API(app) {
 function updateStatsFromD1(stats) {
     const jobsEl = document.getElementById('total-jobs');
     const companiesEl = document.getElementById('total-companies');
+    const platformsEl = document.getElementById('total-platforms');
+    const updatedEl = document.getElementById('last-updated');
+
     if (jobsEl) jobsEl.textContent = (stats.totalJobs || 0).toLocaleString();
     if (companiesEl) companiesEl.textContent = (stats.totalCompanies || 0).toLocaleString();
+    if (platformsEl) platformsEl.textContent = (stats.totalPlatforms || 0).toLocaleString();
+    if (updatedEl && stats.lastUpdated) {
+        const d = new Date(stats.lastUpdated);
+        updatedEl.textContent = d.toLocaleDateString();
+    }
 }
 
 /**
- * Update the stats bar in the DOM (fallback for R2 chunks).
- * @param {Array} jobs - The full jobs array
- * @param {string} [lastUpdated] - ISO timestamp from manifest
+ * Update stats bar with local job array (fallback when D1 stats unavailable).
  */
 export function updateStats(jobs, lastUpdated) {
-    const companies = new Set(jobs.map(j => j.company_slug || j.company)).size;
-    document.getElementById('total-jobs').textContent = jobs.length.toLocaleString();
-    document.getElementById('total-companies').textContent = companies.toLocaleString();
+    const jobsEl = document.getElementById('total-jobs');
+    const companiesEl = document.getElementById('total-companies');
+    const updatedEl = document.getElementById('last-updated');
+
+    if (jobsEl) jobsEl.textContent = jobs.length.toLocaleString();
+    if (companiesEl) {
+        const companies = new Set(jobs.map(j => j.company).filter(Boolean));
+        companiesEl.textContent = companies.size.toLocaleString();
+    }
+    if (updatedEl && lastUpdated) {
+        const d = new Date(lastUpdated);
+        updatedEl.textContent = d.toLocaleDateString();
+    }
 }

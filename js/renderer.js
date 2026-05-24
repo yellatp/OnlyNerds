@@ -208,24 +208,28 @@ export function render(app) {
     const grid = document.getElementById('job-grid');
     if (!grid) return;
 
-    // Apply sorting
+    // Apply sorting (only relevant for client-side mode; in server-side mode,
+    // jobs come pre-sorted from the API)
     const displayJobs = applySorting(app.filteredJobs, app.sortState);
-    const totalPages = Math.ceil(displayJobs.length / app.perPage);
+
+    // Use totalJobCount for pagination when in server-side mode
+    const totalCount = app.serverSide ? app.totalJobCount : displayJobs.length;
+    const totalPages = Math.ceil(totalCount / app.perPage);
 
     // Bounds check
     if (app.currentPage > totalPages && totalPages > 0) app.currentPage = 1;
     if (app.currentPage < 1) app.currentPage = 1;
 
-    const start = (app.currentPage - 1) * app.perPage;
-    const end = start + app.perPage;
-    const pageJobs = displayJobs.slice(start, end);
+    // In server-side mode, the pageJobs are already the correct slice from the API
+    // In client-side mode, slice from the full array
+    const pageJobs = app.serverSide ? displayJobs : displayJobs.slice((app.currentPage - 1) * app.perPage, app.currentPage * app.perPage);
 
     // Clear grid
     grid.innerHTML = '';
 
     if (pageJobs.length === 0) {
         grid.innerHTML = '<div class="text-center py-5" style="color:#dfe6e9;grid-column:1/-1;"><p class="fs-5">No jobs found</p><p class="text-muted">Try adjusting your filters.</p></div>';
-        updatePagination(app.currentPage, 1, app.filteredJobs.length, app.filterState?.freshness);
+        updatePagination(app.currentPage, 1, totalCount, app.filterState?.freshness);
         return;
     }
 
@@ -240,5 +244,5 @@ export function render(app) {
         if (tile) grid.appendChild(tile);
     });
 
-    updatePagination(app.currentPage, totalPages, app.filteredJobs.length, app.filterState?.freshness);
+    updatePagination(app.currentPage, totalPages, totalCount, app.filterState?.freshness);
 }

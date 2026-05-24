@@ -2,7 +2,7 @@
  * Cloudflare Pages Function — D1 Search API
  *
  * Search and filter jobs from the D1 database:
- *   GET /api/search?q=engineer&company=Google&ats=greenhouse&category=Technology&limit=50&offset=0
+ *   GET /api/search?q=engineer&company=Google&ats=greenhouse&category=Technology&freshness=30d&limit=50&offset=0
  *
  * Parameters (all optional):
  *   q        - Full-text search on title/company/location
@@ -13,7 +13,8 @@
  *   skill_level - Filter by skill level (entry, mid, senior, lead)
  *   employment_type - Filter by employment type
  *   remote   - Filter by remote (1 = remote, 0 = on-site)
- *   limit    - Max results (default: 50, max: 200)
+ *   freshness - Filter by freshness (24h, 3d, 5d, 10d, 30d, 45d, 60d)
+ *   limit    - Max results (default: 50, max: 2000)
  *   offset   - Pagination offset (default: 0)
  *
  * Requires a D1 binding named "DB" in wrangler.toml:
@@ -93,6 +94,34 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       conditions.push('remote = 1');
     } else if (remote === '0' || remote === 'false') {
       conditions.push('remote = 0');
+    }
+
+    // Freshness filter (server-side)
+    const freshness = params.get('freshness');
+    if (freshness && freshness.trim()) {
+      const hoursMap: Record<string, number> = {
+        '24h': 24,
+        '3d': 72,
+        '5d': 120,
+        '10d': 240,
+        '30d': 720,
+        '45d': 1080,
+        '60d': 1440,
+      };
+      const maxHours = hoursMap[freshness.trim()];
+      if (maxHours) {
+        // Use published_on if available, otherwise scraped_at
+        conditions.push(
+          `(CASE
+            WHEN published_on IS NOT NULL AND published_on != ''
+              THEN (unixepoch('now') - unixepoch(published_on)) / 3600.0
+            WHEN scraped_at IS NOT NULL AND scraped_at != ''
+              THEN (unixepoch('now') - unixepoch(scraped_at)) / 3600.0
+            ELSE 999999
+          END) <= ?`
+        );
+        bindings.push(maxHours);
+      }
     }
 
     // Pagination

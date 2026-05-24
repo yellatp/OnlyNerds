@@ -58,6 +58,8 @@ export function loadFromURL() {
     const show = params.get('show') || '';
     const domain = params.get('domain') || '';
     const category = params.get('category') || '';
+    const sort = params.get('sort') || '';
+    const dir = params.get('dir') || '';
     const page = parseInt(params.get('page')) || 1;
 
     const setVal = (id, val) => {
@@ -82,5 +84,20 @@ export function loadFromURL() {
         skillLevel || employmentType || remote || ats || freshness || show ||
         domain || category);
 
-    return { hasFilters, page, domain, category };
+    return {
+        hasFilters,
+        page,
+        domain,
+        category,
+        freshness,
+        sort: sort ? `${sort}-${dir || 'asc'}` : '',
+        q: search,
+        company,
+        ats,
+        skill_level: skillLevel,
+        employment_type: employmentType,
+        remote,
+        show,
+        location
+    };
 }

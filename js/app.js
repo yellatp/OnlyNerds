@@ -5,7 +5,7 @@
 import { showToast, showLoadingToast } from './ui_utils.js';
 import { loadApplicationStatus, getSavedJobsCount } from './storage.js';
 import { loadJobsProgressive, updateStats, fetchD1Page, queryD1WithFilters } from './jobs_loader.js';
-import { filterJobs, clearFilterInputs, populateFilterOptions } from './filters.js';
+import { filterJobs, clearFilterInputs, populateFilterOptions, readFilterInputs } from './filters.js';
 import { render } from './renderer.js';
 import { updateURL, loadFromURL } from './url_state.js';
 import { setupEventListeners } from './events.js';
@@ -43,6 +43,8 @@ class JobBoardApp {
     async init() {
         await this.loadJobs();
         setupEventListeners(this);
+        // Apply URL params after initial load (page, freshness, sort, etc.)
+        this.loadFromURLAfterAllChunks();
         this.render();
     }
 
@@ -102,6 +104,8 @@ class JobBoardApp {
         if (this._loading) return;
 
         if (this.serverSide) {
+            // Read current DOM filter values into filterState
+            this._syncFilterStateFromDOM();
             // Server-side filtering: query D1 API
             await this._queryServer(this.currentPage);
         } else {
@@ -116,6 +120,28 @@ class JobBoardApp {
             updateURL(this.filterState, this.currentPage, this.sortState);
             this.render();
         }
+    }
+
+    /**
+     * Sync filterState from current DOM input values.
+     * This ensures the server query uses the actual selected filters.
+     */
+    _syncFilterStateFromDOM() {
+        const domFilters = readFilterInputs();
+        this.filterState.search = domFilters.search;
+        this.filterState.location = domFilters.location;
+        this.filterState.company = domFilters.company;
+        this.filterState.department = domFilters.department;
+        this.filterState.salary_min = domFilters.salary_min;
+        this.filterState.skill_level = domFilters.skill_level;
+        this.filterState.employment_type = domFilters.employment_type;
+        this.filterState.remote = domFilters.remote;
+        this.filterState.ats = domFilters.ats;
+        this.filterState.freshness = domFilters.freshness;
+        this.filterState.show = domFilters.show;
+        // Domain and category are managed via app state
+        this.filterState.domain = this.selectedDomain;
+        this.filterState.category = this.selectedCategory;
     }
 
     clearFilters() {
@@ -388,7 +414,12 @@ class JobBoardApp {
 
     loadFromURLAfterAllChunks() {
         this.loadFromURL();
-        this.applyFilters();
+        // Apply the URL params by querying the server with the current page
+        if (this.serverSide) {
+            this._queryServer(this.currentPage);
+        } else {
+            this.applyFilters();
+        }
     }
 
     // ── Saved Jobs ───────────────────────────────────────────

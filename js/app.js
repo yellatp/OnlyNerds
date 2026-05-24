@@ -10,7 +10,7 @@ import { render } from './renderer.js';
 import { updateURL, loadFromURL } from './url_state.js';
 import { setupEventListeners } from './events.js';
 import { applySorting } from './sorting.js';
-import { classifyJobs, getCategoryCounts, getCategoriesForDomain, CATEGORY_ORDER, DOMAINS, DOMAIN_ORDER } from './categories.js';
+import { classifyJobs, classifyJob, getCategoryCounts, getCategoriesForDomain, CATEGORY_ORDER, DOMAINS, DOMAIN_ORDER } from './categories.js';
 
 class JobBoardApp {
     constructor() {
@@ -195,11 +195,22 @@ class JobBoardApp {
             const filters = this._buildFilterParams();
             const result = await queryD1WithFilters(this, filters, page, this.perPage);
 
-            // Apply category/domain filtering client-side since D1 has NULL for these columns
-            let pageJobs = result.jobs || [];
+            // Classify returned jobs client-side since D1 has NULL for category/domain columns
+            const pageJobs = (result.jobs || []).map(job => {
+                if (!job.category || !job.domain) {
+                    const cls = classifyJob(job);
+                    job.category = job.category || cls.category;
+                    job.domain = job.domain || cls.domain;
+                    job.normalized_role = job.normalized_role || cls.normalized_role;
+                }
+                return job;
+            });
+
+            // Apply category/domain filtering client-side
+            let filteredJobs = pageJobs;
             let totalCount = result.total || 0;
             if (this.selectedCategory || this.selectedDomain) {
-                pageJobs = pageJobs.filter(job => {
+                filteredJobs = pageJobs.filter(job => {
                     if (this.selectedCategory) {
                         const jobCat = job.category || '';
                         if (jobCat !== this.selectedCategory) return false;
@@ -227,7 +238,7 @@ class JobBoardApp {
                 }
             }
 
-            this.filteredJobs = pageJobs;
+            this.filteredJobs = filteredJobs;
             this.totalJobCount = totalCount;
             this.currentPage = page;
 

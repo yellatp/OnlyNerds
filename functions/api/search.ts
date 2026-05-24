@@ -96,7 +96,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     // Pagination
-    const limit = Math.min(parseInt(params.get('limit') || '50', 10), 200);
+    const limit = Math.min(parseInt(params.get('limit') || '50', 10), 2000);
     const offset = Math.max(parseInt(params.get('offset') || '0', 10), 0);
 
     // Build WHERE clause

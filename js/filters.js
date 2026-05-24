@@ -232,7 +232,7 @@ export function filterJobs(allJobs, overrides = {}) {
                 const jobDate = new Date(dateStr).getTime();
                 if (!isNaN(jobDate)) {
                     const hoursAgo = (now - jobDate) / 3600000;
-                    const hoursMap = { '24h': 24, '3d': 72, '7d': 168, '14d': 336, '30d': 720 };
+                    const hoursMap = { '24h': 24, '3d': 72, '5d': 120, '10d': 240, '30d': 720, '45d': 1080, '60d': 1440 };
                     const maxHours = hoursMap[f.freshness];
                     if (maxHours && hoursAgo > maxHours) return false;
                 }

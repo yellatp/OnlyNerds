@@ -54,12 +54,12 @@ class JobBoardApp {
 
             this.sortState = { key: 'published_on', direction: 'desc' };
 
-            // Default freshness filter: show jobs from past 30 days
+            // Default freshness filter: show all jobs (no date restriction)
             // Only apply if no explicit freshness filter is set from URL
             if (!this.filterState.freshness) {
-                this.filterState.freshness = '30d';
+                this.filterState.freshness = '';
                 const freshnessEl = document.getElementById('filter-freshness');
-                if (freshnessEl) freshnessEl.value = '30d';
+                if (freshnessEl) freshnessEl.value = '';
             }
 
             loadingEl.style.display = 'none';

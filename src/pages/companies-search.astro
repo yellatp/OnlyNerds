@@ -1,0 +1,387 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+export const prerender = true;
+const pageTitle = 'Companies Search';
+const pageDescription = 'Search companies by ATS platform — find which employers use Greenhouse, Ashby, Lever, and more';
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  keywords="tech companies, ats platforms, company search, job boards, greenhouse, lever, ashby, workday"
+  ogImage="/assets/OnlyNerds.svg"
+>
+  <Navbar pageTitle={pageTitle} />
+
+  <main class="cn-page" style="max-width:1400px;margin:0 auto;padding:2rem 1.5rem 4rem;">
+    <div style="margin-bottom:2rem;">
+      <h1 style="font-size:1.75rem;font-weight:700;color:#EDEDEA;margin:0 0 0.5rem;">Companies Search</h1>
+      <p style="color:#8A8880;font-size:0.9rem;margin:0;">
+        Find which ATS a company uses and browse their jobs with one click.
+      </p>
+    </div>
+
+    <!-- Controls -->
+    <div id="controls" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;align-items:center;">
+      <div style="position:relative;min-width:160px;flex:0 1 200px;">
+        <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:#706E66;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="co-search" type="text" placeholder="Search company..." autofocus
+          style="width:100%;padding:0.5rem 0.75rem 0.5rem 2rem;background:#141410;border:1px solid #323028;border-radius:8px;color:#EDEDEA;font-size:0.8rem;outline:none;"
+        >
+      </div>
+      <select id="co-region" style="padding:0.5rem 0.75rem;background:#141410;border:1px solid #323028;border-radius:8px;color:#EDEDEA;font-size:0.8rem;outline:none;min-width:95px;">
+        <option value="">Global</option>
+        <option value="US">US</option>
+        <option value="EU">EU</option>
+        <option value="LATAM">LATAM</option>
+        <option value="US-CA">US-CA</option>
+        <option value="ASIA">ASIA</option>
+        <option value="AU-NZ">AU-NZ</option>
+        <option value="AFRICA">AFRICA</option>
+      </select>
+      <select id="co-ats" style="padding:0.5rem 0.75rem;background:#141410;border:1px solid #323028;border-radius:8px;color:#EDEDEA;font-size:0.8rem;outline:none;min-width:150px;">
+        <option value="">All ATS</option>
+      </select>
+      <select id="co-sort" style="padding:0.5rem 0.75rem;background:#141410;border:1px solid #323028;border-radius:8px;color:#EDEDEA;font-size:0.8rem;outline:none;min-width:100px;">
+        <option value="name-asc">A-Z</option>
+        <option value="name-desc">Z-A</option>
+      </select>
+      <select id="co-perpage" style="padding:0.5rem 0.75rem;background:#141410;border:1px solid #323028;border-radius:8px;color:#EDEDEA;font-size:0.8rem;outline:none;">
+        <option value="50" selected>50</option>
+        <option value="100">100</option>
+        <option value="150">150</option>
+        <option value="200">200</option>
+      </select>
+    </div>
+
+    <!-- Stats ribbon -->
+    <div id="co-stats" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;padding:0.5rem 0.75rem;background:#141410;border:1px solid #1C1C18;border-radius:8px;flex-wrap:wrap;font-size:0.7rem;">
+      <span style="color:#A09E96;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;">Total</span>
+      <span style="color:#EDEDEA;font-weight:700;font-size:0.85rem;margin-right:0.5rem;" id="co-total">-</span>
+      <span style="width:1px;height:16px;background:#323028;display:inline-block;vertical-align:middle;"></span>
+      <span id="co-region-breakdown" style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;"></span>
+      <span id="co-result-count" style="display:none;"></span>
+    </div>
+
+    <!-- Silenced ATS notice -->
+    <div style="margin-bottom:1.5rem;font-size:0.7rem;color:#5C5A54;line-height:1.5;">
+      <span style="display:inline-flex;align-items:center;gap:0.35rem;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#5C5A54" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Workday &amp; SmartRecruiters are withheld due to broken URLs. Some ATS platforms may have incomplete records as we refine the dataset.
+      </span>
+    </div>
+
+    <!-- Loading -->
+    <div id="co-loading" style="text-align:center;padding:3rem 0;color:#8A8880;">
+      <p>Loading company data...</p>
+      <div style="width:40px;height:4px;background:#323028;border-radius:2px;margin:1rem auto 0;overflow:hidden;">
+        <div id="co-load-bar" style="width:0;height:100%;background:#A09E96;border-radius:2px;transition:width 0.3s;"></div>
+      </div>
+    </div>
+
+    <!-- Error state (hidden until error) -->
+    <div id="co-error" style="display:none;text-align:center;padding:2rem;color:#f87171;"></div>
+
+    <!-- Tile Grid -->
+    <div id="co-results" style="display:none;">
+      <div id="co-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:0.4rem;"></div>
+
+      <!-- Pagination -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;padding:0 0.25rem;">
+        <span style="color:#8A8880;font-size:0.8rem;" id="co-page-info">Page 1 of 1</span>
+        <div style="display:flex;gap:0.5rem;">
+          <button id="co-prev" disabled style="padding:0.5rem 1rem;background:#141410;border:1px solid #323028;border-radius:8px;color:#EDEDEA;font-size:0.85rem;cursor:pointer;">Previous</button>
+          <button id="co-next" style="padding:0.5rem 1rem;background:#141410;border:1px solid #323028;border-radius:8px;color:#EDEDEA;font-size:0.85rem;cursor:pointer;">Next</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script type="module" is:inline>
+    import initWasm, { readParquet } from 'https://cdn.jsdelivr.net/npm/parquet-wasm@0.6.1/esm/+esm';
+    import { tableFromIPC } from 'https://cdn.jsdelivr.net/npm/apache-arrow@17/+esm';
+
+    let allRows = [];
+    let filteredRows = [];
+    let page = 1;
+    let perPage = 50;
+    let sortKey = 'name';
+    let sortDir = 'asc';
+    let search = '';
+    let regionFilter = '';
+    let atsFilter = '';
+
+    const $ = (id) => document.getElementById(id);
+    const gridEl = $('co-grid');
+    const loadDiv = $('co-loading');
+    const loadBar = $('co-load-bar');
+    const errorDiv = $('co-error');
+    const resDiv = $('co-results');
+    const resultCount = $('co-result-count');
+    const pageInfo = $('co-page-info');
+    const prevBtn = $('co-prev');
+    const nextBtn = $('co-next');
+    const searchInput = $('co-search');
+    const regionSelect = $('co-region');
+    const atsSelect = $('co-ats');
+    const sortSelect = $('co-sort');
+    const perPageSelect = $('co-perpage');
+    const totalEl = $('co-total');
+    const regionBreakdownEl = $('co-region-breakdown');
+
+
+
+    const ATS_COLORS = {
+      greenhouse:     { bg: '#0d2e1c', fg: '#4ade80' },
+      lever:          { bg: '#1e293b', fg: '#94a3b8' },
+      ashby:          { bg: '#2e1a00', fg: '#fb923c' },
+      bamboohr:       { bg: '#0c1622', fg: '#38bdf8' },
+      icims:          { bg: '#1e293b', fg: '#cbd5e1' },
+      workable:       { bg: '#0d1f1c', fg: '#2dd4bf' },
+      recruitee:      { bg: '#1a1c1e', fg: '#e2e8f0' },
+      jobvite:        { bg: '#1a0e00', fg: '#fdba74' },
+      paylocity:      { bg: '#0d1f1c', fg: '#34d399' },
+      breezyhr:       { bg: '#1e293b', fg: '#cbd5e1' },
+      jazzhr:         { bg: '#0c1622', fg: '#38bdf8' },
+      personio:       { bg: '#1e293b', fg: '#94a3b8' },
+      teamtailor:     { bg: '#1a0e00', fg: '#fb923c' },
+      applytojob:     { bg: '#1e293b', fg: '#cbd5e1' },
+      join_com:       { bg: '#1a0e2e', fg: '#c084fc' },
+      personio:       { bg: '#0d1f2e', fg: '#60a5fa' },
+      recruitee:      { bg: '#1e1a0d', fg: '#fbbf24' },
+      teamtailor:     { bg: '#0d1f1c', fg: '#34d399' },
+      workable:       { bg: '#1e1b0d', fg: '#f59e0b' },
+    };
+
+    const EXCLUDED_ATS = ['smartrecruiters', 'workday'];
+    const ATS_DISPLAY = {
+      greenhouse: 'Greenhouse', ashby: 'Ashby', lever: 'Lever',
+      bamboohr: 'BambooHR', icims: 'iCIMS', workable: 'Workable',
+      recruitee: 'Recruitee', jobvite: 'Jobvite', paylocity: 'Paylocity',
+      breezyhr: 'BreezyHR', jazzhr: 'JazzHR', personio: 'Personio',
+      teamtailor: 'Teamtailor', applytojob: 'ApplyToJob', rippling: 'Rippling',
+      breezy: 'Breezy', oracle: 'Oracle', pinpoint: 'Pinpoint',
+      recruiterbox: 'RecruiterBox', cornerstone: 'Cornerstone',
+      taleo: 'Taleo', avature: 'Avature', successfactors: 'SuccessFactors',
+      phenom: 'Phenom', eightfold: 'Eightfold',
+      join_com: 'join.com', personio: 'Personio', recruitee: 'Recruitee',
+      teamtailor: 'Teamtailor', workable: 'Workable',
+    };
+
+    function atsDisplay(ats) {
+      return ATS_DISPLAY[ats?.toLowerCase()] || ats || 'Unknown';
+    }
+
+    function atsBadge(ats) {
+      const c = ATS_COLORS[ats?.toLowerCase()] || { bg: '#1C1C18', fg: '#706E66' };
+      return `<span style="background:${c.bg};color:${c.fg};padding:1px 6px;border-radius:3px;font-size:0.65rem;font-weight:600;white-space:nowrap;line-height:1.4;">${atsDisplay(ats)}</span>`;
+    }
+
+    function getAtsList() {
+      const set = new Set();
+      for (const row of allRows) {
+        const a = (row.ats || '').toLowerCase();
+        if (!EXCLUDED_ATS.includes(a) && a && !a.includes('|')) set.add(a);
+      }
+      return [...set].sort();
+    }
+
+    function rebuildAtsDropdown() {
+      const available = getAtsList();
+      const current = atsSelect.value;
+      let html = '<option value="">All ATS</option>';
+      for (const a of available) {
+        html += `<option value="${a}">${atsDisplay(a)}</option>`;
+      }
+      atsSelect.innerHTML = html;
+      if (current && [...atsSelect.options].some(o => o.value === current)) {
+        atsSelect.value = current;
+      } else {
+        atsSelect.value = '';
+        atsFilter = '';
+      }
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = String(s ?? '');
+      return d.innerHTML;
+    }
+
+    async function loadData() {
+      try {
+        loadBar.style.width = '10%';
+        await initWasm();
+        const resp = await fetch('/data/companies.parquet');
+        const buffer = await resp.arrayBuffer();
+        loadBar.style.width = '40%';
+        const wasmTable = readParquet(new Uint8Array(buffer));
+        const table = tableFromIPC(wasmTable.intoIPCStream());
+        loadBar.style.width = '70%';
+
+        const n = Number(table.numRows);
+        const nameCol = table.getChild('name');
+        const atsCol = table.getChild('ats');
+        const urlCol = table.getChild('url');
+        const domainCol = table.getChild('domain');
+        const regionsCol = table.getChild('regions');
+
+        function val(col, idx) { const v = col?.get(idx); return v == null ? '' : String(v); }
+
+        allRows = [];
+        for (let i = 0; i < n; i++) {
+          const regionsStr = val(regionsCol, i);
+          allRows.push({
+            name: val(nameCol, i),
+            ats: val(atsCol, i),
+            url: val(urlCol, i),
+            domain: val(domainCol, i),
+            regions: regionsStr ? regionsStr.split('|').filter(Boolean) : [],
+          });
+        }
+
+        loadBar.style.width = '100%';
+        totalEl.textContent = n.toLocaleString();
+        rebuildAtsDropdown();
+        applyFilters();
+      } catch (err) {
+        console.error('Failed to load company data:', err);
+        loadDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = `<p style="color:#f87171;font-size:1rem;">Failed to load company data.</p><p style="color:#8A8880;font-size:0.85rem;margin-top:0.5rem;">${err.message}</p>`;
+      }
+    }
+
+    function matchesRegion(regions, filter) {
+      if (!filter) return true;
+      return regions.includes(filter);
+    }
+
+    function matchesAts(rowAts, filter) {
+      const a = (rowAts || '').toLowerCase();
+      if (!filter) return a !== 'join_com' && a !== 'smartrecruiters' && a !== 'workday' && !a.includes('|');
+      return a === filter;
+    }
+
+    function applyFilters() {
+      const q = search.toLowerCase().trim();
+
+      filteredRows = allRows.filter(row => {
+        if (q && !row.name.toLowerCase().includes(q) && !row.domain?.toLowerCase().includes(q)) return false;
+        if (!matchesAts(row.ats, atsFilter)) return false;
+        if (!matchesRegion(row.regions, regionFilter)) return false;
+        return true;
+      });
+
+      filteredRows.sort((a, b) => {
+        let va = a[sortKey] || '', vb = b[sortKey] || '';
+        va = String(va).toLowerCase(); vb = String(vb).toLowerCase();
+        const aIsAlpha = /^[a-z]/.test(va);
+        const bIsAlpha = /^[a-z]/.test(vb);
+        if (aIsAlpha !== bIsAlpha) return aIsAlpha ? -1 : 1;
+        if (va < vb) return sortDir === 'asc' ? -1 : 1;
+        if (va > vb) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      page = 1;
+      render();
+    }
+
+    function render() {
+      loadDiv.style.display = 'none';
+      errorDiv.style.display = 'none';
+      resDiv.style.display = 'block';
+
+      const total = filteredRows.length;
+      const totalPages = Math.max(1, Math.ceil(total / perPage));
+      const start = (page - 1) * perPage;
+      const slice = filteredRows.slice(start, start + perPage);
+
+      resultCount.textContent = total.toLocaleString();
+      pageInfo.textContent = `Page ${page} of ${totalPages.toLocaleString()}`;
+
+      const regionCounts = {US:0,'US-CA':0,EU:0,ASIA:0,LATAM:0,'AU-NZ':0,AFRICA:0};
+      for (const row of allRows) {
+        for (const reg of row.regions) {
+          if (reg in regionCounts) regionCounts[reg]++;
+        }
+      }
+      const regionColors = {
+        'US-CA': ['#0d2e1c', '#4ade80'], 'EU': ['#1e1b4b', '#a78bfa'],
+        'ASIA': ['#2e1a00', '#fb923c'], 'LATAM': ['#1e293b', '#38bdf8'],
+        'AU-NZ': ['#0d1f1c', '#2dd4bf'], 'AFRICA': ['#1a0e00', '#fdba74'],
+      };
+      regionBreakdownEl.innerHTML = Object.entries(regionCounts)
+        .filter(([_, c]) => c > 0)
+        .map(([reg, cnt]) => {
+          const [bg, fg] = regionColors[reg] || ['#1C1C18', '#706E66'];
+          return `<span style="display:inline-flex;align-items:center;gap:0.35rem;"><span style="width:6px;height:6px;border-radius:50%;background:${fg};display:inline-block;"></span><span style="color:#A09E96;font-weight:600;">${reg}</span><span style="color:#EDEDEA;font-weight:700;">${cnt.toLocaleString()}</span></span>`;
+        }).join('');
+      prevBtn.disabled = page <= 1;
+      nextBtn.disabled = page >= totalPages;
+
+      gridEl.innerHTML = slice.map(r => {
+        const targetUrl = r.url && r.url.startsWith('http') ? r.url : `/jobs?company=${encodeURIComponent(r.name)}`;
+        return `
+        <a href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener noreferrer"
+           style="display:flex;flex-direction:column;gap:0.35rem;
+                  background:#0D0D0B;border:1px solid #1C1C18;border-radius:8px;padding:0.5rem 0.65rem;
+                  text-decoration:none;transition:border-color 0.2s,background 0.2s;
+                  cursor:pointer;"
+           onmouseover="this.style.borderColor='#4A4844';this.style.background='#141410'"
+           onmouseout="this.style.borderColor='#1C1C18';this.style.background='#0D0D0B'">
+          <span style="color:#EDEDEA;font-weight:600;font-size:0.8rem;line-height:1.3;
+                       overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+                       max-width:100%;display:block;" title="${escapeHtml(r.name)}">${escapeHtml(r.name)}</span>
+          <span style="display:flex;align-items:center;gap:0.35rem;">
+            ${atsBadge(r.ats)}
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#706E66" stroke-width="2.5" style="margin-left:auto;"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </span>
+        </a>`;
+      }).join('');
+    }
+
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        search = searchInput.value;
+        applyFilters();
+      }, 200);
+    });
+
+    regionSelect.addEventListener('change', () => {
+      regionFilter = regionSelect.value;
+      applyFilters();
+    });
+
+    atsSelect.addEventListener('change', () => {
+      atsFilter = atsSelect.value;
+      applyFilters();
+    });
+
+    sortSelect.addEventListener('change', () => {
+      const [key, dir] = sortSelect.value.split('-');
+      sortKey = key; sortDir = dir;
+      applyFilters();
+    });
+
+    perPageSelect.addEventListener('change', () => {
+      perPage = parseInt(perPageSelect.value);
+      applyFilters();
+    });
+
+    prevBtn.addEventListener('click', () => { if (page > 1) { page--; render(); } });
+    nextBtn.addEventListener('click', () => {
+      const totalPages = Math.max(1, Math.ceil(filteredRows.length / perPage));
+      if (page < totalPages) { page++; render(); }
+    });
+
+    loadData();
+  </script>
+</Layout>

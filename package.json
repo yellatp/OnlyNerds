@@ -1,0 +1,30 @@
+{
+  "name": "onlynerds",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Career intelligence for people who do their homework. Free, community-built resource repository for tech jobseekers.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run convert-csvs && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "convert-csvs": "node scripts/convert-csvs-to-parquet.cjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^3.6.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^4.16.0",
+    "framer-motion": "^11.11.0",
+    "lucide-react": "^0.468.0",
+    "parquet-wasm": "^0.7.1",
+    "parquetjs": "^0.11.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.15"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}

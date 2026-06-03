@@ -1,0 +1,19 @@
+# ============================================================
+# Cloudflare Pages — wrangler.toml
+# ============================================================
+# Deploy:  npx wrangler pages deploy dist/ --branch main
+# Serve locally with D1:  npx wrangler pages dev dist/ --d1 DB
+# ============================================================
+
+compatibility_date = "2024-10-01"
+pages_build_output = "dist/"
+
+# ── D1 Database (job search, stats, click tracking) ──────
+[[d1_databases]]
+binding = "DB"
+database_name = "job-aggregator-db"
+database_id = "01442a72-dac8-419b-a367-96b9a450fb0e"
+
+# ── Environment Variables ─────────────────────────────────
+[vars]
+R2_PUBLIC_BASE = "https://pub-44ec4fb39628423389fcf31e0c2ec994.r2.dev"

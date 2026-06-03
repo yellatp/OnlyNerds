@@ -1,0 +1,112 @@
+---
+interface Props {
+  quantity?: number;
+}
+const { quantity = 140 } = Astro.props;
+---
+
+<canvas id="dust-canvas" aria-hidden="true"></canvas>
+
+<style>
+  #dust-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>
+
+<script define:vars={{ quantity }}>
+  (function () {
+    const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('dust-canvas'));
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let W = 0;
+    let H = 0;
+    let raf = 0;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // Build particles — mix of sizes for depth
+    const particles = Array.from({ length: quantity }, () => ({
+      x:     Math.random() * W,
+      y:     Math.random() * H,
+      vx:    (Math.random() - 0.5) * 1.4,
+      vy:    (Math.random() - 0.5) * 1.4,
+      r:     0.8 + Math.random() * 1.8,       // 0.8 - 2.6 px
+      alpha: 0.18 + Math.random() * 0.48,     // clearly visible
+      // Each particle gets a random direction-change interval
+      kickInterval: 18 + Math.floor(Math.random() * 40),
+      kickAge: 0,
+    }));
+
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+
+      for (const p of particles) {
+        p.kickAge++;
+
+        // Scheduled random direction reversal - makes motion aggressive
+        if (p.kickAge >= p.kickInterval) {
+          p.vx += (Math.random() - 0.5) * 2.2;
+          p.vy += (Math.random() - 0.5) * 2.2;
+          p.kickAge = 0;
+          p.kickInterval = 18 + Math.floor(Math.random() * 40);
+        }
+
+        // Per-frame micro turbulence
+        p.vx += (Math.random() - 0.5) * 0.18;
+        p.vy += (Math.random() - 0.5) * 0.18;
+
+        // Light damping - retains energy better than before
+        p.vx *= 0.97;
+        p.vy *= 0.97;
+
+        // Speed cap raised significantly for aggressive feel
+        const spd = Math.hypot(p.vx, p.vy);
+        if (spd > 2.2) {
+          const inv = 2.2 / spd;
+          p.vx *= inv;
+          p.vy *= inv;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap edges
+        if (p.x < 0)  p.x += W;
+        if (p.x > W)  p.x -= W;
+        if (p.y < 0)  p.y += H;
+        if (p.y > H)  p.y -= H;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245,240,230,${p.alpha})`;
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(tick);
+    }
+
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+      } else {
+        raf = requestAnimationFrame(tick);
+      }
+    });
+
+    raf = requestAnimationFrame(tick);
+  })();
+</script>

@@ -1,0 +1,253 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import { getH1BCompanies } from '../lib/h1b';
+import { getPrivateCompanies } from '../lib/privateMarkets';
+import { getVCFirms } from '../lib/vcPortfolios';
+
+const h1bCount  = (await getH1BCompanies()).length;
+const pmCount   = (await getPrivateCompanies()).length;
+const vcFirms   = await getVCFirms();
+const vcCount   = vcFirms.filter(f => f.type === 'VC').length;
+const accelCount = vcFirms.filter(f => f.type === 'accelerator').length;
+const total     = h1bCount + pmCount + vcFirms.length;
+---
+
+<Layout
+  title="Home"
+  description="OnlyNerds is a free career platform for tech jobseekers. Find H1B sponsoring companies, VC-backed startup jobs, private market firms, and curated learning paths - all in one place. No paywalls, no sign-ups."
+  keywords="tech jobs 2025, H1B sponsoring companies list, startup jobs, VC backed companies hiring, free job search tools, career platform for engineers, data science jobs, machine learning jobs, software engineer job search"
+>
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1">
+
+      <!-- ── Hero ── -->
+      <section
+        class="border-b border-slate-800 px-6 sm:px-10 lg:px-16"
+        style="padding-top:160px; padding-bottom:40px;"
+      >
+        <div class="mx-auto max-w-7xl">
+          <div class="grid grid-cols-1 gap-16 lg:grid-cols-12">
+
+            <!-- Left: main content — 8 cols -->
+            <div class="lg:col-span-8">
+
+              <div class="mb-8 flex items-center gap-3">
+                <span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span>
+                <span class="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                  Free Forever &middot; Community Built &middot; onlynerds.win
+                </span>
+              </div>
+
+              <h1 class="mb-8 font-display font-black text-slate-100" style="font-size:clamp(2.8rem,8vw,5.5rem); line-height:0.92; letter-spacing:-0.025em;">
+                Career Intelligence<br />
+                <span class="font-light italic text-slate-400" style="font-size:clamp(2.2rem,6.5vw,4.5rem);">for Serious Builders</span>
+              </h1>
+
+              <p class="mb-3 max-w-lg font-mono text-sm leading-relaxed text-slate-400">
+                {total.toLocaleString()} ATS-linked company records across {vcCount} VC funds and {accelCount} accelerators.
+                Find any company's ATS job board and build precision dork queries — all free and open.
+              </p>
+
+              <div class="flex flex-wrap gap-3">
+                <a
+                  href="/companies-search"
+                  class="inline-flex items-center gap-2 bg-slate-100 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-900 transition-colors hover:bg-white"
+                >
+                  ATS Lookup
+                </a>
+                <a
+                  href="/job-search"
+                  class="inline-flex items-center gap-2 border border-slate-700 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100"
+                >
+                  Dork Builder
+                </a>
+                <a
+                  href="/companies"
+                  class="inline-flex items-center gap-2 border border-slate-700 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100"
+                >
+                  Directory
+                </a>
+              </div>
+
+              <!-- Mobile stats grid — shown below CTA on small screens -->
+              <div class="mt-12 grid grid-cols-2 border border-slate-800 sm:grid-cols-4 lg:hidden">
+                {[
+                  { value: h1bCount.toLocaleString(), label: 'H1B Companies' },
+                  { value: pmCount.toLocaleString(),  label: 'Private Firms'  },
+                  { value: vcCount.toString(),        label: 'VC Funds'       },
+                  { value: accelCount.toString(),     label: 'Accelerators'   },
+                ].map((s, i) => (
+                  <div class:list={['px-4 py-5', i > 0 && 'border-l border-slate-800']}>
+                    <p class="font-display text-2xl font-black leading-none text-slate-100">{s.value}</p>
+                    <p class="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+
+            <!-- Right: vertical stats column — desktop only -->
+            <div class="hidden border-l border-slate-800 pl-10 lg:col-span-4 lg:flex lg:flex-col lg:justify-end">
+              {[
+                { value: h1bCount.toLocaleString(), label: 'H1B Companies' },
+                { value: pmCount.toLocaleString(),  label: 'Private Firms'  },
+                { value: vcCount.toString(),        label: 'VC Funds'       },
+                { value: accelCount.toString(),     label: 'Accelerators'   },
+              ].map((s) => (
+                <div class="border-b border-slate-800 py-6">
+                  <p class="font-display text-4xl font-black leading-none text-slate-100">{s.value}</p>
+                  <p class="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Feature tiles ── -->
+      <section class="px-6 py-20 sm:px-10 lg:px-16">
+        <div class="mx-auto max-w-7xl">
+
+          <div class="mb-14 grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <div class="lg:col-span-6">
+              <p class="mb-4 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">// Why OnlyNerds</p>
+              <h2 class="font-sans text-fluid-3xl font-bold leading-tight tracking-tight text-slate-100">
+                Built for people who actually want to learn and grow
+              </h2>
+            </div>
+          </div>
+
+          <!-- Tile grid — gap-px on bg-slate-800 creates 1px dividers without border markup -->
+          <div class="grid grid-cols-1 gap-px bg-slate-800 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                tag: '01 / ATS Lookup',
+                title: 'Company ATS Lookup',
+                body: 'Find which ATS platform any company uses with one search. 126K+ company records across Greenhouse, Ashby, Lever, BambooHR, iCIMS, and more. Click to go directly to their job board.',
+              },
+              {
+                tag: '02 / Job Board',
+                title: 'Live Job Board',
+                body: '1.4M+ active job postings updated daily. Filter by title, company, ATS, location, salary, experience level, and freshness. All data from the last 45 days.',
+              },
+              {
+                tag: '03 / Dork Builder',
+                title: 'Precision Dorking Engine',
+                body: 'Build Google, Bing, or DuckDuckGo dork queries targeting specific roles, experience levels, ATS platforms, and locations. Hit job postings hours after they go live.',
+              },
+              {
+                tag: '04 / H1B Intelligence',
+                title: 'H1B Sponsorship Intelligence',
+                body: 'Every company ranked by H1B sponsorship likelihood from Very High to Low, based on historical patterns. Target the right employers before you apply.',
+              },
+              {
+                tag: '05 / Private Markets',
+                title: 'Pre-IPO Private Market Access',
+                body: 'Surfaces thousands of private, pre-IPO firms that are actively hiring but rarely appear in standard searches. Find your next rocket before it launches.',
+              },
+              {
+                tag: '06 / VC Portfolios',
+                title: 'VC Portfolio Job Boards',
+                body: 'Browse direct job board links for 100+ top VC firms and accelerators including Y Combinator, a16z, Sequoia, and Techstars. Funded startups hire fast.',
+              },
+            ].map((item) => (
+              <div class="group bg-slate-900 p-7 transition-all duration-500 hover:bg-slate-800">
+                <p class="mb-5 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">{item.tag}</p>
+                <h3 class="mb-3 font-sans text-base font-semibold leading-snug text-slate-100">{item.title}</h3>
+                <p class="font-mono text-xs leading-relaxed text-slate-400">{item.body}</p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── Contribute CTA ── -->
+      <section class="border-t border-slate-800 px-6 py-20 sm:px-10 lg:px-16">
+        <div class="mx-auto max-w-7xl">
+          <div class="border border-slate-800 p-8 sm:p-12">
+            <div class="grid grid-cols-1 gap-8 sm:grid-cols-12 sm:items-end">
+              <div class="sm:col-span-8">
+                <p class="mb-4 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">// Contribute</p>
+                <h2 class="mb-3 font-sans text-fluid-2xl font-bold leading-tight tracking-tight text-slate-100">
+                  Join as a Contributor
+                </h2>
+                <p class="max-w-xl font-mono text-xs leading-relaxed text-slate-400">
+                  OnlyNerds is a platform built on the principle of shared growth. Fork the repo, add resources you have discovered,
+                  push better data, or improve the UI. Every contribution will be credited.
+                  If you share a resource, it goes up with your name on it.
+                </p>
+              </div>
+              <div class="sm:col-span-4 sm:flex sm:flex-col sm:items-end sm:gap-3">
+                <a
+                  href="https://github.com/yellatp/OnlyNerds"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 bg-slate-100 px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-slate-900 transition-colors hover:bg-white"
+                >
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                  </svg>
+                  Fork on GitHub
+                </a>
+                <a href="/contact" class="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500 transition-colors hover:text-slate-300">
+                  Share a resource or idea
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Explore grid ── -->
+      <section class="border-t border-slate-800 px-6 py-20 sm:px-10 lg:px-16">
+        <div class="mx-auto max-w-7xl">
+          <p class="mb-8 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">// Explore</p>
+          <div class="grid grid-cols-1 gap-px bg-slate-800 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                href: '/companies-search',
+                label: 'ATS Lookup',
+                count: '126K+ companies',
+                desc: 'Find which ATS any company uses and jump to their job board',
+              },
+              {
+                href: '/job-search',
+                label: 'Dork Builder',
+                count: 'Precision queries',
+                desc: 'Build targeted search queries by role, level, ATS, and location',
+              },
+              {
+                href: '/companies',
+                label: 'Directory',
+                count: `${total.toLocaleString()} records`,
+                desc: 'H1B sponsors, private markets, and VC portfolios',
+              },
+            ].map((item) => (
+              <a
+                href={item.href}
+                class="group bg-slate-900 p-7 transition-all duration-500 hover:bg-slate-800"
+              >
+                <p class="mb-6 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{item.count}</p>
+                <h3 class="mb-2 font-sans text-base font-semibold leading-tight text-slate-100">{item.label}</h3>
+                <p class="font-mono text-xs leading-relaxed text-slate-500">{item.desc}</p>
+                <div class="mt-8 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-600 transition-colors group-hover:text-slate-300">
+                  Explore &rarr;
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

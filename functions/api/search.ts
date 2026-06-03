@@ -21,7 +21,7 @@
  *   [[d1_databases]]
  *   binding = "DB"
  *   database_name = "job-aggregator-db"
- *   database_id = "d27185cb-ca2d-4dc3-96bf-d21d558fced3"
+ *   database_id = "01442a72-dac8-419b-a367-96b9a450fb0e"
  */
 
 interface Env {

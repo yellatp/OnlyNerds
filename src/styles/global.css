@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    cursor: none;
+  }
+
+  body {
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    background-color: #0D0D0D;
+    color: #EDEDEA;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Film grain overlay — 2% opacity, repeating SVG noise tile */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+    background-repeat: repeat;
+  }
+
+  /* Display headings — Fraunces optical serif */
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    letter-spacing: -0.025em;
+    line-height: 0.95;
+  }
+
+  /* Section headings — Space Grotesk, still tight */
+  h2, h3 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    letter-spacing: -0.015em;
+  }
+
+  /* Mono elements — buttons, labels, stats, code */
+  button, input, select, textarea {
+    font-family: 'JetBrains Mono', Menlo, monospace;
+    cursor: none;
+  }
+
+  code, kbd, pre, .font-mono {
+    font-family: 'JetBrains Mono', Menlo, monospace;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #0D0D0D; }
+  ::-webkit-scrollbar-thumb { background: #1C1C18; border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: #323028; }
+
+  ::selection { background: rgba(160, 158, 150, 0.2); color: #F5F5F0; }
+
+  a { text-decoration: none; color: inherit; cursor: none; }
+}
+
+/* ─── Custom cursor ─────────────────────────────────────── */
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(251, 146, 60, 0.85);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+              height 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+              background 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+              border-color 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+              opacity 0.3s ease;
+  will-change: left, top;
+  box-shadow: 0 0 6px rgba(251, 146, 60, 0.3);
+}
+
+#cursor.is-hovering {
+  width: 38px;
+  height: 38px;
+  background: rgba(251, 146, 60, 0.07);
+  border-color: rgba(251, 146, 60, 1);
+  box-shadow: 0 0 14px rgba(251, 146, 60, 0.45);
+}
+
+/* ─── Global hover highlight on text ───────────────────── */
+/* Any text element brightens when directly hovered */
+p, li, td, th, span, label {
+  transition: color 0.18s ease;
+}
+
+/* Tiles/blocks: text inside brightens when the block is hovered */
+[class*="group"]:hover p,
+[class*="group"]:hover li,
+[class*="group"]:hover span:not([style*="background"]) {
+  color: #C8C6BE;
+}
+
+/* Headings brighten on direct hover */
+h1:hover, h2:hover, h3:hover {
+  color: #F5F5F0;
+}
+
+/* ─── Component classes ─────────────────────────────────── */
+@layer components {
+
+  /* Card tile — zero radius, warm dark, lazy luxurious hover */
+  .cn-card {
+    background: #141410;
+    border: 0.5px solid #1C1C18;
+    border-radius: 0;
+    transition: background-color 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    isolation: isolate;
+  }
+
+  .cn-card:hover {
+    background: #1C1C18;
+    transform: scale(1.015);
+    z-index: 1;
+  }
+
+  /* Input */
+  .cn-input {
+    width: 100%;
+    background: #141410;
+    border: 0.5px solid #323028;
+    border-radius: 0;
+    padding: 0.625rem 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8125rem;
+    color: #EDEDEA;
+    outline: none;
+    transition: border-color 0.2s ease;
+    placeholder-color: #706E66;
+  }
+
+  .cn-input::placeholder { color: #706E66; }
+  .cn-input:focus { border-color: #706E66; background: #1C1C18; }
+
+  /* Pill button — inactive */
+  .cn-pill {
+    border-radius: 0;
+    padding: 0.375rem 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    background: #1C1C18;
+    color: #A09E96;
+    cursor: none;
+  }
+  .cn-pill:hover { background: #323028; color: #DDDBD3; }
+
+  /* Pill active variants — muted versions */
+  .cn-pill-emerald { background: rgba(122, 184, 122, 0.12); color: #7AB87A; outline: 1px solid rgba(122, 184, 122, 0.25); }
+  .cn-pill-amber   { background: rgba(196, 154, 58, 0.12);  color: #C49A3A; outline: 1px solid rgba(196, 154, 58, 0.25);  }
+  .cn-pill-violet  { background: rgba(155, 142, 196, 0.12); color: #9B8EC4; outline: 1px solid rgba(155, 142, 196, 0.25); }
+  .cn-pill-blue    { background: rgba(107, 154, 196, 0.12); color: #6B9AC4; outline: 1px solid rgba(107, 154, 196, 0.25); }
+
+  /* Section label */
+  .cn-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #706E66;
+  }
+
+  /* Page title */
+  .cn-page-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 0.95;
+    color: #EDEDEA;
+  }
+
+  /* Stat box */
+  .cn-stat {
+    background: #141410;
+    border: 0.5px solid #1C1C18;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Section divider */
+  .cn-divider {
+    border-top: 0.5px solid #1C1C18;
+  }
+}

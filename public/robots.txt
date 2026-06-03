@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block direct access to raw data assets
+Disallow: /_astro/
+
+Sitemap: https://onlynerds.win/sitemap.xml

@@ -5,15 +5,13 @@
  * In production on Cloudflare Pages, this function intercepts those requests
  * and proxies them to the R2 public URL, avoiding CORS issues.
  *
- * For local development, the `frontend/data/chunks/` directory contains
- * the actual chunk files, so the function is bypassed.
+ * For local development without R2, set env.R2_PUBLIC_BASE or
+ * the function falls back to ASSETS (static files from the deployment).
  */
-
-// R2 public bucket base URL
-const R2_PUBLIC_BASE = 'https://pub-44ec4fb39628423389fcf31e0c2ec994.r2.dev';
 
 interface Env {
   ASSETS: { fetch: (request: Request) => Promise<Response> };
+  R2_PUBLIC_BASE?: string;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -26,7 +24,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   const filePath = pathParts.join('/');
-  const r2Url = `${R2_PUBLIC_BASE}/chunks/${filePath}`;
+  const r2Base = env.R2_PUBLIC_BASE || 'https://pub-44ec4fb39628423389fcf31e0c2ec994.r2.dev';
+  const r2Url = `${r2Base}/chunks/${filePath}`;
 
   try {
     const response = await fetch(r2Url);

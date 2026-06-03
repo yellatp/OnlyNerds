@@ -1,0 +1,53 @@
+<svg width="680" height="720" viewBox="0 0 680 720" xmlns="http://www.w3.org/2000/svg">
+  <title>OnlyNerds Face Logo</title>
+  <desc>A human face constructed from code syntax inside a circular head</desc>
+
+  <defs>
+    <clipPath id="headClip">
+      <circle cx="340" cy="340" r="295"/>
+    </clipPath>
+  </defs>
+
+  <rect width="680" height="720" rx="28" fill="#0A0A0A"/>
+
+  <g clip-path="url(#headClip)" opacity="0.04">
+    <line x1="100" y1="45" x2="100" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="160" y1="45" x2="160" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="220" y1="45" x2="220" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="280" y1="45" x2="280" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="340" y1="45" x2="340" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="400" y1="45" x2="400" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="460" y1="45" x2="460" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="520" y1="45" x2="520" y2="635" stroke="#FF7A00" stroke-width="1"/>
+    <line x1="580" y1="45" x2="580" y2="635" stroke="#FF7A00" stroke-width="1"/>
+  </g>
+
+  <circle cx="340" cy="340" r="284" fill="#111111" stroke="#FF7A00" stroke-width="2.5"/>
+
+  <!-- Eyes -->
+  <ellipse cx="220" cy="278" rx="72" ry="34" fill="#1A1A1A" stroke="#FF7A00"/>
+  <text x="220" y="290" text-anchor="middle" font-size="26" fill="#FF7A00">
+    (<tspan fill="#FFFFFF" font-weight="800">Only</tspan>)
+  </text>
+
+  <ellipse cx="460" cy="278" rx="72" ry="34" fill="#1A1A1A" stroke="#FF7A00"/>
+  <text x="460" y="290" text-anchor="middle" font-size="26" fill="#FF7A00">
+    (<tspan fill="#FFFFFF" font-weight="800">Nerds</tspan>)
+  </text>
+
+  <!-- Nose bridge -->
+  <text x="340" y="350" text-anchor="middle" font-size="80" fill="#1DA1F2">|</text>
+
+  <!-- Nose -->
+  <path d="M 312,372 Q 298,372 298,386 L 298,398 Q 298,408 286,408 Q 298,408 298,418 L 298,430 Q 298,444 312,444"
+        fill="none" stroke="#FF7A00" stroke-width="4"/>
+
+  <path d="M 368,372 Q 382,372 382,386 L 382,398 Q 382,408 394,408 Q 382,408 382,418 L 382,430 Q 382,444 368,444"
+        fill="none" stroke="#FF7A00" stroke-width="4"/>
+
+  <!-- Mouth -->
+  <text x="340" y="540" text-anchor="middle" font-size="44" fill="#1DA1F2">
+    &lt; === &gt;
+  </text>
+
+</svg>

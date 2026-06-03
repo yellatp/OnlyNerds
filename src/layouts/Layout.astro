@@ -1,0 +1,144 @@
+---
+import '../styles/global.css';
+import DustParticles from '../components/DustParticles.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const {
+  title = 'OnlyNerds',
+  description = 'Free career intelligence for tech jobseekers. Search H1B sponsoring companies, VC-backed startup jobs, private market firms, and curated learning resources - all in one place.',
+  keywords = 'tech jobs, H1B sponsoring companies, VC backed startups, startup jobs, career resources, job search, data science jobs, software engineer jobs, machine learning jobs, VC portfolio jobs, accelerator jobs, job dorking',
+  ogImage = '/OnlyNerds.png',
+  canonical,
+} = Astro.props;
+
+const siteUrl  = 'https://onlynerds.win';
+const pageUrl  = canonical ?? (siteUrl + Astro.url.pathname);
+const pageTitle = title === 'Home' || title === 'OnlyNerds'
+  ? 'OnlyNerds - Free Career Intelligence for Tech Jobseekers'
+  : `${title} | OnlyNerds`;
+
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : siteUrl + ogImage;
+
+const jsonLdOrg = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'OnlyNerds',
+  url: siteUrl,
+  logo: siteUrl + '/OnlyNerds.svg',
+  description: 'Free career intelligence platform for tech jobseekers, students, and builders.',
+  sameAs: ['https://github.com/yellatp/OnlyNerds'],
+});
+
+const jsonLdWebsite = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'OnlyNerds',
+  url: siteUrl,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: siteUrl + '/companies?q={search_term_string}' },
+    'query-input': 'required name=search_term_string',
+  },
+});
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary -->
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="Pavan Yellathakota" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href={pageUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OnlyNerds" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:creator" content="@yellatp" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/OnlyNerds.png" />
+
+    <!-- Fonts: Fraunces (display serif) + Space Grotesk (sans) + JetBrains Mono (mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={jsonLdOrg} />
+    <script type="application/ld+json" set:html={jsonLdWebsite} />
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5e718d23e7c849099f2560c92268c7c5"}'></script>
+
+    <!-- Microsoft Clarity -->
+    <script is:inline>
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "wfszympp7m");
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <!-- Custom cursor -->
+    <div id="cursor" aria-hidden="true"></div>
+
+    <!-- Dust particles background -->
+    <DustParticles quantity={90} />
+
+    <slot />
+  </body>
+</html>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  if (cursor && window.matchMedia('(pointer: fine)').matches) {
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.addEventListener('mouseover', (e) => {
+      const t = e.target as Element;
+      if (t && (t.matches('a,button,input,select,textarea,[role="button"]') || t.closest('a,button'))) {
+        cursor.classList.add('is-hovering');
+      } else {
+        cursor.classList.remove('is-hovering');
+      }
+    });
+    document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { cursor.style.opacity = '1'; });
+  } else if (cursor) {
+    cursor.style.display = 'none';
+  }
+</script>

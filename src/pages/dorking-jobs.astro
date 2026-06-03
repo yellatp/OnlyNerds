@@ -1,0 +1,465 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+---
+
+<Layout
+  title="Google Dorking for Job Search - OnlyNerds"
+  description="Master Google Dorking for job search. Use advanced search operators to find hidden job listings, bypass ATS, and uncover roles at specific companies before they're posted on LinkedIn."
+  keywords="google dorking jobs, google dork job search, site operator jobs, advanced google search jobs, find jobs google, bypass linkedin job search, ATS job search, inurl jobs site, google search operators careers"
+>
+  <div class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1">
+      <div class="mx-auto max-w-7xl px-6 sm:px-10">
+
+        <!-- Hero -->
+        <div class="border-b py-16 sm:py-24" style="border-color: #1C1C18;">
+          <div class="mb-4 flex items-center gap-3">
+            <span class="h-2 w-2 rounded-full" style="background:#fb923c;"></span>
+            <span class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#fb923c;">Dorking Guide</span>
+          </div>
+          <h1 class="mb-6 font-display" style="font-size: clamp(2.4rem, 6vw, 5rem); line-height: 1.05; color: #EDEDEA; font-weight: 700;">
+            Google Dorking<br />
+            <span style="color:#706E66; font-style:italic; font-weight:300;">for Job Search</span>
+          </h1>
+          <p class="mb-8 max-w-2xl font-sans leading-relaxed" style="color:#8A8880; font-size:1rem;">
+            Google indexes everything companies post publicly - job boards, career pages, PDFs, LinkedIn profiles.
+            Most jobseekers search the surface. Dorking lets you search the structure.
+            Learn the operators that reveal listings before they trend, companies before they post, and roles before they're gone.
+          </p>
+
+          <!-- Quick stats row -->
+          <div class="flex flex-wrap gap-4">
+            {[
+              { val: '12+', label: 'Core operators' },
+              { val: '30+', label: 'Query templates' },
+              { val: '6',   label: 'ATS targets' },
+            ].map((s) => (
+              <div class="px-5 py-3" style="border: 0.5px solid #1C1C18; background:#141410;">
+                <p class="font-mono text-xl font-bold" style="color:#fb923c;">{s.val}</p>
+                <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#706E66;">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- What is Dorking? -->
+        <section class="border-b py-14" style="border-color: #1C1C18;">
+          <div class="mb-6 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#fb923c;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#fb923c;">What is Dorking?</h2>
+          </div>
+          <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <div>
+              <p class="mb-4 font-sans leading-relaxed" style="color:#A09E96; font-size:0.95rem;">
+                Google Dorking (also called Google Hacking) uses advanced search operators to filter results with surgical precision.
+                Instead of searching <span class="font-mono" style="color:#C8C6BE;">"software engineer jobs"</span>, you search
+                <span class="font-mono" style="color:#C8C6BE;">site:greenhouse.io "software engineer" "new york"</span> and get
+                direct ATS listings - no aggregators, no sponsored posts, no noise.
+              </p>
+              <p class="font-sans leading-relaxed" style="color:#A09E96; font-size:0.95rem;">
+                For job search, this means finding: roles posted directly on company career pages,
+                listings that haven't been scraped by job boards yet, niche positions at companies
+                that don't advertise widely, and openings at companies you've targeted by name.
+              </p>
+            </div>
+            <div style="background:#0D0D0B; border: 0.5px solid #1C1C18; padding: 1.5rem;">
+              <p class="mb-3 font-mono text-[10px] uppercase tracking-widest" style="color:#706E66;">Anatomy of a Dork</p>
+              <div class="space-y-2 font-mono text-sm" style="color:#C8C6BE;">
+                <div class="flex flex-wrap gap-2">
+                  <span style="background:#1A1A14; color:#fb923c; padding: 2px 8px;">site:</span>
+                  <span style="color:#8A8880;">restricts results to a domain</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span style="background:#1A1A14; color:#7AB87A; padding: 2px 8px;">inurl:</span>
+                  <span style="color:#8A8880;">matches text in the URL</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span style="background:#1A1A14; color:#C49A3A; padding: 2px 8px;">intitle:</span>
+                  <span style="color:#8A8880;">matches text in the page title</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span style="background:#1A1A14; color:#9B8EC4; padding: 2px 8px;">"exact phrase"</span>
+                  <span style="color:#8A8880;">forces exact match</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span style="background:#1A1A14; color:#6B9AC4; padding: 2px 8px;">-term</span>
+                  <span style="color:#8A8880;">excludes that word from results</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span style="background:#1A1A14; color:#C8C6BE; padding: 2px 8px;">filetype:</span>
+                  <span style="color:#8A8880;">filter by file extension</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Core Operators Reference -->
+        <section class="border-b py-14" style="border-color: #1C1C18;">
+          <div class="mb-8 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#fb923c;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#fb923c;">Core Operators</h2>
+          </div>
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-3" style="background:#1C1C18;">
+            {[
+              {
+                op: 'site:',
+                color: '#fb923c',
+                desc: 'Search within a specific domain or subdomain.',
+                example: 'site:lever.co "machine learning engineer"',
+              },
+              {
+                op: 'inurl:',
+                color: '#7AB87A',
+                desc: 'Match text within the page URL path.',
+                example: 'inurl:careers "data scientist" "remote"',
+              },
+              {
+                op: 'intitle:',
+                color: '#C49A3A',
+                desc: 'Match text in the HTML page title.',
+                example: 'intitle:"software engineer" site:notion.so',
+              },
+              {
+                op: '"exact phrase"',
+                color: '#9B8EC4',
+                desc: 'Force Google to match the exact string.',
+                example: '"senior data engineer" "open to sponsorship"',
+              },
+              {
+                op: 'OR',
+                color: '#6B9AC4',
+                desc: 'Expand results to match either term.',
+                example: 'site:greenhouse.io "ML engineer" OR "MLOps"',
+              },
+              {
+                op: '-exclude',
+                color: '#C8C6BE',
+                desc: 'Remove results containing that word.',
+                example: 'site:lever.co "backend engineer" -senior -lead',
+              },
+              {
+                op: 'filetype:',
+                color: '#fb923c',
+                desc: 'Filter by file extension (pdf, doc, csv).',
+                example: 'filetype:pdf "we are hiring" "data scientist"',
+              },
+              {
+                op: 'tbs=qdr:',
+                color: '#7AB87A',
+                desc: 'Time filter via URL param. d=day, w=week, m=month.',
+                example: 'site:ashbyhq.com "engineer" tbs=qdr:w (append to URL)',
+              },
+              {
+                op: 'cache:',
+                color: '#C49A3A',
+                desc: 'View Google cached version of a page.',
+                example: 'cache:boards.greenhouse.io/acme/jobs/12345',
+              },
+              {
+                op: 'related:',
+                color: '#9B8EC4',
+                desc: 'Find sites similar to a known one.',
+                example: 'related:greenhouse.io',
+              },
+              {
+                op: 'intext:',
+                color: '#6B9AC4',
+                desc: 'Match text in the body of a page.',
+                example: 'intext:"H1B sponsor" intext:"software engineer"',
+              },
+              {
+                op: 'after:',
+                color: '#C8C6BE',
+                desc: 'Filter pages indexed after a date.',
+                example: 'site:lever.co "product manager" after:2025-01-01',
+              },
+            ].map((o) => (
+              <div style="background:#0D0D0B; padding:1.25rem 1.5rem;">
+                <p class="mb-1 font-mono text-sm font-bold" style={`color:${o.color}`}>{o.op}</p>
+                <p class="mb-3 font-sans text-xs leading-relaxed" style="color:#8A8880;">{o.desc}</p>
+                <p class="font-mono text-xs" style="color:#706E66; word-break:break-all;">{o.example}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- ATS-Specific Dorks -->
+        <section class="border-b py-14" style="border-color: #1C1C18;">
+          <div class="mb-3 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#7AB87A;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#7AB87A;">ATS-Specific Dorks</h2>
+          </div>
+          <p class="mb-8 font-sans text-sm leading-relaxed" style="color:#706E66; max-width:60ch;">
+            Each ATS has a predictable URL structure. Target it directly to skip aggregators entirely.
+            Replace the bracketed placeholders with your actual role and location.
+          </p>
+          <div class="space-y-px">
+            {[
+              {
+                name: 'Greenhouse',
+                domain: 'boards.greenhouse.io',
+                color: '#7AB87A',
+                template: 'site:boards.greenhouse.io "[ROLE]" "[CITY OR REMOTE]"',
+                tip: 'Greenhouse job IDs increment. Bookmark the listing page, not the apply URL.',
+              },
+              {
+                name: 'Lever',
+                domain: 'jobs.lever.co',
+                color: '#C49A3A',
+                template: 'site:jobs.lever.co "[ROLE]" "[CITY OR REMOTE]"',
+                tip: 'Lever shows team name in URL slug. Filter by team: inurl:/engineering/ or /data/',
+              },
+              {
+                name: 'Ashby',
+                domain: 'jobs.ashbyhq.com',
+                color: '#9B8EC4',
+                template: 'site:jobs.ashbyhq.com "[ROLE]" "[CITY OR REMOTE]"',
+                tip: 'Ashby is used heavily by Series A-C startups. Great for early-stage roles.',
+              },
+              {
+                name: 'Workday',
+                domain: '*.myworkdayjobs.com',
+                color: '#6B9AC4',
+                template: 'site:myworkdayjobs.com "[ROLE]" "[COMPANY NAME]"',
+                tip: 'Large enterprises use Workday. Search by company subdomain: site:companyname.wd1.myworkdayjobs.com',
+              },
+              {
+                name: 'SmartRecruiters',
+                domain: 'careers.smartrecruiters.com',
+                color: '#fb923c',
+                template: 'site:careers.smartrecruiters.com "[ROLE]"',
+                tip: 'Enterprise-scale. Combine with company name in quotes to target specific orgs.',
+              },
+              {
+                name: 'BambooHR',
+                domain: '*.bamboohr.com/jobs',
+                color: '#C8C6BE',
+                template: 'site:bamboohr.com "[ROLE]" inurl:/jobs/',
+                tip: 'Common for SMBs and PE-backed companies. Under-indexed by LinkedIn.',
+              },
+            ].map((a) => (
+              <div class="grid grid-cols-1 gap-4 p-5 lg:grid-cols-3" style="background:#0D0D0B; border-top: 0.5px solid #1C1C18;">
+                <div>
+                  <p class="mb-0.5 font-mono text-sm font-bold" style={`color:${a.color}`}>{a.name}</p>
+                  <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#4A4844;">{a.domain}</p>
+                </div>
+                <div class="font-mono text-xs lg:col-span-2" style="color:#8A8880; word-break:break-all;">
+                  <p class="mb-2 font-bold" style="color:#C8C6BE;">{a.template}</p>
+                  <p style="color:#706E66;">{a.tip}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Power Dork Recipes -->
+        <section class="border-b py-14" style="border-color: #1C1C18;">
+          <div class="mb-3 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#9B8EC4;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#9B8EC4;">Power Dork Recipes</h2>
+          </div>
+          <p class="mb-8 font-sans text-sm leading-relaxed" style="color:#706E66; max-width:60ch;">
+            Copy, customize, and paste into Google. Each recipe targets a specific job-hunting scenario.
+          </p>
+          <div class="space-y-4">
+            {[
+              {
+                label: '01 - Freshly Posted Listings (past week)',
+                query: 'site:greenhouse.io OR site:lever.co "[ROLE]" "[CITY]" after:2025-01-01',
+                desc: 'Combine ATS domains with a date filter to catch listings before aggregators index them. Use after: with a date 7-14 days ago.',
+              },
+              {
+                label: '02 - H1B Sponsoring Companies',
+                query: 'site:greenhouse.io "visa sponsorship" OR "H1B" "[ROLE]"',
+                desc: 'Many companies disclose sponsorship in the JD text. Google indexes that text. This surfaces relevant listings directly.',
+              },
+              {
+                label: '03 - Remote-First Roles',
+                query: 'site:jobs.lever.co "remote" "data engineer" -"remote not available" -"US only"',
+                desc: 'Exclude common exclusion phrases to filter out jobs that say remote but mean "remote in California only".',
+              },
+              {
+                label: '04 - Target a Specific Company',
+                query: 'site:company.com inurl:careers OR inurl:jobs "[ROLE]"',
+                desc: 'Hit the company career page directly. Works for companies that self-host on their own domain instead of an ATS.',
+              },
+              {
+                label: '05 - Unadvertised Roles via LinkedIn',
+                query: 'site:linkedin.com/in "[ROLE]" "[COMPANY NAME]" "open to work"',
+                desc: 'Find employees at your target company with that role title who are open to work - signals internal movement, new headcount, or upcoming backfill.',
+              },
+              {
+                label: '06 - PDF Job Postings',
+                query: 'filetype:pdf "software engineer" "apply now" OR "send resume" "2025"',
+                desc: 'Some teams post PDFs to their site or Google Drive. These are rarely on LinkedIn and rarely competitive.',
+              },
+              {
+                label: '07 - Internship and New Grad Roles',
+                query: 'site:greenhouse.io "new grad" OR "entry level" OR "0-2 years" "[FIELD]" "2025"',
+                desc: 'New grad postings often go live months before the start date. The 2025/2026 text is often in the JD body, not the title.',
+              },
+              {
+                label: '08 - Startup Job Boards (under the radar)',
+                query: 'site:jobs.ashbyhq.com "[ROLE]" -senior -staff -principal',
+                desc: 'Ashby is the ATS of choice for YC and Series A startups. Filter out senior titles to find IC and mid-level openings.',
+              },
+              {
+                label: '09 - Role Alias Expansion',
+                query: 'site:lever.co "data scientist" OR "ML engineer" OR "applied scientist" "[CITY]"',
+                desc: 'The same role gets titled differently across companies. Use OR to cast a wider net and catch all naming variants.',
+              },
+              {
+                label: '10 - Government and Research Roles',
+                query: 'site:.gov OR site:.edu "data scientist" OR "data analyst" "apply" "2025"',
+                desc: 'Government and university roles are often on .gov/.edu domains, invisible on LinkedIn.',
+              },
+            ].map((r) => (
+              <div style="background:#0D0D0B; border: 0.5px solid #1C1C18;">
+                <div class="border-b px-5 py-3" style="border-color:#1C1C18;">
+                  <p class="font-mono text-[10px] font-semibold uppercase tracking-widest" style="color:#fb923c;">{r.label}</p>
+                </div>
+                <div class="px-5 py-4">
+                  <p class="mb-3 break-all font-mono text-sm" style="color:#C8C6BE;">{r.query}</p>
+                  <p class="font-sans text-xs leading-relaxed" style="color:#706E66;">{r.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Pro Tips -->
+        <section class="border-b py-14" style="border-color: #1C1C18;">
+          <div class="mb-8 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#6B9AC4;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#6B9AC4;">Pro Tips</h2>
+          </div>
+          <div class="grid grid-cols-1 gap-px sm:grid-cols-2" style="background:#1C1C18;">
+            {[
+              {
+                n: '01',
+                title: 'Use time filters via URL',
+                body: 'After running a search, click Tools > Any time > Past week. Or manually append &tbs=qdr:w (week), &tbs=qdr:d (day), or &tbs=qdr:m (month) to the Google URL. This is the most reliable way to find fresh listings.',
+              },
+              {
+                n: '02',
+                title: 'Build a dork sheet for each ATS',
+                body: 'Save one query per ATS per target role in a spreadsheet. Run each weekly. Listings on Greenhouse and Lever sometimes expire within 48 hours for hot roles.',
+              },
+              {
+                n: '03',
+                title: 'Dork LinkedIn for internal signals',
+                body: 'site:linkedin.com/in "[ROLE]" "[COMPANY]" reveals current employees. Recent hires in a function suggest headcount growth. Departures signal backfill. Both are job leads.',
+              },
+              {
+                n: '04',
+                title: 'Search GitHub for hiring signals',
+                body: 'site:github.com "we are hiring" OR "join our team" "[ROLE]" - Some engineering teams post job openings in README files or GitHub Discussions. These are almost never on LinkedIn.',
+              },
+              {
+                n: '05',
+                title: 'Target company press releases',
+                body: '"[COMPANY NAME]" "we are hiring" OR "we are growing" site:prnewswire.com OR site:businesswire.com after:2025-01-01 - Funding announcements often precede job postings by 2-4 weeks.',
+              },
+              {
+                n: '06',
+                title: 'Use cache: to recover expired listings',
+                body: 'If a listing 404s, Google may still have a cached version. Use cache:boards.greenhouse.io/company/jobs/123456 to get the JD text and identify the hiring manager.',
+              },
+              {
+                n: '07',
+                title: 'Combine dorks with OR brackets',
+                body: '(site:greenhouse.io OR site:lever.co OR site:jobs.ashbyhq.com) "staff engineer" "remote" - Parentheses group OR terms. One query covers three ATS platforms at once.',
+              },
+              {
+                n: '08',
+                title: 'Alert on new results',
+                body: 'Take any dork query and create a Google Alert for it at google.com/alerts. Google will email you when new pages matching that dork are indexed - passive job search on autopilot.',
+              },
+            ].map((t) => (
+              <div style="background:#0D0D0B; padding:1.5rem;">
+                <div class="mb-2 flex items-center gap-3">
+                  <span class="font-mono text-[10px]" style="color:#4A4844;">{t.n}</span>
+                  <p class="font-sans text-sm font-semibold" style="color:#EDEDEA;">{t.title}</p>
+                </div>
+                <p class="font-sans text-xs leading-relaxed" style="color:#706E66;">{t.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Quick Reference Cheatsheet -->
+        <section class="py-14">
+          <div class="mb-8 flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full" style="background:#C49A3A;"></span>
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-widest" style="color:#C49A3A;">Quick Reference</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full font-mono text-xs" style="border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom: 0.5px solid #323028;">
+                  <th class="py-2.5 text-left" style="color:#706E66; padding-right:2rem; min-width:160px;">Operator</th>
+                  <th class="py-2.5 text-left" style="color:#706E66; padding-right:2rem; min-width:180px;">Use For</th>
+                  <th class="py-2.5 text-left" style="color:#706E66;">Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ['site:',         'Restrict to domain',       'site:greenhouse.io "engineer"'],
+                  ['inurl:',        'Match URL text',           'inurl:/jobs/ "data scientist"'],
+                  ['intitle:',      'Match page title',         'intitle:"hiring" "machine learning"'],
+                  ['"phrase"',      'Exact match',              '"open to sponsorship"'],
+                  ['OR',            'Either term',              '"ML" OR "machine learning"'],
+                  ['-word',         'Exclude term',             '"engineer" -senior -lead'],
+                  ['filetype:',     'File type filter',         'filetype:pdf "we are hiring"'],
+                  ['after:',        'Posted after date',        'after:2025-01-01'],
+                  ['tbs=qdr:w',     'Past week (URL param)',    'append to Google URL'],
+                  ['cache:',        'Cached page',              'cache:lever.co/jobs/12345'],
+                  ['intext:',       'Match body text',          'intext:"H1B" intext:"data"'],
+                  ['related:',      'Similar sites',            'related:greenhouse.io'],
+                ].map(([op, use, ex]) => (
+                  <tr style="border-bottom: 0.5px solid #1C1C18;">
+                    <td class="py-3 font-bold" style="color:#fb923c; padding-right:2rem;">{op}</td>
+                    <td class="py-3" style="color:#8A8880; padding-right:2rem;">{use}</td>
+                    <td class="py-3 text-[10px]" style="color:#706E66; word-break:break-all;">{ex}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- CTA -->
+          <div class="mt-12 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <a
+              href="/job-search"
+              style="display:inline-flex;align-items:center;gap:8px;background:#fb923c;color:#0D0D0D;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:opacity 0.2s ease;"
+              onmouseover="this.style.opacity='0.85'"
+              onmouseout="this.style.opacity='1'"
+            >
+              Try the Dorking Builder
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+            <a
+              href="/companies"
+              style="display:inline-flex;align-items:center;gap:8px;border:0.5px solid #323028;color:#706E66;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.13em;text-decoration:none;padding:10px 20px;transition:border-color 0.2s ease,color 0.2s ease;"
+              onmouseover="this.style.borderColor='#706E66';this.style.color='#C8C6BE'"
+              onmouseout="this.style.borderColor='#323028';this.style.color='#706E66'"
+            >
+              Browse Target Companies
+            </a>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

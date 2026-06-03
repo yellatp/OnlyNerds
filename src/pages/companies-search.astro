@@ -74,12 +74,22 @@ const pageDescription = 'Search companies by ATS platform — find which employe
     </div>
 
     <!-- Loading -->
-    <div id="co-loading" style="text-align:center;padding:3rem 0;color:#8A8880;">
-      <p>Loading company data...</p>
-      <div style="width:40px;height:4px;background:#323028;border-radius:2px;margin:1rem auto 0;overflow:hidden;">
-        <div id="co-load-bar" style="width:0;height:100%;background:#A09E96;border-radius:2px;transition:width 0.3s;"></div>
+    <div id="co-loading" style="padding:1.5rem 0;">
+      <p style="text-align:center;font-family:Space Grotesk,sans-serif;font-size:0.9rem;font-style:italic;color:#5C5A54;margin-bottom:1.5rem;">
+        Wish one of these companies deserves you&hellip;
+      </p>
+      <div id="co-skeleton" style="display:grid;grid-template-columns:repeat(6,1fr);gap:0.4rem;"></div>
+      <div style="width:200px;height:2px;background:#323028;border-radius:1px;margin:1rem auto 0;overflow:hidden;">
+        <div id="co-load-bar" style="width:0;height:100%;background:#A09E96;border-radius:1px;transition:width 0.3s;"></div>
       </div>
     </div>
+
+    <style is:inline>
+      @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+      .skel { background:#1C1C18; border-radius:4px; animation:pulse 1.5s ease-in-out infinite; }
+      .skel-sm { height:0.55rem; width:35%; border-radius:3px; }
+      .skel-lg { height:0.85rem; width:70%; }
+    </style>
 
     <!-- Error state (hidden until error) -->
     <div id="co-error" style="display:none;text-align:center;padding:2rem;color:#f87171;"></div>
@@ -130,6 +140,21 @@ const pageDescription = 'Search companies by ATS platform — find which employe
     const atsSelect = $('co-ats');
     const sortSelect = $('co-sort');
     const perPageSelect = $('co-perpage');
+    const skeletonEl = $('co-skeleton');
+
+    // Generate skeleton tiles
+    if (skeletonEl) {
+      let html = '';
+      for (let i = 0; i < 12; i++) {
+        const w1 = 55 + Math.floor(Math.random() * 35);
+        html += `<div style="background:#141410;border:1px solid #1C1C18;border-radius:8px;padding:0.5rem 0.65rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <div class="skel skel-lg" style="width:${w1}%;"></div>
+          <div class="skel skel-sm"></div>
+        </div>`;
+      }
+      skeletonEl.innerHTML = html;
+    }
+
     const totalEl = $('co-total');
     const regionBreakdownEl = $('co-region-breakdown');
 

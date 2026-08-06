@@ -20,6 +20,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const { env } = context;
 
   try {
+    // Gracefully degrade when the D1 binding is missing or unprovisioned.
+    if (!env.DB) {
+      return json({
+        totalJobs: 0,
+        totalCompanies: 0,
+        totalPlatforms: 0,
+        lastUpdated: null,
+      });
+    }
+
     // Run all stats queries in parallel
     const [jobCountResult, companyCountResult, platformCountResult, lastUpdatedResult] = await Promise.all([
       env.DB.prepare('SELECT COUNT(*) as count FROM jobs').all(),
@@ -46,12 +56,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   } catch (error) {
     console.error('D1 stats error:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch stats' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    return json({ error: 'Failed to fetch stats' }, 500);
   }
 };
+
+function json(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Cache-Control': 'public, max-age=300',
+    },
+  });
+}

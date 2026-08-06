@@ -43,9 +43,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       });
     }
 
-    await env.DB.prepare(
-      'INSERT INTO apply_clicks (job_url, title, company) VALUES (?, ?, ?)'
-    ).bind(body.url, body.title || null, body.company || null).run();
+    // Gracefully degrade when the D1 binding is missing or unprovisioned.
+    if (env.DB) {
+      await env.DB.prepare(
+        'INSERT INTO apply_clicks (job_url, title, company) VALUES (?, ?, ?)'
+      ).bind(body.url, body.title || null, body.company || null).run();
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       headers: {

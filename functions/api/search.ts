@@ -33,6 +33,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(request.url);
   const params = url.searchParams;
 
+  // Gracefully degrade when the D1 binding is missing or unprovisioned.
+  if (!env.DB) {
+    return json({ jobs: [], total: 0, limit: 0, offset: 0, hasMore: false });
+  }
+
   try {
     // Build the query dynamically based on provided filters
     const conditions: string[] = [];
@@ -175,12 +180,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   } catch (error) {
     console.error('D1 search error:', error);
-    return new Response(JSON.stringify({ error: 'Search failed', jobs: [], total: 0 }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    return json({ error: 'Search failed', jobs: [], total: 0 }, 500);
   }
 };
+
+function json(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Cache-Control': 'public, max-age=60',
+    },
+  });
+}

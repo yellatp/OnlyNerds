@@ -351,7 +351,7 @@ const pageDescription = 'Search companies by ATS platform — find which employe
       nextBtn.disabled = page >= totalPages;
 
       gridEl.innerHTML = slice.map(r => {
-        const targetUrl = r.url && r.url.startsWith('http') ? r.url : `/jobs?company=${encodeURIComponent(r.name)}`;
+        const targetUrl = r.url && r.url.startsWith('http') ? r.url : `https://www.google.com/search?q=${encodeURIComponent(r.name + ' careers jobs')}`;
         return `
         <a href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener noreferrer"
            style="display:flex;flex-direction:column;gap:0.35rem;

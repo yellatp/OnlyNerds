@@ -9,6 +9,9 @@ import {
   SQL_RESOURCES, SALARY_INTEL, NETWORKING_TOOLS, AUTOFILL_TOOLS,
   RESUME_RESOURCES, DORK_QUERIES, PYE_LEARNING_PATHS,
 } from '../lib/resources';
+import {
+  CORP101_DEPARTMENTS, CORP101_ROLES, CORP101_TERM_GROUPS, CORP101_TOTAL_TERMS,
+} from '../lib/corporate101';
 
 const SECTIONS = [
   {
@@ -110,6 +113,16 @@ const SECTIONS = [
     border: 'hover:border-emerald-700',
     badge: 'bg-emerald-950 text-emerald-300 border border-emerald-800',
     count: `${RESUME_RESOURCES.length} resources`,
+  },
+  {
+    id: 'corporate-101',
+    label: 'Corporate & Tech 101',
+    desc: 'How a tech company works, who reports to whom, and the jargon cheat sheet',
+    color: 'sky',
+    dot: 'bg-sky-400',
+    border: 'hover:border-sky-700',
+    badge: 'bg-sky-950 text-sky-300 border border-sky-800',
+    count: `${CORP101_TOTAL_TERMS} terms`,
   },
 ];
 ---
@@ -588,6 +601,117 @@ data scientist CV site:edu filetype:pdf</pre>
         </div>
       </div>
     </div>
+</ResourceModal>
+
+<ResourceModal id="modal-corporate-101" colorClass="sky" title="Corporate & Tech 101">
+    <div class="p-6 space-y-8">
+
+      <div class="rounded-xl border border-sky-900 bg-sky-950/30 p-5">
+        <p class="text-sm text-slate-300 leading-relaxed">
+          The stuff nobody teaches you in college: how a typical tech company is organized, who reports to whom,
+          and the tech/corporate acronym cheat sheet everyone assumes you know. Written for candidates who have
+          never worked in a corporate or tech environment.
+        </p>
+      </div>
+
+      <!-- How a tech company is organized -->
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">How a tech company is typically organized</p>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {CORP101_DEPARTMENTS.map((dept) => (
+            <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+              <p class="mb-1.5 text-sm font-semibold text-white">{dept.name}</p>
+              <p class="text-xs text-slate-400 leading-relaxed">{dept.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Common roles table -->
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">Common tech roles and who they report to</p>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="border-b border-slate-700 bg-slate-900">
+                <th class="py-2.5 pr-4 pl-4 text-left font-semibold text-slate-300">Role</th>
+                <th class="py-2.5 pr-4 text-left font-semibold text-slate-300">Reports to</th>
+                <th class="py-2.5 pr-4 text-left font-semibold text-slate-300">What they actually do</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              {CORP101_ROLES.map((row) => (
+                <tr class="align-top">
+                  <td class="py-2.5 pr-4 pl-4 font-semibold text-slate-100">{row.role}</td>
+                  <td class="py-2.5 pr-4 text-sky-300">{row.reportsTo}</td>
+                  <td class="py-2.5 pr-4 text-slate-400">{row.does}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 rounded-lg border border-slate-800 bg-slate-900 px-4 py-3">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Titles vary between companies. The pattern is: individual contributor (IC) to team lead or manager,
+            then director, VP, C-level. Your reporting manager is usually the person who does your performance
+            review and approves your priorities.
+          </p>
+        </div>
+      </div>
+
+      <!-- Jargon cheat sheet -->
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">
+          Tech &amp; Corporate Jargon Cheat Sheet ({CORP101_TOTAL_TERMS} terms)
+        </p>
+        <p class="mb-5 text-xs text-slate-400 leading-relaxed">
+          Every company develops its own dialect from its tools (Jira, Slack, GitHub) and workflow.
+          These are the terms that appear in stand-ups, PR reviews, incidents, and emails. Where a
+          plain-English alternative exists, it is listed as "Say instead". Meanings vary by sector too.
+          Each term appears only once across the site.
+        </p>
+
+        <div class="space-y-6">
+          {CORP101_TERM_GROUPS.map((group) => (
+            <div>
+              <p class="mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500">{group.title}</p>
+              <div class="overflow-x-auto rounded-xl border border-slate-800">
+                <table class="w-full text-xs">
+                  <thead>
+                    <tr class="border-b border-slate-700 bg-slate-900">
+                      <th class="py-2 pr-4 pl-4 text-left font-semibold text-slate-300">Term</th>
+                      <th class="py-2 pr-4 text-left font-semibold text-slate-300">What it means</th>
+                      <th class="py-2 pr-4 text-left font-semibold text-slate-300">Say instead</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800">
+                    {group.terms.map((t) => (
+                      <tr class="align-top">
+                        <td class="py-2 pr-4 pl-4 font-semibold text-slate-100 whitespace-nowrap">{t.term}</td>
+                        <td class="py-2 pr-4 text-slate-400 leading-relaxed">{t.means}</td>
+                        <td class="py-2 pr-4 text-emerald-300">{t.sayInstead || <span class="text-slate-600">&mdash;</span>}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <p class="text-xs text-slate-400 leading-relaxed">
+          <span class="font-semibold text-slate-200">Next: how work gets managed.</span>
+          Companies run projects differently depending on the type of work. Ad-hoc requests need one approach,
+          recurring/tracker projects need another, and the lifecycle you follow (SDLC, Data, ML) changes how work
+          flows. Pair this with the <a href="/job-search" class="text-sky-400 hover:text-sky-300 transition-colors">Dork Builder</a>
+          and the other prep sections to go from zero corporate knowledge to interview-ready.
+        </p>
+      </div>
+
+    </div>
+  </div>
 </ResourceModal>
 
 <style>

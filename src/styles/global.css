@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Cache-bust revision 2 — forces new hashed asset URL after stale CDN cache */
+
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
@@ -212,4 +214,9 @@ h1:hover, h2:hover, h3:hover {
   .cn-divider {
     border-top: 0.5px solid #1C1C18;
   }
+}
+
+/* Force fresh asset hash after CDN cache poisoning */
+html {
+  scrollbar-color: #1C1C18 #0D0D0D;
 }

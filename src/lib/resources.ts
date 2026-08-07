@@ -67,6 +67,9 @@ export const AI_ML_LEARNING: ResourceLink[] = [
   { name: 'CampusX',              url: 'https://www.youtube.com/@campusx-official',         desc: 'Applied DS and ML content. Excellent for project-based learning and interview prep.' },
   { name: 'Krishnaik',            url: 'https://www.youtube.com/@krishnaik06',              desc: 'Practical data science, ML, and MLOps tutorials. Focuses on job-ready skills and real-world tools.' },
   { name: 'HuggingFace',          url: 'https://huggingface.co/learn',                      desc: 'Free NLP, diffusion, and LLM courses from the team behind Transformers. Hands-on and current.' },
+  { name: 'TensorFlow Learn ML',  url: 'https://www.tensorflow.org/resources/learn-ml',     desc: 'Google\u2019s official ML learning path: foundational concepts, tutorials, and hands-on guides across Keras, TF, and JAX.' },
+  { name: 'Google Topics API Dataset', url: 'https://www.kaggle.com/datasets/googleai/topics-api-private-data-release/', desc: 'Google AI research dataset on Kaggle. Useful for privacy-focused advertising and interest-based inference projects.' },
+  { name: 'Google PAIR Explorables', url: 'https://pair.withgoogle.com/explorables/',      desc: 'Interactive visual essays from Google\u2019s People + AI Research (PAIR) team. Learn ML concepts by playing with them, not reading about them.' },
   { name: 'fast.ai',              url: 'https://www.fast.ai/',                               desc: 'Top-down practical deep learning. Jeremy Howard approach: build first, understand theory after.' },
   { name: 'Made With ML',         url: 'https://madewithml.com/',                            desc: 'MLOps and production ML engineering. Covers design, serving, monitoring, and testing.' },
 ];
